@@ -1,0 +1,54 @@
+[package]
+name = "heard-tts"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Heard's TTS backends (null, ElevenLabs, Kokoro) behind one trait, plus a registry for extra backends."
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+regex.workspace = true
+once_cell.workspace = true
+# Blocking HTTP with rustls. The Python backends use `urllib` precisely so the
+# daemon does not pull in a heavy client; `ureq` is the closest Rust analogue —
+# blocking, no async runtime, no C TLS. `rustls` (not native-tls) also removes
+# the certifi workaround the Python carries for py2app's frozen interpreter:
+# the CA roots are compiled in, so there is no filesystem bundle to miss.
+ureq = { version = "2.12", default-features = false, features = ["tls", "gzip"] }
+
+# The Kokoro spike. Optional so the cloud path never builds ONNX Runtime:
+# `ort` DOWNLOADS a prebuilt ONNX Runtime at build time — that is a supply-chain
+# fact worth knowing, and gating it behind a
+# feature is how this crate keeps it off the default path.
+ort = { version = "2.0.0-rc.13", optional = true }
+ndarray = { version = "0.17", optional = true }
+# voices-v1.0.bin is a NumPy .npz — a plain zip of .npy arrays.
+zip = { version = "2", optional = true, default-features = false, features = ["deflate"] }
+
+# The local voice's G2P: misaki's English lexicons + rules, in process.
+# Apache-2.0, and so is the lexicon data it embeds (verbatim from misaki
+# 0.9.4) — see THIRD-PARTY-NOTICES.md. Replaces the espeak-ng (GPLv3)
+# dependency `kokoro-onnx` has.
+sayd-misaki-en = { version = "0.1.0", optional = true }
+
+[features]
+default = []
+kokoro = ["dep:ort", "dep:ndarray", "dep:zip", "dep:sayd-misaki-en"]
+# Opt-in, OFF by default: phonemise by running an `espeak-ng` binary as a
+# subprocess, reproducing the Python `kokoro-onnx` pipeline exactly. For
+# side-by-side comparison only. espeak-ng is GPL-3.0; nothing in the default
+# build or the shipped bundle compiles, links or invokes it
+# (tests/no_espeak_by_default.rs pins that).
+espeak = ["kokoro"]
+
+[[example]]
+name = "g2p_compare"
+required-features = ["kokoro"]
+
+[dev-dependencies]
+serde_json.workspace = true
+# The fake HTTP servers are hand-rolled over std::net::TcpListener — see
+# tests/fake_http.rs. No extra dependency, and it lets every test assert on the
+# exact bytes of the request line, the headers and the body.

@@ -1,0 +1,1450 @@
+{
+ "queue_max": 5,
+ "deferred_mic_max": 10,
+ "deferred_max_age_s": 300.0,
+ "split": [
+  {
+   "text": "",
+   "out": []
+  },
+  {
+   "text": "   ",
+   "out": []
+  },
+  {
+   "text": "Short line.",
+   "out": [
+    "Short line."
+   ]
+  },
+  {
+   "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "out": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+   ]
+  },
+  {
+   "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "out": [
+    "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+   ]
+  },
+  {
+   "text": "One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here. One sentence here.",
+   "out": [
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here.",
+    "One sentence here."
+   ]
+  },
+  {
+   "text": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA. Then a short one! And a question? Yes.",
+   "out": [
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA.",
+    "Then a short one!",
+    "And a question?",
+    "Yes."
+   ]
+  },
+  {
+   "text": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB, with a comma; and a semicolon: then a colon cccccccccccccccccccc",
+   "out": [
+    "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB,",
+    "with a comma;",
+    "and a semicolon:",
+    "then a colon cccccccccccccccccccc"
+   ]
+  },
+  {
+   "text": "Sentence one.  DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD  Sentence three.",
+   "out": [
+    "Sentence one.",
+    "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD  Sentence three."
+   ]
+  },
+  {
+   "text": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+   "out": [
+    "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+   ]
+  }
+ ],
+ "enqueue": [
+  {
+   "name": "fifo_within_a_session",
+   "steps": [
+    {
+     "op": {
+      "text": "one",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "one",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "two",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "one",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "two",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "three",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "one",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "two",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "three",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "cap_drops_the_oldest",
+   "steps": [
+    {
+     "op": {
+      "text": "q0",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "q0",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "q1",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "q0",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q1",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "q2",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "q0",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q1",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q2",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "q3",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "q0",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q1",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q2",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q3",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "q4",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "q0",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q1",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q2",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q3",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q4",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "q5",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "q1",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q2",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q3",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q4",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q5",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "q6",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "q2",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q3",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q4",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q5",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "q6",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a_new_session_clears_other_sessions",
+   "steps": [
+    {
+     "op": {
+      "text": "a1",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "a1",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "a2",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "a1",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "a2",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "b1",
+      "session": "B",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "b1",
+       "B",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "a3",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "a3",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "coexisting_flushes_share_the_queue",
+   "steps": [
+    {
+     "op": {
+      "text": "p1",
+      "session": "P",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "p1",
+       "P",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "p2",
+      "session": "Q",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "p1",
+       "P",
+       "tool_pre"
+      ],
+      [
+       "p2",
+       "Q",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "live",
+      "session": "R",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "live",
+       "R",
+       "tool_pre"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sessionless_lines_never_clear_and_are_cleared",
+   "steps": [
+    {
+     "op": {
+      "text": "a1",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "a1",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "sys",
+      "session": "",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "a1",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "sys",
+       "",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "b1",
+      "session": "B",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "b1",
+       "B",
+       "tool_pre"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "priority_final_supersedes_its_own_routine_lines",
+   "steps": [
+    {
+     "op": {
+      "text": "tool1",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "tool1",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "prose",
+      "session": "A",
+      "kind": "intermediate",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "tool1",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "prose",
+       "A",
+       "intermediate"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "q",
+      "session": "A",
+      "kind": "question",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "tool1",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "prose",
+       "A",
+       "intermediate"
+      ],
+      [
+       "q",
+       "A",
+       "question"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "done",
+      "session": "A",
+      "kind": "final",
+      "priority": true,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "q",
+       "A",
+       "question"
+      ],
+      [
+       "done",
+       "A",
+       "final"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "priority_jumps_other_sessions_but_not_its_own",
+   "steps": [
+    {
+     "op": {
+      "text": "b-tool",
+      "session": "B",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b-tool",
+       "B",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "a-q",
+      "session": "A",
+      "kind": "question",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b-tool",
+       "B",
+       "tool_pre"
+      ],
+      [
+       "a-q",
+       "A",
+       "question"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "b-final",
+      "session": "B",
+      "kind": "final",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b-tool",
+       "B",
+       "tool_pre"
+      ],
+      [
+       "a-q",
+       "A",
+       "question"
+      ],
+      [
+       "b-final",
+       "B",
+       "final"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "a-final",
+      "session": "A",
+      "kind": "final",
+      "priority": true,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b-tool",
+       "B",
+       "tool_pre"
+      ],
+      [
+       "a-q",
+       "A",
+       "question"
+      ],
+      [
+       "a-final",
+       "A",
+       "final"
+      ],
+      [
+       "b-final",
+       "B",
+       "final"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "sessionless_priority_front_jumps_and_drops_intermediates",
+   "steps": [
+    {
+     "op": {
+      "text": "prose1",
+      "session": "A",
+      "kind": "intermediate",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "prose1",
+       "A",
+       "intermediate"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "tool",
+      "session": "A",
+      "kind": "tool_pre",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "prose1",
+       "A",
+       "intermediate"
+      ],
+      [
+       "tool",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "prose2",
+      "session": "A",
+      "kind": "intermediate",
+      "priority": false,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "prose1",
+       "A",
+       "intermediate"
+      ],
+      [
+       "tool",
+       "A",
+       "tool_pre"
+      ],
+      [
+       "prose2",
+       "A",
+       "intermediate"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "ack",
+      "session": "",
+      "kind": "answer",
+      "priority": true,
+      "coexists": false
+     },
+     "queue": [
+      [
+       "ack",
+       "",
+       "answer"
+      ],
+      [
+       "tool",
+       "A",
+       "tool_pre"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "name": "priority_overflow_truncates_the_tail",
+   "steps": [
+    {
+     "op": {
+      "text": "b0",
+      "session": "B",
+      "kind": "question",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b0",
+       "B",
+       "question"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "b1",
+      "session": "B",
+      "kind": "question",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b0",
+       "B",
+       "question"
+      ],
+      [
+       "b1",
+       "B",
+       "question"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "b2",
+      "session": "B",
+      "kind": "question",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b0",
+       "B",
+       "question"
+      ],
+      [
+       "b1",
+       "B",
+       "question"
+      ],
+      [
+       "b2",
+       "B",
+       "question"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "b3",
+      "session": "B",
+      "kind": "question",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b0",
+       "B",
+       "question"
+      ],
+      [
+       "b1",
+       "B",
+       "question"
+      ],
+      [
+       "b2",
+       "B",
+       "question"
+      ],
+      [
+       "b3",
+       "B",
+       "question"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "b4",
+      "session": "B",
+      "kind": "question",
+      "priority": false,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "b0",
+       "B",
+       "question"
+      ],
+      [
+       "b1",
+       "B",
+       "question"
+      ],
+      [
+       "b2",
+       "B",
+       "question"
+      ],
+      [
+       "b3",
+       "B",
+       "question"
+      ],
+      [
+       "b4",
+       "B",
+       "question"
+      ]
+     ]
+    },
+    {
+     "op": {
+      "text": "urgent",
+      "session": "",
+      "kind": "final",
+      "priority": true,
+      "coexists": true
+     },
+     "queue": [
+      [
+       "urgent",
+       "",
+       "final"
+      ],
+      [
+       "b0",
+       "B",
+       "question"
+      ],
+      [
+       "b1",
+       "B",
+       "question"
+      ],
+      [
+       "b2",
+       "B",
+       "question"
+      ],
+      [
+       "b3",
+       "B",
+       "question"
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "flush": [
+  {
+   "name": "fresh_lines_replay_in_order",
+   "mic_active": false,
+   "queue": [],
+   "deferred": [
+    {
+     "text": "h1",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "h2",
+     "age": 0.5,
+     "priority": false,
+     "session": "A"
+    }
+   ],
+   "after_queue": [
+    [
+     "h1",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "h2",
+     "A",
+     "tool_pre"
+    ]
+   ],
+   "after_deferred": [],
+   "observed": []
+  },
+  {
+   "name": "expired_lines_fold_into_working_memory",
+   "mic_active": false,
+   "queue": [
+    [
+     "already",
+     "A",
+     "tool_pre"
+    ]
+   ],
+   "deferred": [
+    {
+     "text": "stale",
+     "age": 301,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "fresh",
+     "age": 10,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "edge",
+     "age": 300,
+     "priority": false,
+     "session": "A"
+    }
+   ],
+   "after_queue": [
+    [
+     "already",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "fresh",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "edge",
+     "A",
+     "tool_pre"
+    ]
+   ],
+   "after_deferred": [],
+   "observed": [
+    {
+     "kind": "unspoken",
+     "tag": "held_expired",
+     "neutral": "stale",
+     "session": {
+      "id": "A",
+      "cwd": ""
+     }
+    }
+   ]
+  },
+  {
+   "name": "still_held_while_the_mic_is_hot",
+   "mic_active": true,
+   "queue": [],
+   "deferred": [
+    {
+     "text": "h1",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    }
+   ],
+   "after_queue": [],
+   "after_deferred": [
+    [
+     "h1",
+     false
+    ]
+   ],
+   "observed": []
+  },
+  {
+   "name": "still_held_while_the_user_speaks",
+   "mic_active": false,
+   "user_speaking": true,
+   "queue": [],
+   "deferred": [
+    {
+     "text": "h1",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    }
+   ],
+   "after_queue": [],
+   "after_deferred": [
+    [
+     "h1",
+     false
+    ]
+   ],
+   "observed": []
+  },
+  {
+   "name": "flushing_bypasses_the_cap",
+   "mic_active": false,
+   "queue": [],
+   "deferred": [
+    {
+     "text": "h0",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "h1",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "h2",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "h3",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "h4",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "h5",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "h6",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    },
+    {
+     "text": "h7",
+     "age": 1,
+     "priority": false,
+     "session": "A"
+    }
+   ],
+   "after_queue": [
+    [
+     "h0",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "h1",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "h2",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "h3",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "h4",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "h5",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "h6",
+     "A",
+     "tool_pre"
+    ],
+    [
+     "h7",
+     "A",
+     "tool_pre"
+    ]
+   ],
+   "after_deferred": [],
+   "observed": []
+  },
+  {
+   "name": "nothing_held",
+   "mic_active": false,
+   "queue": [],
+   "deferred": [],
+   "after_queue": [],
+   "after_deferred": [],
+   "observed": []
+  }
+ ],
+ "history": [
+  {
+   "name": "played",
+   "outcome": "played",
+   "cancelled": false,
+   "has_meta": true,
+   "appended": true,
+   "record_keys": [
+    "id",
+    "kind",
+    "persona",
+    "repo_name",
+    "session_id",
+    "spoken",
+    "tag",
+    "via",
+    "voice"
+   ]
+  },
+  {
+   "name": "synth_failed",
+   "outcome": "failed",
+   "cancelled": false,
+   "has_meta": true,
+   "appended": true,
+   "record_keys": [
+    "id",
+    "kind",
+    "persona",
+    "repo_name",
+    "session_id",
+    "spoken",
+    "tag",
+    "via",
+    "voice"
+   ]
+  },
+  {
+   "name": "afplay_failed",
+   "outcome": "failed",
+   "cancelled": false,
+   "has_meta": true,
+   "appended": true,
+   "record_keys": [
+    "id",
+    "kind",
+    "persona",
+    "repo_name",
+    "session_id",
+    "spoken",
+    "tag",
+    "via",
+    "voice"
+   ]
+  },
+  {
+   "name": "skipped_muted",
+   "outcome": "skipped",
+   "cancelled": false,
+   "has_meta": true,
+   "appended": true,
+   "record_keys": [
+    "id",
+    "kind",
+    "persona",
+    "repo_name",
+    "session_id",
+    "spoken",
+    "tag",
+    "via",
+    "voice"
+   ]
+  },
+  {
+   "name": "skipped_audio_off",
+   "outcome": "skipped",
+   "cancelled": false,
+   "has_meta": true,
+   "appended": true,
+   "record_keys": [
+    "id",
+    "kind",
+    "persona",
+    "repo_name",
+    "session_id",
+    "spoken",
+    "tag",
+    "via",
+    "voice"
+   ]
+  },
+  {
+   "name": "skipped_mic_active",
+   "outcome": "skipped",
+   "cancelled": false,
+   "has_meta": true,
+   "appended": true,
+   "record_keys": [
+    "id",
+    "kind",
+    "persona",
+    "repo_name",
+    "session_id",
+    "spoken",
+    "tag",
+    "via",
+    "voice"
+   ]
+  },
+  {
+   "name": "skipped_no_voice",
+   "outcome": "skipped",
+   "cancelled": false,
+   "has_meta": true,
+   "appended": true,
+   "record_keys": [
+    "id",
+    "kind",
+    "persona",
+    "repo_name",
+    "session_id",
+    "spoken",
+    "tag",
+    "via",
+    "voice"
+   ]
+  },
+  {
+   "name": "cancelled_by_silence",
+   "outcome": "cancelled",
+   "cancelled": true,
+   "has_meta": true,
+   "appended": false,
+   "record_keys": []
+  },
+  {
+   "name": "cancelled_by_barge_in",
+   "outcome": "cancelled",
+   "cancelled": true,
+   "has_meta": true,
+   "appended": false,
+   "record_keys": []
+  },
+  {
+   "name": "played_without_history_meta",
+   "outcome": "played",
+   "cancelled": false,
+   "has_meta": false,
+   "appended": false,
+   "record_keys": []
+  },
+  {
+   "name": "failed_without_history_meta",
+   "outcome": "failed",
+   "cancelled": false,
+   "has_meta": false,
+   "appended": false,
+   "record_keys": []
+  }
+ ]
+}

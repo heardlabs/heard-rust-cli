@@ -1,0 +1,14 @@
+[package]
+name = "heard-install"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Installs, removes and inspects heard-cli's hooks in Claude Code and Codex CLI"
+
+[dependencies]
+serde = { workspace = true }
+# NOT `preserve_order`: features unify across the workspace, and switching
+# serde_json's Map to insertion order would change every other crate's
+# output. Key order is kept by this crate's own `json::Json` instead.
+serde_json = { workspace = true }
+thiserror = { workspace = true }

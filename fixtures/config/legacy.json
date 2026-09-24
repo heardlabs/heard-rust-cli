@@ -1,0 +1,185 @@
+[
+  {
+    "input": {
+      "fn": "normalize_verbosity",
+      "name": "low"
+    },
+    "name": "verbosity_low_is_quiet",
+    "output": "quiet"
+  },
+  {
+    "input": {
+      "fn": "normalize_verbosity",
+      "name": "high"
+    },
+    "name": "verbosity_high_is_verbose",
+    "output": "verbose"
+  },
+  {
+    "input": {
+      "fn": "normalize_verbosity",
+      "name": "  HIGH "
+    },
+    "name": "verbosity_case_and_space_insensitive",
+    "output": "verbose"
+  },
+  {
+    "input": {
+      "fn": "normalize_verbosity",
+      "name": null
+    },
+    "name": "verbosity_missing_is_normal",
+    "output": "normal"
+  },
+  {
+    "input": {
+      "fn": "normalize_verbosity",
+      "name": ""
+    },
+    "name": "verbosity_empty_is_normal",
+    "output": "normal"
+  },
+  {
+    "input": {
+      "fn": "normalize_verbosity",
+      "name": "quiet"
+    },
+    "name": "verbosity_current_names_pass_through",
+    "output": "quiet"
+  },
+  {
+    "input": {
+      "fn": "normalize_verbosity",
+      "name": "Meh"
+    },
+    "name": "verbosity_unknown_passes_through_lowercased",
+    "output": "meh"
+  },
+  {
+    "input": {
+      "cfg": {
+        "mode": "copilot"
+      },
+      "fn": "legacy_mode"
+    },
+    "name": "mode_copilot",
+    "output": "copilot"
+  },
+  {
+    "input": {
+      "cfg": {
+        "mode": "COMPANION"
+      },
+      "fn": "legacy_mode"
+    },
+    "name": "mode_companion",
+    "output": "companion"
+  },
+  {
+    "input": {
+      "cfg": {
+        "mode": " focus "
+      },
+      "fn": "legacy_mode"
+    },
+    "name": "mode_focus_with_spaces",
+    "output": "focus"
+  },
+  {
+    "input": {
+      "cfg": {
+        "mode": "custom"
+      },
+      "fn": "legacy_mode"
+    },
+    "name": "mode_custom_is_preserved",
+    "output": "custom"
+  },
+  {
+    "input": {
+      "cfg": {
+        "mode": "noisy"
+      },
+      "fn": "legacy_mode"
+    },
+    "name": "mode_unknown_fails_closed_to_copilot",
+    "output": "copilot"
+  },
+  {
+    "input": {
+      "cfg": {},
+      "fn": "legacy_mode"
+    },
+    "name": "mode_missing_fails_closed_to_copilot",
+    "output": "copilot"
+  },
+  {
+    "input": {
+      "cfg": {
+        "mode": ""
+      },
+      "fn": "legacy_mode"
+    },
+    "name": "mode_empty_fails_closed_to_copilot",
+    "output": "copilot"
+  },
+  {
+    "input": {
+      "cfg": {
+        "notify.errors": false,
+        "notify_errors": true
+      },
+      "default": true,
+      "dotted": "notify.errors",
+      "fn": "dotted_or_underscore"
+    },
+    "name": "dotted_key_wins",
+    "output": false
+  },
+  {
+    "input": {
+      "cfg": {
+        "notify.errors": false
+      },
+      "default": true,
+      "dotted": "notify.errors",
+      "fn": "dotted_or_underscore"
+    },
+    "name": "dotted_false_is_not_treated_as_absent",
+    "output": false
+  },
+  {
+    "input": {
+      "cfg": {
+        "notify_blocked": false
+      },
+      "default": true,
+      "dotted": "notify.blocked",
+      "fn": "dotted_or_underscore"
+    },
+    "name": "legacy_underscore_key_is_the_fallback",
+    "output": false
+  },
+  {
+    "input": {
+      "cfg": {},
+      "default": true,
+      "dotted": "notify.completions",
+      "fn": "dotted_or_underscore"
+    },
+    "name": "neither_key_present_uses_the_default",
+    "output": true
+  },
+  {
+    "input": {
+      "cfg": {
+        "dictation_phone_paired": true
+      },
+      "default": false,
+      "dotted": "dictation.phone_paired",
+      "fn": "dotted_or_underscore"
+    },
+    "name": "only_the_first_dot_is_rewritten",
+    "output": true
+  }
+]

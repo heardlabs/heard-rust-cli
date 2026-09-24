@@ -1,0 +1,16 @@
+[package]
+name = "heard-config"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+# `float_roundtrip`: parse JSON floats correctly rounded, as Python's `json`
+# does. Without it serde_json can land 1 ULP off, and that float then reaches
+# config.yaml as different text than Python would write.
+serde_json = { workspace = true, features = ["float_roundtrip"] }
+thiserror.workspace = true
+# flock(2) for the cross-process config lock, with a safe wrapper — the crate
+# is `#![deny(unsafe_code)]`.
+rustix = { workspace = true, features = ["fs"] }

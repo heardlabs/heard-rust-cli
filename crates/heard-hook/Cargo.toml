@@ -1,0 +1,14 @@
+[package]
+name = "heard-hook"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "heard-hook"
+path = "src/main.rs"
+
+[dependencies]
+heard-proto = { path = "../heard-proto" }
+serde = { workspace = true }
+serde_json = { workspace = true, features = ["raw_value"] }

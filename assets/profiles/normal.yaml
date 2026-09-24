@@ -1,0 +1,14 @@
+# Normal — milestone announcements, prose voiced, bursts summarised.
+#
+# Default for solo mode. Meaningful tool calls narrate (tests, builds,
+# installs, delegation) but routine per-file ops (edits/writes/searches)
+# stay quiet — Verbose is the play-by-play mode. Prose is voiced; bursts of
+# 5+ tools in 30 s route to a digest summary on the next prose arrival.
+
+name: normal
+description: Per-tool announcements; prose voiced; bursts summarised.
+pre_tool: per_tool
+post_success: silent
+prose: speak
+final_budget: 600
+burst_threshold: 5

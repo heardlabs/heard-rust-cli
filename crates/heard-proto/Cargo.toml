@@ -1,0 +1,12 @@
+[package]
+name = "heard-proto"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+# raw_value: the hook forwards the agent's payload verbatim, without
+# reshaping it or re-allocating its bytes.
+serde_json = { workspace = true, features = ["raw_value"] }
+thiserror.workspace = true

@@ -1,0 +1,43 @@
+{
+  "model": "opus",
+  "permissions": {
+    "allow": [
+      "Bash(git status)",
+      "Read"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guard.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo hi"
+          }
+        ]
+      }
+    ],
+    "Stop": []
+  },
+  "zeta_unknown_key": {
+    "nested": [
+      1,
+      2.5,
+      "x"
+    ]
+  },
+  "alpha": true
+}

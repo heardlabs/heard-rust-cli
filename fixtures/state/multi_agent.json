@@ -1,0 +1,3399 @@
+{
+  "auto_voice_pool": [
+    "21m00Tcm4TlvDq8ikWAM",
+    "pNInz6obpgDQGcFmaJgB",
+    "XB0fDUnXU5powFXDhCwa",
+    "onwK4e9ZLuTAKqWW03F9",
+    "pFZP5JQG7iQjIQuC4Bku",
+    "pqHfZKP75CvOlQylNhV4"
+  ],
+  "session_active_s": 30.0,
+  "session_visible_s": 600.0,
+  "channel_idle_flush_s": 2.0,
+  "channel_max_pending": 5,
+  "auto_voice_for": [
+    {
+      "repo_name": "",
+      "expect": "21m00Tcm4TlvDq8ikWAM"
+    },
+    {
+      "repo_name": "api",
+      "expect": "21m00Tcm4TlvDq8ikWAM"
+    },
+    {
+      "repo_name": "web",
+      "expect": "21m00Tcm4TlvDq8ikWAM"
+    },
+    {
+      "repo_name": "cli",
+      "expect": "pFZP5JQG7iQjIQuC4Bku"
+    },
+    {
+      "repo_name": "frontend",
+      "expect": "XB0fDUnXU5powFXDhCwa"
+    },
+    {
+      "repo_name": "infra",
+      "expect": "onwK4e9ZLuTAKqWW03F9"
+    },
+    {
+      "repo_name": "ml",
+      "expect": "pNInz6obpgDQGcFmaJgB"
+    },
+    {
+      "repo_name": "heard",
+      "expect": "pqHfZKP75CvOlQylNhV4"
+    },
+    {
+      "repo_name": "demo-repo",
+      "expect": "onwK4e9ZLuTAKqWW03F9"
+    },
+    {
+      "repo_name": "a",
+      "expect": "pFZP5JQG7iQjIQuC4Bku"
+    },
+    {
+      "repo_name": "Z",
+      "expect": "pNInz6obpgDQGcFmaJgB"
+    },
+    {
+      "repo_name": "project with spaces",
+      "expect": "pNInz6obpgDQGcFmaJgB"
+    },
+    {
+      "repo_name": "café",
+      "expect": "pqHfZKP75CvOlQylNhV4"
+    }
+  ],
+  "count_word": [
+    {
+      "n": 0,
+      "expect": "0"
+    },
+    {
+      "n": 1,
+      "expect": "1"
+    },
+    {
+      "n": 2,
+      "expect": "two"
+    },
+    {
+      "n": 3,
+      "expect": "three"
+    },
+    {
+      "n": 4,
+      "expect": "four"
+    },
+    {
+      "n": 5,
+      "expect": "five"
+    },
+    {
+      "n": 6,
+      "expect": "6"
+    },
+    {
+      "n": 12,
+      "expect": "12"
+    }
+  ],
+  "format_project_summary": [
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_edit",
+        "tool_bash_test"
+      ],
+      "member_count": 1,
+      "include_label": true,
+      "expect": "Api: 2 edits, a test run."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_edit",
+        "tool_bash_test"
+      ],
+      "member_count": 1,
+      "include_label": false,
+      "expect": "2 edits, a test run."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_edit",
+        "tool_bash_test"
+      ],
+      "member_count": 2,
+      "include_label": true,
+      "expect": "Api: 2 edits, a test run across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_edit",
+        "tool_bash_test"
+      ],
+      "member_count": 2,
+      "include_label": false,
+      "expect": "2 edits, a test run across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_edit",
+        "tool_bash_test"
+      ],
+      "member_count": 3,
+      "include_label": true,
+      "expect": "Api: 2 edits, a test run across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_edit",
+        "tool_bash_test"
+      ],
+      "member_count": 3,
+      "include_label": false,
+      "expect": "2 edits, a test run across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_edit",
+        "tool_bash_test"
+      ],
+      "member_count": 7,
+      "include_label": true,
+      "expect": "Api: 2 edits, a test run across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_edit",
+        "tool_bash_test"
+      ],
+      "member_count": 7,
+      "include_label": false,
+      "expect": "2 edits, a test run across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_read",
+        "tool_bash_read",
+        "tool_bash_grep_cmd"
+      ],
+      "member_count": 1,
+      "include_label": true,
+      "expect": "Api: 2 reads, a search."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_read",
+        "tool_bash_read",
+        "tool_bash_grep_cmd"
+      ],
+      "member_count": 1,
+      "include_label": false,
+      "expect": "2 reads, a search."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_read",
+        "tool_bash_read",
+        "tool_bash_grep_cmd"
+      ],
+      "member_count": 2,
+      "include_label": true,
+      "expect": "Api: 2 reads, a search across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_read",
+        "tool_bash_read",
+        "tool_bash_grep_cmd"
+      ],
+      "member_count": 2,
+      "include_label": false,
+      "expect": "2 reads, a search across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_read",
+        "tool_bash_read",
+        "tool_bash_grep_cmd"
+      ],
+      "member_count": 3,
+      "include_label": true,
+      "expect": "Api: 2 reads, a search across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_read",
+        "tool_bash_read",
+        "tool_bash_grep_cmd"
+      ],
+      "member_count": 3,
+      "include_label": false,
+      "expect": "2 reads, a search across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_read",
+        "tool_bash_read",
+        "tool_bash_grep_cmd"
+      ],
+      "member_count": 7,
+      "include_label": true,
+      "expect": "Api: 2 reads, a search across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_read",
+        "tool_bash_read",
+        "tool_bash_grep_cmd"
+      ],
+      "member_count": 7,
+      "include_label": false,
+      "expect": "2 reads, a search across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit"
+      ],
+      "member_count": 1,
+      "include_label": true,
+      "expect": "Api: an edit."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit"
+      ],
+      "member_count": 1,
+      "include_label": false,
+      "expect": "An edit."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit"
+      ],
+      "member_count": 2,
+      "include_label": true,
+      "expect": "Api: an edit across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit"
+      ],
+      "member_count": 2,
+      "include_label": false,
+      "expect": "An edit across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit"
+      ],
+      "member_count": 3,
+      "include_label": true,
+      "expect": "Api: an edit across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit"
+      ],
+      "member_count": 3,
+      "include_label": false,
+      "expect": "An edit across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit"
+      ],
+      "member_count": 7,
+      "include_label": true,
+      "expect": "Api: an edit across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit"
+      ],
+      "member_count": 7,
+      "include_label": false,
+      "expect": "An edit across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_unknown_thing",
+        "tool_unknown_thing"
+      ],
+      "member_count": 1,
+      "include_label": true,
+      "expect": "Api: 2 operations."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_unknown_thing",
+        "tool_unknown_thing"
+      ],
+      "member_count": 1,
+      "include_label": false,
+      "expect": "2 operations."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_unknown_thing",
+        "tool_unknown_thing"
+      ],
+      "member_count": 2,
+      "include_label": true,
+      "expect": "Api: 2 operations across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_unknown_thing",
+        "tool_unknown_thing"
+      ],
+      "member_count": 2,
+      "include_label": false,
+      "expect": "2 operations across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_unknown_thing",
+        "tool_unknown_thing"
+      ],
+      "member_count": 3,
+      "include_label": true,
+      "expect": "Api: 2 operations across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_unknown_thing",
+        "tool_unknown_thing"
+      ],
+      "member_count": 3,
+      "include_label": false,
+      "expect": "2 operations across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_unknown_thing",
+        "tool_unknown_thing"
+      ],
+      "member_count": 7,
+      "include_label": true,
+      "expect": "Api: 2 operations across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_unknown_thing",
+        "tool_unknown_thing"
+      ],
+      "member_count": 7,
+      "include_label": false,
+      "expect": "2 operations across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [],
+      "member_count": 1,
+      "include_label": true,
+      "expect": null
+    },
+    {
+      "label": "api",
+      "tags": [],
+      "member_count": 1,
+      "include_label": false,
+      "expect": null
+    },
+    {
+      "label": "api",
+      "tags": [],
+      "member_count": 2,
+      "include_label": true,
+      "expect": null
+    },
+    {
+      "label": "api",
+      "tags": [],
+      "member_count": 2,
+      "include_label": false,
+      "expect": null
+    },
+    {
+      "label": "api",
+      "tags": [],
+      "member_count": 3,
+      "include_label": true,
+      "expect": null
+    },
+    {
+      "label": "api",
+      "tags": [],
+      "member_count": 3,
+      "include_label": false,
+      "expect": null
+    },
+    {
+      "label": "api",
+      "tags": [],
+      "member_count": 7,
+      "include_label": true,
+      "expect": null
+    },
+    {
+      "label": "api",
+      "tags": [],
+      "member_count": 7,
+      "include_label": false,
+      "expect": null
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_write",
+        "tool_grep",
+        "tool_glob"
+      ],
+      "member_count": 1,
+      "include_label": true,
+      "expect": "Api: 2 searchs, an edit, a write."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_write",
+        "tool_grep",
+        "tool_glob"
+      ],
+      "member_count": 1,
+      "include_label": false,
+      "expect": "2 searchs, an edit, a write."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_write",
+        "tool_grep",
+        "tool_glob"
+      ],
+      "member_count": 2,
+      "include_label": true,
+      "expect": "Api: 2 searchs, an edit, a write across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_write",
+        "tool_grep",
+        "tool_glob"
+      ],
+      "member_count": 2,
+      "include_label": false,
+      "expect": "2 searchs, an edit, a write across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_write",
+        "tool_grep",
+        "tool_glob"
+      ],
+      "member_count": 3,
+      "include_label": true,
+      "expect": "Api: 2 searchs, an edit, a write across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_write",
+        "tool_grep",
+        "tool_glob"
+      ],
+      "member_count": 3,
+      "include_label": false,
+      "expect": "2 searchs, an edit, a write across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_write",
+        "tool_grep",
+        "tool_glob"
+      ],
+      "member_count": 7,
+      "include_label": true,
+      "expect": "Api: 2 searchs, an edit, a write across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_edit",
+        "tool_write",
+        "tool_grep",
+        "tool_glob"
+      ],
+      "member_count": 7,
+      "include_label": false,
+      "expect": "2 searchs, an edit, a write across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "intermediate_short",
+        "final_long"
+      ],
+      "member_count": 1,
+      "include_label": true,
+      "expect": "Api: a comment, a wrap-up."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "intermediate_short",
+        "final_long"
+      ],
+      "member_count": 1,
+      "include_label": false,
+      "expect": "A comment, a wrap-up."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "intermediate_short",
+        "final_long"
+      ],
+      "member_count": 2,
+      "include_label": true,
+      "expect": "Api: a comment, a wrap-up across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "intermediate_short",
+        "final_long"
+      ],
+      "member_count": 2,
+      "include_label": false,
+      "expect": "A comment, a wrap-up across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "intermediate_short",
+        "final_long"
+      ],
+      "member_count": 3,
+      "include_label": true,
+      "expect": "Api: a comment, a wrap-up across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "intermediate_short",
+        "final_long"
+      ],
+      "member_count": 3,
+      "include_label": false,
+      "expect": "A comment, a wrap-up across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "intermediate_short",
+        "final_long"
+      ],
+      "member_count": 7,
+      "include_label": true,
+      "expect": "Api: a comment, a wrap-up across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "intermediate_short",
+        "final_long"
+      ],
+      "member_count": 7,
+      "include_label": false,
+      "expect": "A comment, a wrap-up across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_commit"
+      ],
+      "member_count": 1,
+      "include_label": true,
+      "expect": "Api: a commit."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_commit"
+      ],
+      "member_count": 1,
+      "include_label": false,
+      "expect": "A commit."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_commit"
+      ],
+      "member_count": 2,
+      "include_label": true,
+      "expect": "Api: a commit across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_commit"
+      ],
+      "member_count": 2,
+      "include_label": false,
+      "expect": "A commit across two agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_commit"
+      ],
+      "member_count": 3,
+      "include_label": true,
+      "expect": "Api: a commit across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_commit"
+      ],
+      "member_count": 3,
+      "include_label": false,
+      "expect": "A commit across three agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_commit"
+      ],
+      "member_count": 7,
+      "include_label": true,
+      "expect": "Api: a commit across 7 agents."
+    },
+    {
+      "label": "api",
+      "tags": [
+        "tool_bash_commit"
+      ],
+      "member_count": 7,
+      "include_label": false,
+      "expect": "A commit across 7 agents."
+    }
+  ],
+  "scripts": [
+    {
+      "name": "solo_mode_speaks_everything",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "only-session",
+          "cwd": "/Users/x/projects/api",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "any",
+          "tag": "tool_pre",
+          "session_id": "only-session"
+        },
+        {
+          "op": "classify",
+          "kind": "any",
+          "tag": "intermediate_short",
+          "session_id": "only-session"
+        },
+        {
+          "op": "classify",
+          "kind": "any",
+          "tag": "final_short",
+          "session_id": "only-session"
+        },
+        {
+          "op": "classify",
+          "kind": "any",
+          "tag": "tool_post_failure",
+          "session_id": "only-session"
+        },
+        {
+          "op": "mode"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        "solo"
+      ]
+    },
+    {
+      "name": "swarm_defers_routine_for_project_flush",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/Users/x/projects/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/Users/x/projects/web",
+          "path_hint": null
+        },
+        {
+          "op": "mode"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "a"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        "swarm",
+        {
+          "action": "defer_to_digest",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        {
+          "action": "defer_to_digest",
+          "label_prefix": "",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "swarm_critical_pierces_with_label",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/Users/x/projects/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/Users/x/projects/web",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "session_id": "a"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_question",
+          "session_id": "a"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "action": "speak",
+          "label_prefix": "Agent api: ",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "Agent api: ",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "project_flush_backpressure_drains_busy_project_early",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "project_key": "api",
+            "label": "api",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "a"
+            ],
+            "speaker_session_id": "a",
+            "voice_override": "21m00Tcm4TlvDq8ikWAM",
+            "is_primary": false
+          }
+        ]
+      ]
+    },
+    {
+      "name": "project_flush_below_backpressure_and_fresh_waits",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": true
+        },
+        {
+          "op": "pending_count"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [],
+        4
+      ]
+    },
+    {
+      "name": "project_flushes_ordered_longest_first",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "a",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "b",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "project_key": "web",
+            "label": "web",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "b"
+            ],
+            "speaker_session_id": "b",
+            "voice_override": null,
+            "is_primary": true
+          },
+          {
+            "project_key": "api",
+            "label": "api",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "a"
+            ],
+            "speaker_session_id": "a",
+            "voice_override": "21m00Tcm4TlvDq8ikWAM",
+            "is_primary": false
+          }
+        ]
+      ]
+    },
+    {
+      "name": "project_flush_one_voice_mode_uses_persona_for_all",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "a",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "b",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": false
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "project_key": "api",
+            "label": "api",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "a"
+            ],
+            "speaker_session_id": "a",
+            "voice_override": null,
+            "is_primary": false
+          },
+          {
+            "project_key": "web",
+            "label": "web",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "b"
+            ],
+            "speaker_session_id": "b",
+            "voice_override": null,
+            "is_primary": true
+          }
+        ]
+      ]
+    },
+    {
+      "name": "project_flush_idle_drain_aggregates_same_project",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a1",
+          "cwd": "/Users/x/projects/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "a2",
+          "cwd": "/Users/x/projects/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "w",
+          "cwd": "/Users/x/projects/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a1",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit one"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a2",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit two"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "w",
+          "kind": "tool_pre",
+          "tag": "tool_grep",
+          "neutral": "grep"
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "a1",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "a2",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "w",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "project_key": "api",
+            "label": "api",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit one"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit two"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "a1",
+              "a2"
+            ],
+            "speaker_session_id": "a2",
+            "voice_override": "21m00Tcm4TlvDq8ikWAM",
+            "is_primary": false
+          },
+          {
+            "project_key": "web",
+            "label": "web",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_grep"
+                ],
+                [
+                  "neutral",
+                  "grep"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "w"
+            ],
+            "speaker_session_id": "w",
+            "voice_override": null,
+            "is_primary": true
+          }
+        ]
+      ]
+    },
+    {
+      "name": "pinned_session_always_speaks_others_drop",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "a"
+        },
+        {
+          "op": "mode"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "a"
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "a"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        "pinned",
+        {
+          "action": "speak",
+          "label_prefix": "Agent a: ",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        {
+          "action": "drop",
+          "label_prefix": "",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "pinned_critical_still_pierces_from_others",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "a"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "session_id": "b"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        {
+          "action": "speak",
+          "label_prefix": "Agent web: ",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "unpin_returns_to_auto_mode",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "a"
+        },
+        {
+          "op": "mode"
+        },
+        {
+          "op": "unpin"
+        },
+        {
+          "op": "mode"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        "pinned",
+        "swarm"
+      ]
+    },
+    {
+      "name": "pin_unknown_session_returns_false",
+      "ops": [
+        {
+          "op": "pin",
+          "session_id": "not-a-real-session"
+        },
+        {
+          "op": "mode"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        false,
+        "solo"
+      ]
+    },
+    {
+      "name": "solo_after_inactive_threshold",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "b",
+          "relative_to_now": -35.0
+        },
+        {
+          "op": "mode"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "a"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        "solo",
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "digest_collection_drains_pending",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "neutral": "Searching the codebase."
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_post",
+          "tag": "tool_post_success",
+          "neutral": "Done."
+        },
+        {
+          "op": "collect_digest"
+        },
+        {
+          "op": "collect_digest"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "session_id": "a",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_bash_grep"
+                ],
+                [
+                  "neutral",
+                  "Searching the codebase."
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ],
+              [
+                [
+                  "kind",
+                  "tool_post"
+                ],
+                [
+                  "tag",
+                  "tool_post_success"
+                ],
+                [
+                  "neutral",
+                  "Done."
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ]
+          }
+        ],
+        []
+      ]
+    },
+    {
+      "name": "agent_voices_override_on_pinned_speak",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "a"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "a",
+          "agent_voices": {
+            "api": "voice_id_api",
+            "web": "voice_id_web"
+          }
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "a"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": "voice_id_api"
+        },
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "agent_voices_override_on_pierce_too",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "session_id": "a",
+          "agent_voices": {
+            "api": "voice_id_api"
+          }
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "action": "speak",
+          "label_prefix": "Agent api: ",
+          "voice_override": "voice_id_api"
+        }
+      ]
+    },
+    {
+      "name": "format_digest_summarises_per_session",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "Editing auth.py."
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "Editing helper.py."
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_bash_test",
+          "neutral": "Running the test suite."
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_bash_commit",
+          "neutral": "Committing."
+        },
+        {
+          "op": "format_digest"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        "Background update. Api: 2 edits, a test run. Web: a commit."
+      ]
+    },
+    {
+      "name": "format_digest_returns_none_when_empty",
+      "ops": [
+        {
+          "op": "format_digest"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        null
+      ]
+    },
+    {
+      "name": "format_digest_drains_pending",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "Editing x."
+        },
+        {
+          "op": "format_digest"
+        },
+        {
+          "op": "format_digest"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        "Background update. Api: an edit.",
+        null
+      ]
+    },
+    {
+      "name": "auto_voices_pick_distinct_for_non_focus_in_swarm",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "a",
+          "auto_voices": true
+        },
+        {
+          "op": "classify",
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "session_id": "a",
+          "auto_voices": true
+        },
+        {
+          "op": "classify",
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "session_id": "a",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "action": "defer_to_digest",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "Agent api: ",
+          "voice_override": "21m00Tcm4TlvDq8ikWAM"
+        },
+        {
+          "action": "speak",
+          "label_prefix": "Agent api: ",
+          "voice_override": "21m00Tcm4TlvDq8ikWAM"
+        }
+      ]
+    },
+    {
+      "name": "auto_voices_off_keeps_persona_voice",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "session_id": "a",
+          "auto_voices": false
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "action": "speak",
+          "label_prefix": "Agent api: ",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "auto_voices_does_not_override_solo_or_primary_project",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "a",
+          "auto_voices": true
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "a",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "b",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        [
+          {
+            "project_key": "api",
+            "label": "api",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "a"
+            ],
+            "speaker_session_id": "a",
+            "voice_override": "21m00Tcm4TlvDq8ikWAM",
+            "is_primary": false
+          },
+          {
+            "project_key": "web",
+            "label": "web",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "b"
+            ],
+            "speaker_session_id": "b",
+            "voice_override": null,
+            "is_primary": true
+          }
+        ]
+      ]
+    },
+    {
+      "name": "manual_map_beats_auto_voice",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "session_id": "a",
+          "agent_voices": {
+            "api": "manual_voice_id"
+          },
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "action": "speak",
+          "label_prefix": "Agent api: ",
+          "voice_override": "manual_voice_id"
+        }
+      ]
+    },
+    {
+      "name": "list_active_for_menu",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/Users/x/projects/api",
+          "path_hint": null
+        },
+        {
+          "op": "advance",
+          "seconds": 0.5
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/Users/x/projects/web",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "a"
+        },
+        {
+          "op": "list_active"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        [
+          {
+            "session_id": "b",
+            "repo_name": "web",
+            "last_event_ago_s": 0.0,
+            "pinned": false
+          },
+          {
+            "session_id": "a",
+            "repo_name": "api",
+            "last_event_ago_s": 0.5,
+            "pinned": true
+          }
+        ]
+      ]
+    },
+    {
+      "name": "list_active_hides_sessions_past_the_visible_window",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/Users/x/projects/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/Users/x/projects/web",
+          "path_hint": null
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "b",
+          "relative_to_now": -700.0
+        },
+        {
+          "op": "list_active"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "session_id": "a",
+            "repo_name": "api",
+            "last_event_ago_s": 0.0,
+            "pinned": false
+          }
+        ]
+      ]
+    },
+    {
+      "name": "pinned_single_voice_mode_prefixes_pinned_agent",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "b"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b",
+          "auto_voices": false
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        {
+          "action": "speak",
+          "label_prefix": "Agent web: ",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "solo_never_prefixes_even_in_single_voice_mode",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "only",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "only",
+          "auto_voices": false
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "pinned_single_voice_mode_skips_prefix_when_manual_voice_set",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "b"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b",
+          "agent_voices": {
+            "web": "voice_xyz"
+          },
+          "auto_voices": false
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": "voice_xyz"
+        }
+      ]
+    },
+    {
+      "name": "pinned_single_voice_prefix_only_on_speaker_change",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "b"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b",
+          "auto_voices": false
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b",
+          "auto_voices": false
+        },
+        {
+          "op": "classify",
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "session_id": "a",
+          "auto_voices": false
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b",
+          "auto_voices": false
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        {
+          "action": "speak",
+          "label_prefix": "Agent web: ",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "Agent api: ",
+          "voice_override": null
+        },
+        {
+          "action": "speak",
+          "label_prefix": "Agent web: ",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "note_flush_spoken_suppresses_the_next_same_speaker_prefix",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "pin",
+          "session_id": "b"
+        },
+        {
+          "op": "note_flush_spoken",
+          "session_id": "b"
+        },
+        {
+          "op": "classify",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep",
+          "session_id": "b",
+          "auto_voices": false
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        true,
+        {
+          "action": "speak",
+          "label_prefix": "",
+          "voice_override": null
+        }
+      ]
+    },
+    {
+      "name": "pending_count_sums_across_sessions",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "pending_count"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "pending_count"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        0,
+        3
+      ]
+    },
+    {
+      "name": "force_flush_all_returns_every_project_regardless_of_idle",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": true
+        },
+        {
+          "op": "force_flush_all",
+          "auto_voices": true
+        },
+        {
+          "op": "pending_count"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [],
+        [
+          {
+            "project_key": "api",
+            "label": "api",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "a"
+            ],
+            "speaker_session_id": "a",
+            "voice_override": "21m00Tcm4TlvDq8ikWAM",
+            "is_primary": false
+          },
+          {
+            "project_key": "web",
+            "label": "web",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "b"
+            ],
+            "speaker_session_id": "b",
+            "voice_override": null,
+            "is_primary": true
+          }
+        ],
+        0
+      ]
+    },
+    {
+      "name": "force_flush_all_skips_empty_projects",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "force_flush_all",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "project_key": "api",
+            "label": "api",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "a"
+            ],
+            "speaker_session_id": "a",
+            "voice_override": "21m00Tcm4TlvDq8ikWAM",
+            "is_primary": false
+          }
+        ]
+      ]
+    },
+    {
+      "name": "clear_pending_returns_count_and_empties_all_sessions",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "clear_pending"
+        },
+        {
+          "op": "pending_count"
+        },
+        {
+          "op": "clear_pending"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        3,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "drain_session_summary_labelled_and_solo",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_bash_read",
+          "neutral": "read"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_bash_read",
+          "neutral": "read"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_bash_grep_cmd",
+          "neutral": "grep"
+        },
+        {
+          "op": "drain_session_summary",
+          "session_id": "a",
+          "include_label": true
+        },
+        {
+          "op": "drain_session_summary",
+          "session_id": "a",
+          "include_label": true
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "drain_session_summary",
+          "session_id": "a",
+          "include_label": false
+        },
+        {
+          "op": "drain_session_summary",
+          "session_id": "unknown"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        "Api: 2 reads, a search.",
+        null,
+        "An edit.",
+        null
+      ]
+    },
+    {
+      "name": "event_seq_breaks_ties_on_identical_timestamps",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "b",
+          "cwd": "/x/web",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "a",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "b",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "a",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "b",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "project_key": "api",
+            "label": "api",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "a"
+            ],
+            "speaker_session_id": "a",
+            "voice_override": "21m00Tcm4TlvDq8ikWAM",
+            "is_primary": false
+          },
+          {
+            "project_key": "web",
+            "label": "web",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "b"
+            ],
+            "speaker_session_id": "b",
+            "voice_override": null,
+            "is_primary": true
+          }
+        ]
+      ]
+    },
+    {
+      "name": "unknown_session_digest_is_dropped",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "a",
+          "cwd": "/x/api",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "ghost",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "pending_count"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        0
+      ]
+    },
+    {
+      "name": "empty_session_id_note_event_is_ignored",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "",
+          "cwd": "/x/api"
+        },
+        {
+          "op": "mode"
+        },
+        {
+          "op": "list_active"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        "solo",
+        []
+      ]
+    },
+    {
+      "name": "session_without_repo_name_channels_under_its_session_id",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "sess-aaaaaaaa-1",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "note_event",
+          "session_id": "sess-bbbbbbbb-2",
+          "cwd": "",
+          "path_hint": null
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "sess-aaaaaaaa-1",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "add_to_digest",
+          "session_id": "sess-bbbbbbbb-2",
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "edit"
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "sess-aaaaaaaa-1",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "set_last_event",
+          "session_id": "sess-bbbbbbbb-2",
+          "relative_to_now": -2.5
+        },
+        {
+          "op": "collect_project_flushes",
+          "auto_voices": true
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        [
+          {
+            "project_key": "sess-aaaaaaaa-1",
+            "label": "sess-aaa",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "sess-aaaaaaaa-1"
+            ],
+            "speaker_session_id": "sess-aaaaaaaa-1",
+            "voice_override": null,
+            "is_primary": false
+          },
+          {
+            "project_key": "sess-bbbbbbbb-2",
+            "label": "sess-bbb",
+            "events": [
+              [
+                [
+                  "kind",
+                  "tool_pre"
+                ],
+                [
+                  "tag",
+                  "tool_edit"
+                ],
+                [
+                  "neutral",
+                  "edit"
+                ],
+                [
+                  "ctx",
+                  {}
+                ],
+                [
+                  "ts",
+                  1000000.0
+                ]
+              ]
+            ],
+            "member_session_ids": [
+              "sess-bbbbbbbb-2"
+            ],
+            "speaker_session_id": "sess-bbbbbbbb-2",
+            "voice_override": null,
+            "is_primary": true
+          }
+        ]
+      ]
+    },
+    {
+      "name": "repo_confidence_never_downgrades_on_a_weaker_signal",
+      "ops": [
+        {
+          "op": "note_event",
+          "session_id": "s1",
+          "cwd": "/x/weakname",
+          "path_hint": null
+        },
+        {
+          "op": "session_info",
+          "session_id": "s1"
+        },
+        {
+          "op": "note_event",
+          "session_id": "s1",
+          "cwd": "/x/weakname",
+          "path_hint": null
+        },
+        {
+          "op": "session_info",
+          "session_id": "s1"
+        }
+      ],
+      "start_time": 1000000.0,
+      "trace": [
+        {
+          "session_id": "s1",
+          "cwd": "/x/weakname",
+          "repo_name": "weakname",
+          "repo_confidence": 1,
+          "event_seq": 1,
+          "pending": 0
+        },
+        {
+          "session_id": "s1",
+          "cwd": "/x/weakname",
+          "repo_name": "weakname",
+          "repo_confidence": 1,
+          "event_seq": 2,
+          "pending": 0
+        }
+      ]
+    }
+  ]
+}

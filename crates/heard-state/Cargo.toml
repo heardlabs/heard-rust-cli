@@ -1,0 +1,16 @@
+[package]
+name = "heard-state"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+# NOT the workspace's 1.85: `std::fs::File::lock` (flock(2) on Unix) was
+# stabilised in 1.89, and spoken.rs needs it for the per-session
+# read-modify-write. Taking it from std is what keeps this crate free of
+# `fs2`/`rustix` and free of `unsafe`; the toolchain in use is 1.98.
+rust-version = "1.89"
+description = "Heard's deterministic state layer (agent scoreboard, sessions, multi-agent routing, spoken dedup, spoken history)."
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }

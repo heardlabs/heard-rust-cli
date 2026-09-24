@@ -1,0 +1,252 @@
+{
+  "markers": [
+    ".git",
+    "pyproject.toml",
+    "package.json",
+    "Cargo.toml",
+    "go.mod",
+    "build.gradle",
+    "build.gradle.kts",
+    "pom.xml",
+    "Gemfile",
+    "composer.json",
+    "Makefile",
+    ".heard.yaml"
+  ],
+  "find_project_root": [
+    {
+      "name": "dot_git_marks_a_project",
+      "dirs": [
+        "myproj",
+        "myproj/.git",
+        "myproj/src",
+        "myproj/tests"
+      ],
+      "files": [],
+      "home": null,
+      "queries": [
+        {
+          "path": "myproj/src/some.py",
+          "expect": "myproj"
+        },
+        {
+          "path": "myproj",
+          "expect": "myproj"
+        },
+        {
+          "path": "myproj/tests",
+          "expect": "myproj"
+        }
+      ]
+    },
+    {
+      "name": "walks_up_several_levels_from_a_file",
+      "dirs": [
+        "deepproj",
+        "deepproj/.git",
+        "deepproj/src/nested/deeply"
+      ],
+      "files": [
+        "deepproj/src/nested/deeply/code.py"
+      ],
+      "home": null,
+      "queries": [
+        {
+          "path": "deepproj/src/nested/deeply/code.py",
+          "expect": "deepproj"
+        }
+      ]
+    },
+    {
+      "name": "alternate_markers_count_too",
+      "dirs": [
+        "jsproj",
+        "pyproj",
+        "rustproj",
+        "goproj",
+        "labelproj",
+        "jsproj/src",
+        "pyproj/src",
+        "rustproj/src",
+        "goproj/src",
+        "labelproj/src"
+      ],
+      "files": [
+        "jsproj/package.json",
+        "pyproj/pyproject.toml",
+        "rustproj/Cargo.toml",
+        "goproj/go.mod",
+        "labelproj/.heard.yaml"
+      ],
+      "home": null,
+      "queries": [
+        {
+          "path": "jsproj/src/x.ts",
+          "expect": "jsproj"
+        },
+        {
+          "path": "pyproj/src/x.py",
+          "expect": "pyproj"
+        },
+        {
+          "path": "rustproj/src/x.rs",
+          "expect": "rustproj"
+        },
+        {
+          "path": "goproj/src/x.go",
+          "expect": "goproj"
+        },
+        {
+          "path": "labelproj/src/x.py",
+          "expect": "labelproj"
+        }
+      ]
+    },
+    {
+      "name": "no_marker_is_not_a_project",
+      "dirs": [
+        "plain"
+      ],
+      "files": [
+        "plain/file.txt"
+      ],
+      "home": null,
+      "queries": [
+        {
+          "path": "plain/file.txt",
+          "expect": null
+        },
+        {
+          "path": "plain",
+          "expect": null
+        }
+      ]
+    },
+    {
+      "name": "the_walk_stops_at_home",
+      "dirs": [
+        "fakehome",
+        "fakehome/.git",
+        "fakehome/Downloads"
+      ],
+      "files": [
+        "fakehome/Downloads/file.txt"
+      ],
+      "home": "fakehome",
+      "queries": [
+        {
+          "path": "fakehome/Downloads/file.txt",
+          "expect": null
+        },
+        {
+          "path": "fakehome",
+          "expect": null
+        }
+      ]
+    },
+    {
+      "name": "nearest_marker_wins_over_an_outer_one",
+      "dirs": [
+        "outer",
+        "outer/.git",
+        "outer/inner",
+        "outer/inner/.git",
+        "outer/inner/src"
+      ],
+      "files": [],
+      "home": null,
+      "queries": [
+        {
+          "path": "outer/inner/src/x.py",
+          "expect": "outer/inner"
+        },
+        {
+          "path": "outer/inner",
+          "expect": "outer/inner"
+        },
+        {
+          "path": "outer",
+          "expect": "outer"
+        }
+      ]
+    },
+    {
+      "name": "empty_and_missing_paths_are_not_projects",
+      "dirs": [],
+      "files": [],
+      "home": null,
+      "queries": [
+        {
+          "path": "",
+          "expect": null
+        },
+        {
+          "path": "nonexistent/path/to/nothing",
+          "expect": null
+        }
+      ]
+    }
+  ],
+  "repo_inference": {
+    "dirs": [
+      "strongname/.git",
+      "strongname/src",
+      "weakname",
+      "fakehome2",
+      "withcwdmarker/.git"
+    ],
+    "cases": [
+      {
+        "name": "path_hint_promotes_to_tier_two",
+        "cwd": "fakehome2",
+        "path_hint": "strongname/src/module.py",
+        "home": "fakehome2",
+        "expect_repo_name": "strongname",
+        "expect_confidence": 2
+      },
+      {
+        "name": "cwd_marker_is_tier_two",
+        "cwd": "withcwdmarker",
+        "path_hint": null,
+        "home": "fakehome2",
+        "expect_repo_name": "withcwdmarker",
+        "expect_confidence": 2
+      },
+      {
+        "name": "home_without_hint_is_tier_zero",
+        "cwd": "fakehome2",
+        "path_hint": null,
+        "home": "fakehome2",
+        "expect_repo_name": "",
+        "expect_confidence": 0
+      },
+      {
+        "name": "plain_folder_is_tier_one",
+        "cwd": "weakname",
+        "path_hint": null,
+        "home": "fakehome2",
+        "expect_repo_name": "weakname",
+        "expect_confidence": 1
+      }
+    ],
+    "upgrade_ladder": {
+      "home": "fakehome2",
+      "weak_cwd": "weakname",
+      "strong_hint": "strongname/src/x.py",
+      "expect": [
+        [
+          "weakname",
+          1
+        ],
+        [
+          "strongname",
+          2
+        ],
+        [
+          "strongname",
+          2
+        ]
+      ]
+    }
+  }
+}

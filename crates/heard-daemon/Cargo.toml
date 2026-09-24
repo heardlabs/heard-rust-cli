@@ -1,0 +1,25 @@
+[package]
+name = "heard-daemon"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+# NOT the workspace's 1.85: this crate links `heard-state`, which needs
+# `std::fs::File::lock` (stabilised in 1.89) for the spoken-state flock.
+rust-version = "1.89"
+description = "The Heard daemon library: hook routing, narration policy and shaping, the socket protocol, and the Speech, Brain and Extension seams."
+
+[dependencies]
+heard-proto = { path = "../heard-proto" }
+heard-config = { path = "../heard-config" }
+heard-narrate = { path = "../heard-narrate" }
+heard-state = { path = "../heard-state" }
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+regex.workspace = true
+once_cell.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true

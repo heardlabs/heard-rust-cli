@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "PYTHONDONTWRITEBYTECODE=1 PYTHONHOME=/Applications/Heard.app/Contents/Resources /Applications/Heard.app/Contents/MacOS/python -m heard.hook claude-code",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/someone/.heard/permission-bridge.sh",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}

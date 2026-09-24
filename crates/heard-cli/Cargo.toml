@@ -1,0 +1,53 @@
+[package]
+name = "heard-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+# heard-state (history paths) needs 1.89 for `File::lock`.
+rust-version = "1.89"
+description = "The `heard` binary: interactive console, scriptable subcommands, setup, models, doctor."
+
+[[bin]]
+name = "heard"
+path = "src/main.rs"
+
+[lib]
+name = "heard_cli"
+path = "src/lib.rs"
+
+[dependencies]
+heard-config = { path = "../heard-config" }
+heard-install = { path = "../heard-install" }
+heard-proto = { path = "../heard-proto" }
+heard-tts = { path = "../heard-tts" }
+heard-daemon = { path = "../heard-daemon" }
+heard-speech = { path = "../heard-speech" }
+heard-state = { path = "../heard-state" }
+tokio = { workspace = true, features = ["signal"] }
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+ureq.workspace = true
+ring.workspace = true
+rustix = { workspace = true, features = ["process", "stdio"] }
+clap = { version = "4.6", features = ["derive", "wrap_help"] }
+clap_complete = "4.6"
+reedline = { version = "0.51", features = ["external_printer"] }
+inquire = "0.9"
+indicatif = "0.18"
+nu-ansi-term = "0.50"
+
+[features]
+# The local voice. On by default: it is what the CLI edition speaks with.
+# `ort` links a prebuilt ONNX Runtime (downloaded at build time, or from
+# ORT_LIB_LOCATION); build with `--no-default-features` to leave it out
+# (then only your own ElevenLabs key can speak).
+default = ["kokoro"]
+kokoro = ["heard-tts/kokoro"]
+
+[dev-dependencies]
+heard-hook = { path = "../heard-hook" }
+assert_cmd = "2.2"
+predicates = "3.1"
+tempfile = "3.27"
+rexpect = "0.7"

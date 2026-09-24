@@ -1,0 +1,94 @@
+[
+  {
+    "input": null,
+    "name": "DEFAULTS",
+    "output": {
+      "agent_voices": {},
+      "app.language": "system",
+      "audio_off": false,
+      "codex_enabled": true,
+      "companion_thinking_nudge": true,
+      "companion_thinking_nudge_seconds": 30,
+      "elevenlabs_api_key": "",
+      "first_run_attempt": "",
+      "first_run_completed_generation": 0,
+      "first_run_generation": 0,
+      "flush_delay_ms": 800,
+      "harness_enabled": true,
+      "harness_think_say": true,
+      "herdr_report_state": true,
+      "kokoro_voice": "bm_george",
+      "lang": "en-us",
+      "mode": "copilot",
+      "multi_agent_auto_voices": false,
+      "multi_agent_digest_enabled": true,
+      "multi_agent_digest_interval_s": 60,
+      "muted": false,
+      "narrate_prompt_intent": true,
+      "narrate_routine": false,
+      "narrate_routine_before_focus": false,
+      "narrate_tool_results": true,
+      "narrate_tools": true,
+      "narration_register": 1,
+      "narration_skill": "default",
+      "narration_volume": -1,
+      "notify.blocked": true,
+      "notify.completions": true,
+      "notify.errors": true,
+      "onboarded": false,
+      "paused": false,
+      "persona": "jarvis",
+      "send_mode": "",
+      "skip_under_chars": 30,
+      "speed": 1.05,
+      "swarm_verbosity": "brief",
+      "verbosity": "normal",
+      "voice": "george",
+      "voice.output_device": ""
+    },
+    "why": "config.DEFAULTS in full — every key, every value, every type"
+  },
+  {
+    "input": null,
+    "name": "ALWAYS_PERSIST",
+    "output": [
+      "first_run_attempt",
+      "first_run_completed_generation",
+      "first_run_generation",
+      "mode",
+      "narrate_routine",
+      "narration_skill",
+      "onboarded"
+    ],
+    "why": "config._ALWAYS_PERSIST — written even when equal to the default"
+  },
+  {
+    "input": null,
+    "name": "CRITICAL_KEYS",
+    "output": [
+      "onboarded",
+      "first_run_generation",
+      "first_run_completed_generation",
+      "first_run_attempt",
+      "persona",
+      "voice",
+      "elevenlabs_api_key"
+    ],
+    "why": "config.CRITICAL_KEYS — the wipe guard's set, in declaration order"
+  },
+  {
+    "input": null,
+    "name": "NARRATION_LANGS",
+    "output": {
+      "es": [
+        "Spanish",
+        "es"
+      ],
+      "zh": [
+        "Simplified Chinese (简体中文)",
+        "zh"
+      ]
+    },
+    "why": "config._NARRATION_LANGS — app.language → (name, tts lang)"
+  }
+]

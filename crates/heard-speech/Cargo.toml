@@ -1,0 +1,19 @@
+[package]
+name = "heard-speech"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+# heard-daemon / heard-state need 1.89 (File::lock).
+rust-version = "1.89"
+description = "Heard's speech queue (priority, cancellation, mic deferral, mute) over heard-tts and a Player trait."
+
+[dependencies]
+heard-daemon = { path = "../heard-daemon" }
+heard-tts = { path = "../heard-tts" }
+heard-state = { path = "../heard-state" }
+serde_json.workspace = true
+tokio.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+tokio.workspace = true

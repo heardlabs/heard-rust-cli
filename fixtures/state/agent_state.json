@@ -1,0 +1,1596 @@
+{
+  "tool_name_from_tag": [
+    {
+      "tag": "tool_bash",
+      "expect": "bash"
+    },
+    {
+      "tag": "tool_post_bash",
+      "expect": "bash"
+    },
+    {
+      "tag": "tool_pre_bash",
+      "expect": "bash"
+    },
+    {
+      "tag": "tool_post_failure",
+      "expect": null
+    },
+    {
+      "tag": "tool_post_command_failed",
+      "expect": null
+    },
+    {
+      "tag": "tool_post_success",
+      "expect": null
+    },
+    {
+      "tag": "intermediate",
+      "expect": null
+    },
+    {
+      "tag": "",
+      "expect": null
+    },
+    {
+      "tag": "tool",
+      "expect": null
+    },
+    {
+      "tag": "tool_pre",
+      "expect": null
+    },
+    {
+      "tag": "tool_post",
+      "expect": null
+    },
+    {
+      "tag": "tool_notebook_edit",
+      "expect": "notebook_edit"
+    },
+    {
+      "tag": "tool_post_notebook_edit",
+      "expect": "notebook_edit"
+    },
+    {
+      "tag": "prose",
+      "expect": null
+    },
+    {
+      "tag": "tool_bash_test",
+      "expect": "bash_test"
+    },
+    {
+      "tag": "tool_command_failed",
+      "expect": null
+    }
+  ],
+  "approx_tokens": [
+    {
+      "chars": 0,
+      "expect": 1
+    },
+    {
+      "chars": 1,
+      "expect": 1
+    },
+    {
+      "chars": 3,
+      "expect": 1
+    },
+    {
+      "chars": 4,
+      "expect": 1
+    },
+    {
+      "chars": 5,
+      "expect": 1
+    },
+    {
+      "chars": 11,
+      "expect": 2
+    },
+    {
+      "chars": 400,
+      "expect": 100
+    },
+    {
+      "chars": 2000,
+      "expect": 500
+    },
+    {
+      "chars": 1999,
+      "expect": 499
+    }
+  ],
+  "response_shape_hint": [
+    {
+      "window": [],
+      "expect": "mixed"
+    },
+    {
+      "window": [
+        10
+      ],
+      "expect": "short-execution"
+    },
+    {
+      "window": [
+        10,
+        20,
+        30
+      ],
+      "expect": "short-execution"
+    },
+    {
+      "window": [
+        79
+      ],
+      "expect": "short-execution"
+    },
+    {
+      "window": [
+        80
+      ],
+      "expect": "mixed"
+    },
+    {
+      "window": [
+        79,
+        80
+      ],
+      "expect": "mixed"
+    },
+    {
+      "window": [
+        500
+      ],
+      "expect": "long-deliberation"
+    },
+    {
+      "window": [
+        500,
+        200
+      ],
+      "expect": "long-deliberation"
+    },
+    {
+      "window": [
+        500,
+        500,
+        500,
+        200
+      ],
+      "expect": "long-deliberation"
+    },
+    {
+      "window": [
+        10,
+        500
+      ],
+      "expect": "mixed"
+    },
+    {
+      "window": [
+        400,
+        400
+      ],
+      "expect": "long-deliberation"
+    },
+    {
+      "window": [
+        399,
+        400
+      ],
+      "expect": "long-deliberation"
+    },
+    {
+      "window": [
+        80,
+        80,
+        80
+      ],
+      "expect": "mixed"
+    },
+    {
+      "window": [
+        100,
+        200,
+        300
+      ],
+      "expect": "mixed"
+    }
+  ],
+  "salience_hint": [
+    {
+      "error_count": 1,
+      "event_count": 2,
+      "current_tool": null,
+      "window": [],
+      "idle_seconds": 0.0,
+      "expect": "blocked"
+    },
+    {
+      "error_count": 1,
+      "event_count": 40,
+      "current_tool": null,
+      "window": [],
+      "idle_seconds": 5.0,
+      "expect": "blocked"
+    },
+    {
+      "error_count": 1,
+      "event_count": 40,
+      "current_tool": null,
+      "window": [],
+      "idle_seconds": 120.0,
+      "expect": "routine"
+    },
+    {
+      "error_count": 1,
+      "event_count": 40,
+      "current_tool": "bash",
+      "window": [],
+      "idle_seconds": 120.0,
+      "expect": "active-decision"
+    },
+    {
+      "error_count": 0,
+      "event_count": 3,
+      "current_tool": "bash",
+      "window": [],
+      "idle_seconds": 0.0,
+      "expect": "active-decision"
+    },
+    {
+      "error_count": 0,
+      "event_count": 3,
+      "current_tool": null,
+      "window": [
+        10,
+        500
+      ],
+      "idle_seconds": 0.0,
+      "expect": "active-decision"
+    },
+    {
+      "error_count": 0,
+      "event_count": 3,
+      "current_tool": null,
+      "window": [
+        500,
+        10
+      ],
+      "idle_seconds": 0.0,
+      "expect": "routine"
+    },
+    {
+      "error_count": 0,
+      "event_count": 0,
+      "current_tool": null,
+      "window": [],
+      "idle_seconds": 0.0,
+      "expect": "routine"
+    },
+    {
+      "error_count": 0,
+      "event_count": 1,
+      "current_tool": null,
+      "window": [
+        400
+      ],
+      "idle_seconds": 0.0,
+      "expect": "active-decision"
+    },
+    {
+      "error_count": 2,
+      "event_count": 9,
+      "current_tool": null,
+      "window": [],
+      "idle_seconds": 30.0,
+      "expect": "routine"
+    }
+  ],
+  "sequences": [
+    {
+      "name": "first_event_creates_agent_with_cwd_and_repo_name",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": "bash",
+          "current_tool_running": true,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "active-decision"
+        }
+      }
+    },
+    {
+      "name": "tool_post_clears_current_and_records_last",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_bash",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": "bash",
+          "has_last_tool_duration": true,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 2,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "tool_post_failure_increments_error_count",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": true,
+          "files_touched": [],
+          "error_count": 1,
+          "event_count": 2,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "blocked"
+        }
+      }
+    },
+    {
+      "name": "command_failed_also_counts_as_error",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_command_failed",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": true,
+          "files_touched": [],
+          "error_count": 1,
+          "event_count": 2,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "blocked"
+        }
+      }
+    },
+    {
+      "name": "files_touched_collects_abs_paths",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/x/y/auth.py"
+          }
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_write",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_write",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/x/y/test_auth.py"
+          }
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": "y",
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": "write",
+          "has_last_tool_duration": true,
+          "files_touched": [
+            "/x/y/auth.py",
+            "/x/y/test_auth.py"
+          ],
+          "error_count": 0,
+          "event_count": 4,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "derived_area_is_the_dominant_parent_dir",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/components/Nav.tsx"
+          }
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/components/Side.tsx"
+          }
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/analytics/track.ts"
+          }
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": "components",
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": "edit",
+          "has_last_tool_duration": false,
+          "files_touched": [
+            "/repo/components/Nav.tsx",
+            "/repo/components/Side.tsx",
+            "/repo/analytics/track.ts"
+          ],
+          "error_count": 0,
+          "event_count": 3,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "files_touched_retouch_moves_to_the_end",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/a/one.py"
+          }
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/a/two.py"
+          }
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/a/one.py"
+          }
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": "a",
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": "edit",
+          "has_last_tool_duration": false,
+          "files_touched": [
+            "/repo/a/two.py",
+            "/repo/a/one.py"
+          ],
+          "error_count": 0,
+          "event_count": 3,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "derived_area_tie_break_is_first_touched",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/zeta/a.py"
+          }
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/alpha/b.py"
+          }
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": "zeta",
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": "edit",
+          "has_last_tool_duration": false,
+          "files_touched": [
+            "/repo/zeta/a.py",
+            "/repo/alpha/b.py"
+          ],
+          "error_count": 0,
+          "event_count": 2,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "derived_area_tie_break_is_first_touched_reversed",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/alpha/b.py"
+          }
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_edit",
+          "neutral": "",
+          "ctx": {
+            "abs_path": "/repo/zeta/a.py"
+          }
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": "alpha",
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": "edit",
+          "has_last_tool_duration": false,
+          "files_touched": [
+            "/repo/alpha/b.py",
+            "/repo/zeta/a.py"
+          ],
+          "error_count": 0,
+          "event_count": 2,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "prompt_intent_marks_last_user_input",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "prompt_intent",
+          "tag": "",
+          "neutral": "fix the auth bug",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": true,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "event_count_increments",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "hi",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "hi",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "hi",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "hi",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 4,
+          "has_last_user_input": false,
+          "recent_output_tokens": [
+            1,
+            1,
+            1,
+            1
+          ],
+          "response_shape_hint": "short-execution",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "multiple_sessions_kept_distinct",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s2",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_edit",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": "bash",
+          "current_tool_running": true,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "active-decision"
+        },
+        "s2": {
+          "id": "s2",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": "edit",
+          "current_tool_running": true,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "active-decision"
+        }
+      }
+    },
+    {
+      "name": "response_shape_empty_window_is_mixed",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": "bash",
+          "current_tool_running": true,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "active-decision"
+        }
+      }
+    },
+    {
+      "name": "response_shape_short_when_all_outputs_small",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "ok done",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "ok done",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "ok done",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 3,
+          "has_last_user_input": false,
+          "recent_output_tokens": [
+            1,
+            1,
+            1
+          ],
+          "response_shape_hint": "short-execution",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "response_shape_long_when_recent_outputs_large",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 4,
+          "has_last_user_input": false,
+          "recent_output_tokens": [
+            500,
+            500,
+            500,
+            200
+          ],
+          "response_shape_hint": "long-deliberation",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "response_shape_mixed_when_signals_disagree",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "ok",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 2,
+          "has_last_user_input": false,
+          "recent_output_tokens": [
+            1,
+            500
+          ],
+          "response_shape_hint": "mixed",
+          "salience_hint": "active-decision"
+        }
+      }
+    },
+    {
+      "name": "recent_output_window_is_capped_at_eight",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "final",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 12,
+          "has_last_user_input": false,
+          "recent_output_tokens": [
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12
+          ],
+          "response_shape_hint": "short-execution",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "salience_routine_when_idle_and_no_errors",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_bash",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": "bash",
+          "has_last_tool_duration": true,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 2,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "salience_active_decision_after_long_output",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "intermediate",
+          "tag": "",
+          "neutral": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [
+            500
+          ],
+          "response_shape_hint": "long-deliberation",
+          "salience_hint": "active-decision"
+        }
+      }
+    },
+    {
+      "name": "missing_session_uses_default",
+      "events": [
+        {
+          "kind": "tool_pre",
+          "tag": "tool_bash"
+        }
+      ],
+      "expect": {
+        "default": {
+          "id": "default",
+          "cwd": null,
+          "repo_name": null,
+          "area": null,
+          "current_tool": "bash",
+          "current_tool_running": true,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "active-decision"
+        }
+      }
+    },
+    {
+      "name": "empty_event_dict_creates_default_agent",
+      "events": [
+        {}
+      ],
+      "expect": {
+        "default": {
+          "id": "default",
+          "cwd": null,
+          "repo_name": null,
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    },
+    {
+      "name": "generic_outcome_marker_does_not_become_last_tool",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_bash",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_grep",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "tool_post",
+          "tag": "tool_post_failure",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": "bash",
+          "has_last_tool_duration": true,
+          "files_touched": [],
+          "error_count": 1,
+          "event_count": 4,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "blocked"
+        }
+      }
+    },
+    {
+      "name": "cwd_is_sticky_first_one_wins",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/first-repo"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        },
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/second-repo"
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/first-repo",
+          "repo_name": "first-repo",
+          "area": null,
+          "current_tool": "bash",
+          "current_tool_running": true,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 2,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "active-decision"
+        }
+      }
+    },
+    {
+      "name": "null_cwd_leaves_repo_name_unset",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": null
+          },
+          "kind": "tool_pre",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": null,
+          "repo_name": null,
+          "area": null,
+          "current_tool": "bash",
+          "current_tool_running": true,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "active-decision"
+        }
+      }
+    },
+    {
+      "name": "unknown_kind_only_bumps_the_counter",
+      "events": [
+        {
+          "session": {
+            "id": "s1",
+            "cwd": "/Users/dev/Desktop/Projects/heard/heard"
+          },
+          "kind": "something_else",
+          "tag": "tool_bash",
+          "neutral": "",
+          "ctx": {}
+        }
+      ],
+      "expect": {
+        "s1": {
+          "id": "s1",
+          "cwd": "/Users/dev/Desktop/Projects/heard/heard",
+          "repo_name": "heard",
+          "area": null,
+          "current_tool": null,
+          "current_tool_running": false,
+          "last_tool": null,
+          "has_last_tool_duration": false,
+          "files_touched": [],
+          "error_count": 0,
+          "event_count": 1,
+          "has_last_user_input": false,
+          "recent_output_tokens": [],
+          "response_shape_hint": "mixed",
+          "salience_hint": "routine"
+        }
+      }
+    }
+  ]
+}

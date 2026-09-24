@@ -1,0 +1,204 @@
+[
+  {
+    "input": {
+      "HOME": "/tmp/heard-fixture-home"
+    },
+    "name": "macos_defaults",
+    "output": {
+      "CONFIG_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "CONFIG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/config.yaml",
+      "DATA_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.log",
+      "MODELS_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard/models",
+      "PID_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "platformdirs' _MacOSDefaults: both user_config_dir and user_data_dir are ~/Library/Application Support/<appname>"
+  },
+  {
+    "input": {
+      "HOME": "/tmp/heard-fixture-home",
+      "XDG_CONFIG_HOME": "/tmp/xdg-config"
+    },
+    "name": "xdg_config_home_wins",
+    "output": {
+      "CONFIG_DIR": "/tmp/xdg-config/heard",
+      "CONFIG_PATH": "/tmp/xdg-config/heard/config.yaml",
+      "DATA_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.log",
+      "MODELS_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard/models",
+      "PID_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "platformdirs 4.11's MacOS(XDGMixin, _MacOSDefaults) — XDG comes first, and the value is NOT expanduser'd"
+  },
+  {
+    "input": {
+      "HOME": "/tmp/heard-fixture-home",
+      "XDG_DATA_HOME": "/tmp/xdg-data"
+    },
+    "name": "xdg_data_home_wins",
+    "output": {
+      "CONFIG_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "CONFIG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/config.yaml",
+      "DATA_DIR": "/tmp/xdg-data/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/xdg-data/heard/daemon.log",
+      "MODELS_DIR": "/tmp/xdg-data/heard/models",
+      "PID_PATH": "/tmp/xdg-data/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/xdg-data/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "the data half of the same mixin — config and data can now diverge"
+  },
+  {
+    "input": {
+      "HOME": "/tmp/heard-fixture-home",
+      "XDG_CONFIG_HOME": "/tmp/xdg-config",
+      "XDG_DATA_HOME": "/tmp/xdg-data"
+    },
+    "name": "both_xdg_homes",
+    "output": {
+      "CONFIG_DIR": "/tmp/xdg-config/heard",
+      "CONFIG_PATH": "/tmp/xdg-config/heard/config.yaml",
+      "DATA_DIR": "/tmp/xdg-data/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/xdg-data/heard/daemon.log",
+      "MODELS_DIR": "/tmp/xdg-data/heard/models",
+      "PID_PATH": "/tmp/xdg-data/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/xdg-data/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "CONFIG_DIR and DATA_DIR are independent once both are set"
+  },
+  {
+    "input": {
+      "HOME": "/tmp/heard-fixture-home",
+      "XDG_CONFIG_HOME": "   ",
+      "XDG_DATA_HOME": ""
+    },
+    "name": "blank_xdg_falls_back",
+    "output": {
+      "CONFIG_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "CONFIG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/config.yaml",
+      "DATA_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.log",
+      "MODELS_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard/models",
+      "PID_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "_xdg.py takes the value `.strip()`ped and treats blank as unset"
+  },
+  {
+    "input": {
+      "HOME": "/tmp/heard-fixture-home",
+      "XDG_CONFIG_HOME": "  /tmp/xdg-config  "
+    },
+    "name": "xdg_value_is_stripped",
+    "output": {
+      "CONFIG_DIR": "/tmp/xdg-config/heard",
+      "CONFIG_PATH": "/tmp/xdg-config/heard/config.yaml",
+      "DATA_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.log",
+      "MODELS_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard/models",
+      "PID_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "surrounding whitespace is removed before the appname is appended"
+  },
+  {
+    "input": {
+      "HOME": "/tmp/heard-fixture-home",
+      "XDG_CONFIG_HOME": "/tmp/xdg-config/"
+    },
+    "name": "xdg_trailing_slash",
+    "output": {
+      "CONFIG_DIR": "/tmp/xdg-config/heard",
+      "CONFIG_PATH": "/tmp/xdg-config/heard/config.yaml",
+      "DATA_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.log",
+      "MODELS_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard/models",
+      "PID_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "os.path.join does not double the separator"
+  },
+  {
+    "input": {
+      "HEARD_LEDGER_PATH": "/tmp/elsewhere/ledger.db",
+      "HOME": "/tmp/heard-fixture-home"
+    },
+    "name": "heard_ledger_path_override",
+    "output": {
+      "CONFIG_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "CONFIG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/config.yaml",
+      "DATA_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/elsewhere/ledger.db",
+      "LOG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.log",
+      "MODELS_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard/models",
+      "PID_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "the one env override config.py reads itself — LEDGER_PATH mirrors the idiom used by notify._ONCE_PATH, because a plain module-attr patch does NOT survive a re-import"
+  },
+  {
+    "input": {
+      "HEARD_LEDGER_PATH": "",
+      "HOME": "/tmp/heard-fixture-home"
+    },
+    "name": "blank_heard_ledger_path_falls_back",
+    "output": {
+      "CONFIG_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "CONFIG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/config.yaml",
+      "DATA_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.log",
+      "MODELS_DIR": "/tmp/heard-fixture-home/Library/Application Support/heard/models",
+      "PID_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/heard-fixture-home/Library/Application Support/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "plain `or`, so an empty value falls back to HEARD_DIR/ledger.db"
+  },
+  {
+    "input": {
+      "HOME": "/tmp/heard-fixture-home",
+      "XDG_CONFIG_HOME": "/tmp/xdg-config",
+      "XDG_DATA_HOME": "/tmp/xdg-data"
+    },
+    "name": "heard_dir_is_not_moved_by_xdg",
+    "output": {
+      "CONFIG_DIR": "/tmp/xdg-config/heard",
+      "CONFIG_PATH": "/tmp/xdg-config/heard/config.yaml",
+      "DATA_DIR": "/tmp/xdg-data/heard",
+      "HEARD_DIR": "/tmp/heard-fixture-home/.heard",
+      "LEDGER_PATH": "/tmp/heard-fixture-home/.heard/ledger.db",
+      "LOG_PATH": "/tmp/xdg-data/heard/daemon.log",
+      "MODELS_DIR": "/tmp/xdg-data/heard/models",
+      "PID_PATH": "/tmp/xdg-data/heard/daemon.pid",
+      "SOCKET_PATH": "/tmp/xdg-data/heard/daemon.sock",
+      "TURNS_PATH": "/tmp/heard-fixture-home/.heard/turns.jsonl"
+    },
+    "why": "HEARD_DIR is ~/.heard by hand, NOT via platformdirs — the notch-facing dir is deliberately separate from CONFIG_DIR"
+  }
+]

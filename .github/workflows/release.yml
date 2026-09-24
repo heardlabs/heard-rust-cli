@@ -1,0 +1,61 @@
+name: release
+
+# Push a tag like v0.1.0 → build universal macOS binaries → attach
+# heard-macos-universal.tar.gz and SHA256SUMS to the GitHub release, which
+# is exactly what install.sh downloads.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+  # Signed build provenance (Sigstore) for the tarball: a trust root that does
+  # not live in the release itself, unlike SHA256SUMS.
+  id-token: write
+  attestations: write
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_BUILD_JOBS: "3"
+
+jobs:
+  release:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      - name: tag matches the workspace version
+        run: |
+          want="${GITHUB_REF_NAME#v}"
+          have=$(awk '/^\[workspace\.package\]/{p=1;next} /^\[/{p=0} p&&/^version *=/{gsub(/.*= *"|".*/,"");print;exit}' Cargo.toml)
+          if [ "$want" != "$have" ]; then
+            echo "tag $GITHUB_REF_NAME does not match Cargo.toml version $have" >&2
+            exit 1
+          fi
+      - name: test
+        run: cargo test --workspace --locked
+      - name: build universal tarball
+        run: sh packaging/make-release.sh --out dist
+      - name: smoke-test the tarball with install.sh
+        run: |
+          export HOME="$RUNNER_TEMP/home" HEARD_CLI_HOME="$RUNNER_TEMP/home/state"
+          mkdir -p "$HOME"
+          cp install.sh "$RUNNER_TEMP/install.sh"
+          HEARD_INSTALL_BASE_URL="file://$PWD/dist" sh "$RUNNER_TEMP/install.sh" \
+            --prefix "$RUNNER_TEMP/bin" --no-setup </dev/null
+          "$RUNNER_TEMP/bin/heard" --version
+          lipo -info "$RUNNER_TEMP/bin/heard" "$RUNNER_TEMP/bin/heard-hook"
+      - name: attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: dist/heard-macos-universal.tar.gz
+      - name: publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/heard-macos-universal.tar.gz dist/SHA256SUMS \
+            --title "heard $GITHUB_REF_NAME" --generate-notes --verify-tag

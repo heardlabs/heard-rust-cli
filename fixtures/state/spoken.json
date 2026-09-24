@@ -1,0 +1,2485 @@
+{
+  "max_hashes": 500,
+  "hash": [
+    {
+      "text": "",
+      "expect": "da39a3ee5e6b4b0d"
+    },
+    {
+      "text": "hello",
+      "expect": "aaf4c61ddcc5e8a2"
+    },
+    {
+      "text": "hello world",
+      "expect": "2aae6c35c94fcfb4"
+    },
+    {
+      "text": "Three failures — all in auth.py.",
+      "expect": "0f0d21a540da767c"
+    },
+    {
+      "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "expect": "c068a1f54d77965b"
+    },
+    {
+      "text": "line\nwith\nnewlines",
+      "expect": "30eb204777783004"
+    },
+    {
+      "text": "café ☕",
+      "expect": "ceb26d538cd94dcf"
+    },
+    {
+      "text": "\u0000binary\u0001",
+      "expect": "af82a2da09c4a2d4"
+    }
+  ],
+  "state_file_name": [
+    {
+      "session_id": "abc",
+      "expect": "abc.json"
+    },
+    {
+      "session_id": "",
+      "expect": "default.json"
+    },
+    {
+      "session_id": "a/b/c",
+      "expect": "a_b_c.json"
+    },
+    {
+      "session_id": "..",
+      "expect": "__.json"
+    },
+    {
+      "session_id": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+      "expect": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.json"
+    },
+    {
+      "session_id": "sess-1234_ABC",
+      "expect": "sess-1234_ABC.json"
+    },
+    {
+      "session_id": "!!!",
+      "expect": "___.json"
+    },
+    {
+      "session_id": "ünïcode",
+      "expect": "_n_code.json"
+    }
+  ],
+  "scripts": [
+    {
+      "name": "mark_then_is_spoken",
+      "session_id": "s1",
+      "ops": [
+        {
+          "op": "is_spoken",
+          "text": "alpha"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "alpha"
+        },
+        {
+          "op": "is_spoken",
+          "text": "alpha"
+        },
+        {
+          "op": "is_spoken",
+          "text": "beta"
+        }
+      ],
+      "trace": [
+        false,
+        true,
+        false
+      ],
+      "final_file": "{\"hashes\": [\"be76331b95dfc399\"]}"
+    },
+    {
+      "name": "mark_is_idempotent",
+      "session_id": "s1",
+      "ops": [
+        {
+          "op": "mark_spoken",
+          "text": "alpha"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "alpha"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "beta"
+        }
+      ],
+      "trace": [],
+      "final_file": "{\"hashes\": [\"be76331b95dfc399\", \"a295e0bdde1938d1\"]}"
+    },
+    {
+      "name": "filter_unspoken_drops_spoken_and_in_batch_dupes",
+      "session_id": "s1",
+      "ops": [
+        {
+          "op": "mark_spoken",
+          "text": "already"
+        },
+        {
+          "op": "filter_unspoken",
+          "texts": [
+            "already",
+            "fresh",
+            "fresh",
+            "other"
+          ]
+        },
+        {
+          "op": "filter_unspoken",
+          "texts": [
+            "already",
+            "fresh",
+            "fresh",
+            "other"
+          ]
+        }
+      ],
+      "trace": [
+        [
+          "fresh",
+          "other"
+        ],
+        [
+          "fresh",
+          "other"
+        ]
+      ],
+      "final_file": "{\"hashes\": [\"e9bc90edb138e8f4\"]}"
+    },
+    {
+      "name": "clear_wipes_the_file",
+      "session_id": "s1",
+      "ops": [
+        {
+          "op": "mark_spoken",
+          "text": "alpha"
+        },
+        {
+          "op": "clear"
+        },
+        {
+          "op": "is_spoken",
+          "text": "alpha"
+        }
+      ],
+      "trace": [
+        false
+      ],
+      "final_file": null
+    },
+    {
+      "name": "cap_trims_to_the_last_five_hundred",
+      "session_id": "s1",
+      "ops": [
+        {
+          "op": "mark_spoken",
+          "text": "line-0"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-1"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-2"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-3"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-4"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-5"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-6"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-7"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-8"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-9"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-10"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-11"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-12"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-13"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-14"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-15"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-16"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-17"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-18"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-19"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-20"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-21"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-22"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-23"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-24"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-25"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-26"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-27"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-28"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-29"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-30"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-31"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-32"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-33"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-34"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-35"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-36"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-37"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-38"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-39"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-40"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-41"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-42"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-43"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-44"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-45"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-46"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-47"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-48"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-49"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-50"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-51"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-52"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-53"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-54"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-55"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-56"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-57"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-58"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-59"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-60"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-61"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-62"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-63"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-64"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-65"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-66"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-67"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-68"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-69"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-70"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-71"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-72"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-73"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-74"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-75"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-76"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-77"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-78"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-79"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-80"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-81"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-82"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-83"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-84"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-85"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-86"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-87"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-88"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-89"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-90"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-91"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-92"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-93"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-94"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-95"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-96"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-97"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-98"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-99"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-100"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-101"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-102"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-103"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-104"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-105"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-106"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-107"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-108"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-109"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-110"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-111"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-112"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-113"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-114"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-115"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-116"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-117"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-118"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-119"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-120"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-121"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-122"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-123"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-124"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-125"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-126"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-127"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-128"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-129"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-130"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-131"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-132"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-133"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-134"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-135"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-136"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-137"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-138"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-139"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-140"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-141"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-142"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-143"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-144"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-145"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-146"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-147"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-148"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-149"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-150"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-151"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-152"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-153"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-154"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-155"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-156"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-157"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-158"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-159"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-160"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-161"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-162"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-163"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-164"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-165"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-166"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-167"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-168"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-169"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-170"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-171"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-172"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-173"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-174"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-175"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-176"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-177"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-178"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-179"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-180"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-181"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-182"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-183"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-184"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-185"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-186"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-187"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-188"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-189"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-190"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-191"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-192"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-193"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-194"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-195"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-196"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-197"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-198"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-199"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-200"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-201"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-202"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-203"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-204"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-205"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-206"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-207"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-208"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-209"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-210"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-211"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-212"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-213"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-214"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-215"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-216"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-217"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-218"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-219"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-220"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-221"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-222"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-223"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-224"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-225"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-226"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-227"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-228"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-229"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-230"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-231"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-232"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-233"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-234"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-235"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-236"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-237"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-238"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-239"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-240"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-241"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-242"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-243"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-244"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-245"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-246"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-247"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-248"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-249"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-250"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-251"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-252"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-253"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-254"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-255"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-256"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-257"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-258"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-259"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-260"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-261"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-262"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-263"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-264"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-265"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-266"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-267"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-268"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-269"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-270"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-271"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-272"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-273"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-274"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-275"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-276"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-277"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-278"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-279"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-280"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-281"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-282"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-283"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-284"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-285"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-286"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-287"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-288"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-289"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-290"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-291"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-292"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-293"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-294"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-295"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-296"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-297"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-298"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-299"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-300"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-301"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-302"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-303"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-304"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-305"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-306"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-307"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-308"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-309"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-310"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-311"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-312"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-313"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-314"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-315"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-316"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-317"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-318"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-319"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-320"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-321"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-322"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-323"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-324"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-325"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-326"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-327"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-328"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-329"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-330"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-331"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-332"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-333"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-334"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-335"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-336"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-337"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-338"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-339"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-340"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-341"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-342"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-343"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-344"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-345"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-346"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-347"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-348"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-349"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-350"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-351"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-352"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-353"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-354"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-355"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-356"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-357"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-358"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-359"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-360"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-361"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-362"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-363"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-364"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-365"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-366"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-367"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-368"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-369"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-370"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-371"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-372"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-373"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-374"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-375"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-376"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-377"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-378"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-379"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-380"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-381"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-382"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-383"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-384"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-385"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-386"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-387"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-388"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-389"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-390"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-391"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-392"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-393"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-394"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-395"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-396"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-397"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-398"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-399"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-400"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-401"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-402"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-403"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-404"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-405"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-406"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-407"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-408"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-409"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-410"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-411"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-412"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-413"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-414"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-415"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-416"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-417"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-418"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-419"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-420"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-421"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-422"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-423"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-424"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-425"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-426"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-427"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-428"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-429"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-430"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-431"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-432"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-433"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-434"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-435"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-436"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-437"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-438"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-439"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-440"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-441"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-442"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-443"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-444"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-445"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-446"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-447"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-448"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-449"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-450"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-451"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-452"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-453"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-454"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-455"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-456"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-457"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-458"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-459"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-460"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-461"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-462"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-463"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-464"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-465"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-466"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-467"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-468"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-469"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-470"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-471"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-472"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-473"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-474"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-475"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-476"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-477"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-478"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-479"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-480"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-481"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-482"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-483"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-484"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-485"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-486"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-487"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-488"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-489"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-490"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-491"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-492"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-493"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-494"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-495"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-496"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-497"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-498"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-499"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-500"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-501"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-502"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-503"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-504"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-505"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-506"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-507"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-508"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-509"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-510"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-511"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-512"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-513"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-514"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-515"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-516"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-517"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-518"
+        },
+        {
+          "op": "mark_spoken",
+          "text": "line-519"
+        },
+        {
+          "op": "is_spoken",
+          "text": "line-0"
+        },
+        {
+          "op": "is_spoken",
+          "text": "line-519"
+        }
+      ],
+      "trace": [
+        false,
+        true
+      ],
+      "final_file": "{\"hashes\": [\"8de5314c1d9118f3\", \"fec8d44c05d969b6\", \"ec939a8cd3092608\", \"7c38ef431cd985e8\", \"d28bfb51ba086c6a\", \"4c912091f3d03448\", \"2a18ef88569b0806\", \"e3de5948933a69f0\", \"8717bd69c33c6564\", \"4417cba25d285d4b\", \"736432de8fc70972\", \"99e56467210c7635\", \"bae8217e5c5a9110\", \"f0bbf485436045a7\", \"54f927e3d3fec131\", \"b852ccc1651cc7b6\", \"f07925c5588999f4\", \"7e654ae47cac7f7f\", \"c9f919e9e14889d5\", \"090373394318dcfd\", \"ad2e4844339c3b83\", \"e77fa14d11d0f422\", \"8b0801cd48dd99db\", \"68416056673a3c57\", \"042f100c2931dc8c\", \"f7e3debf6102dde8\", \"4402a00f65ed594f\", \"f755a839e7c6ed38\", \"a045785f5c78b07c\", \"424734872872277f\", \"95f5f4b1470cef51\", \"e5c0c1efeaff32f0\", \"46257a46ba83b677\", \"e85f5062ce554c2c\", \"e7b07d637950b807\", \"5e52963dbd00723b\", \"6756f63f6ac07412\", \"8ebf4a237bb96f03\", \"fe5ea28e3de89168\", \"5080b520e5718c72\", \"1443f067303d82ef\", \"9359ed206ba905cb\", \"79d91c776a648f2e\", \"a88ae814fb52bccc\", \"461a08682e8df72c\", \"486d74d9df710678\", \"bd226834a32766db\", \"e5f174fef610e2f0\", \"41e6a24bad9ae2c7\", \"feb8482691b63b86\", \"72120f125de894d7\", \"d6b434174493d557\", \"78359d106bc0470c\", \"d39ec9a6323cff8a\", \"8102d6fa499da1b5\", \"70895a55656be52f\", \"f246e3e04b83f594\", \"7c80a1dd7a941634\", \"fdcd17a45679325e\", \"6541d203ef98f4f4\", \"c9a54f7afad43bd8\", \"bd6e73cac6c56115\", \"85f1575c424be549\", \"69f6a0a9888ff19e\", \"6b08577eaa0cc4b9\", \"326004bff845642d\", \"bf4603387257be1f\", \"9b9a709d10609117\", \"5b0af28fdecaeba6\", \"45d0a65daa8f4928\", \"8f1245f00a7ae1ae\", \"05ac72a742e0acc7\", \"b7c563731b58ea5e\", \"019be2c744ddad47\", \"2d64001a38fe655a\", \"d3b373122720ae94\", \"e2a4806eedb29dd0\", \"edff8e6b9f6b4d3d\", \"fe83d3129bab650d\", \"b2897b7f3969ff7f\", \"5e081d534bc271a3\", \"52b2f2617968b23a\", \"126481ec35c67e17\", \"31db441b2ae259a9\", \"b4cfc9c948fd1819\", \"e51aedb8661a3795\", \"de55daad311257e6\", \"abe2fadac28bd62c\", \"6de00893ecefc88d\", \"2d41c4cbac3f42e4\", \"be1257c083fd8ddb\", \"fc94a36ff31fec85\", \"7275a27804088dbb\", \"42980520fb815bef\", \"c24492aff8aa49c8\", \"2467febc0e300bc0\", \"a72278077e39323f\", \"fe95cc6d0666907f\", \"76150011f6592c8d\", \"aa7c8bddb9949581\", \"e19eefb07c19337c\", \"1b10ed0e5f245f55\", \"e2b3f2e38fd1c3fd\", \"93c2669e013c7d47\", \"bdfa738846140348\", \"604857bde8bd0443\", \"da783b33d6c6ec6f\", \"05c3777584e72fc5\", \"7ab20c569efb7751\", \"5b68236b4c58244d\", \"bc814a317ea0c75b\", \"f371dddc262d9844\", \"84d11212d2cff451\", \"688be1e78bc3d8a2\", \"05b79d0887638a9c\", \"69bb1725b66a750a\", \"24e331ec67711dd9\", \"30f1b1033646b6b3\", \"92570459e4676f18\", \"b8bf3c8199d59598\", \"8acd240492e6dca9\", \"6cc73a39baf3eeec\", \"81eeb5b42c559833\", \"ec860b2de8656b96\", \"08425d12a8195ef5\", \"167ae3b8b6a93c43\", \"4fb5dd1ed5943907\", \"383b36bd75b8461f\", \"5e78c5c816eadda4\", \"434ff547938c9ef0\", \"0ef82ed2f4f7d989\", \"35fcebcfd5da2d8c\", \"da08be543c565172\", \"39e7b83ef440d3fc\", \"76d6c0530c4ff03d\", \"b558d34192322de5\", \"170deeefefa03468\", \"7b8935c4da028f4d\", \"15d380cfa183fe7f\", \"44739ef85ac8e81b\", \"30cac92b80a3759f\", \"6fd61559b17537f5\", \"d568dc4913d84142\", \"5f12e14c99210718\", \"0894019758d9d416\", \"8c1f0603d13b2a6b\", \"d5f812eb04f2f91d\", \"c6307d8ff53e063d\", \"2eca10416760b7e7\", \"cd05172b4501a76c\", \"7f22fdc53176092d\", \"8e4821ff4b0a8154\", \"48b5a6c2bcec10ab\", \"fedddf913c0209b8\", \"ee33a567f9777b6d\", \"09df3d08c0b2cf29\", \"d6c1cd3d1a93b160\", \"11ade39b19b25075\", \"4789c99ace1f412d\", \"d7ca979cc6e7c728\", \"d783bbccc2505273\", \"61620b9a53b5b665\", \"ea43587c46d9c17d\", \"ff764930f7ee8bd6\", \"a57e7e3db7493e00\", \"bb4529e00d078016\", \"ca59676022c08fb6\", \"40f4ce5ee40313a2\", \"32c79290925d38c6\", \"f1284bb799401b2f\", \"1dcb4deef458e03c\", \"d76532d61386ce11\", \"27e3e917c6409a31\", \"ccd800555c1d067f\", \"71e229415c164613\", \"7ee3d59a8968dbab\", \"dbc50528e7e24477\", \"19dd23b5e6c17f24\", \"2ab74cd3de6bd7e6\", \"5502af8e6409f390\", \"ebc30039307b6844\", \"f4c1dfe6ee69d0d0\", \"1dd0c0403638361f\", \"fe6f125cfed7c6b0\", \"cdeeb1e9e29f4440\", \"f223d9e682fcf01b\", \"4c3954d5b7becdc3\", \"14322c1227c1ab3f\", \"68f8d092d68a4a99\", \"898a7d0420b2f4ef\", \"9a11c58a14001241\", \"bb618473d710bbfa\", \"32b838ca069d45f1\", \"d253a9b237267cec\", \"438c38ea20e0b2a1\", \"b096b322b0214a00\", \"a342535963ff838e\", \"c98a94a408bcbcd2\", \"78cbea6b81e3c515\", \"db343d6a6db5d017\", \"b0500c3b5da37d61\", \"0a5eaa8510a19bbc\", \"bfb34f002a49ab59\", \"4fd387951ebca812\", \"3a7b72155097b544\", \"c03ba3fffb50efa6\", \"fe2506375794ff3f\", \"9a345e4cd6a73189\", \"1db5780c997de2fa\", \"f504f6ccb82fa2c9\", \"ca334d910ce0ec65\", \"1eab9781055bd584\", \"6784aa3d4b90bb1c\", \"ea706679693af28a\", \"624008adb6e9186d\", \"93996cea347ff6a1\", \"278d84511bad5c01\", \"4a565c5876abae96\", \"f0d34c1d7daeb553\", \"33d2442ff3f1523c\", \"4311f47290d9356a\", \"031f32f323c2d0b5\", \"cf66bb32278b3cff\", \"6d2aa6c7e5378500\", \"92fa333f63226cf2\", \"3936171c6206156b\", \"50d39bf7c65b7b3e\", \"6770c8f1a42e2d38\", \"a370abe9bb361488\", \"c2d95b601da11a36\", \"3d06e8452f78522f\", \"25251b7f537eef21\", \"c7923e8244dcdc01\", \"d700f651fe564590\", \"63f857651d841a39\", \"bc60fdd8523f51e0\", \"26416210090edc70\", \"aab568c5507f7eb6\", \"0fb6ce26be0cd2a7\", \"339d12401fd3ff37\", \"9d37b4f1ca95c2ff\", \"de2acc05ddf8a629\", \"e442f8e5304ba181\", \"c32e2570baf0b083\", \"ccca151670810954\", \"b8031467e0878d35\", \"fcd4fd0537d1444c\", \"52e8994ccb785855\", \"cc04788e2eeda0f4\", \"c69112cf3a7972c1\", \"0a8821f4a4d3a064\", \"c9e5fb32d15d0489\", \"af1993a2f3f57678\", \"5a65211412d0a73d\", \"4430ff9753ecd0b9\", \"c5b59621c2ad09f2\", \"a85c4acfa74b90ca\", \"0ac18e487fcfded6\", \"db017df40ccf053e\", \"96e7c93b43d66fcc\", \"7657de77b7fb86ea\", \"3daac809eba77f67\", \"5f6124e3b0d8abf8\", \"f5656c805c89f7de\", \"a4083727d13c6769\", \"0c07fa7f8144df7f\", \"608316ff317d759b\", \"73ae5692047c977e\", \"411bad362a3ee15d\", \"b1e2b4cba7034544\", \"9fdb8b1f8b23d864\", \"3be7667725b64e83\", \"a55f301bed9abe94\", \"62e1d3f734be7d84\", \"c207b45f5d8e304b\", \"9d26fa4a6d441004\", \"21fd5d9d0f080172\", \"e172fe6e30684743\", \"7126b0f704bc1dbd\", \"5204172260fac05a\", \"9a2faa4db6b19552\", \"4b393c2be783f764\", \"a39f67191bac39d7\", \"7211382daa8d7511\", \"271b003af97ab31d\", \"b7a6bf78d8649f7d\", \"aa61937c4e83a973\", \"6d04e90addda1231\", \"87ec6dc94efd4d53\", \"4a5ad3010010971f\", \"c0fa3867bde56e57\", \"98200868e1eb091d\", \"79d470c60fadf24e\", \"3ca6e99e682ff09f\", \"558fcec7d5d82732\", \"7ecc717bd65c28a2\", \"e15c9c61b984a21c\", \"25e000266296e82b\", \"d888af4cf3932d27\", \"cbe6939cee096386\", \"ee1a9847be7720fc\", \"ca1920e7c9cd30a5\", \"1fb49ec9dfbeb783\", \"88b2d997106b5daa\", \"06a257077b778c35\", \"4023c102350a9ae5\", \"abeb754666efe8b3\", \"2ca1088463f0137a\", \"f2b1890b2d802fd3\", \"dc4b2cf358529759\", \"742cc45714a227e7\", \"2f99e972ed4499d5\", \"ad44cb1fec3fc2d6\", \"838a817a1c7765da\", \"1ad14048b0e61f97\", \"e98968b3fff67ddf\", \"48ee0639d05abb3e\", \"f54984d2b5dc34b5\", \"51fbd33682c75907\", \"4bfebd5a5a896afb\", \"002e80055dd57056\", \"63075cb395fee638\", \"4e38e9a6014197d5\", \"bb612b50eb5d70da\", \"d1920861c9682fd9\", \"7ca8a3f30ab800b1\", \"9042bb184481b7f0\", \"fd47f906120a36e1\", \"9c95773c76d8bc22\", \"fbe6f087ca168403\", \"c58504a45079e3a2\", \"d6accb7fb69fd680\", \"767fcfd0020d536f\", \"e249bb26f3b863ae\", \"c6314eb6918daf53\", \"de6d93c830340686\", \"7839e8efab0fc56d\", \"18d8b3b57ab0a46d\", \"eeab07a1f0e8ad51\", \"ac01e164ad636e96\", \"49439dae502781ab\", \"f32b08a68bd02109\", \"d1c12cddc916b601\", \"f6808daaaea17e8e\", \"56d349958dd6c023\", \"bccd8b57b37cba03\", \"b850ec3d162724af\", \"0a6ea5b928572227\", \"f16eaa7b64a3c32e\", \"8199d1c00e067e76\", \"97749fd0b8d17afb\", \"a4801360e8f3ad06\", \"654fe2f08f9c24fd\", \"399cc8632f19dd31\", \"b02471f90fd1c344\", \"77aa721bfd0c2a9e\", \"81f8c9700d9c86df\", \"fb5662b55c327525\", \"9f8e697eec38a007\", \"610712eadc2fb2e7\", \"b887cc67088297e5\", \"94269b125e81a0a1\", \"58416b0fc951ab05\", \"2443e3c2d4af1388\", \"c3a775e6e58bd8f4\", \"ef51669c443f2b38\", \"c19f06d26252cedd\", \"e24e0b21d756e0e2\", \"fcca534510758c0c\", \"aed95310721c93e6\", \"06383cf346486dc7\", \"8f78a26fc48ea777\", \"67bfcff3c78de7e9\", \"46552e7ade40e1ed\", \"f1881268c6ec6f96\", \"99f8c17ab1c86b99\", \"59b30617b0731365\", \"29e2fc6005f3c0e6\", \"332aa315887f6e68\", \"1c91656de62d9dc4\", \"023c111e19a3ebeb\", \"890027daafa7541a\", \"8bfaacb6694f18ed\", \"60ac1f05c81c1f54\", \"643d765d752cc284\", \"1f586e805c531c92\", \"85bd7e9525db20f3\", \"23c41133666ecce0\", \"9445080240d30e65\", \"0d83d23bebd7323f\", \"e88baa38702f9492\", \"a020cdfdf9b9d5ab\", \"22862a5a738847e2\", \"fb39ed8a4596084a\", \"e50b282b94c60b13\", \"cc0399833701857e\", \"f4dc2f96d08489da\", \"64f0df53902449fb\", \"8ea6fa268113cc51\", \"7277cfc04075e6e1\", \"ebf4c6bf46e5274d\", \"5d963e6183236f74\", \"e1ff3b85146431b1\", \"9f84cd33cd7444a4\", \"ba4c9b04bc9060d2\", \"3dacc51392bad5bf\", \"dd4acdd050181711\", \"7c48e5469bce2fd4\", \"b443e93c582989c7\", \"bc541d3f7a3a2c47\", \"f241b1efc8956f66\", \"1e93491fdf98102a\", \"157c7e4f4b749d8c\", \"9ffcd41d7c8a57d9\", \"fe224f0631257060\", \"bcc48d0e1d557006\", \"7a0f4f6da5e51a96\", \"f43960bd9fd1f894\", \"371c2a8c1e2d8796\", \"06e58b6ffc031977\", \"96b54fa9faa50c62\", \"b2d75179940f226f\", \"c1d361342bab7bde\", \"37261e5f034e9302\", \"f3d31f90f1c4f4af\", \"75afcb50359379a6\", \"9d90813dee1aa462\", \"a11cc92d30a0ef7e\", \"f4582cde78afa0a9\", \"cb60395dfc90d069\", \"f390af1f60a37c9e\", \"cfc0d9bfc9e84f03\", \"c9fb4499b2336d64\", \"be02f8ae6a5fab7d\", \"755a1a96c711cc3c\", \"3036f85c7d201ba4\", \"a16758e13b21699d\", \"a927e9cb648bfe84\", \"96a86b53826a2427\", \"ac7c7ba69765daa5\", \"a05db5c3836d2316\", \"b8eb9f9807e67d2a\", \"fd1f31712c4d2d5e\", \"1117f4343189b955\", \"9bf6e9d8ee37e85f\", \"04ab09cdf6839ce3\", \"d2c10763ff134285\", \"e33583d9a582fb45\", \"014a2798f92215c8\", \"d88b913997b654b5\", \"970b504512469e2e\", \"7043ae817424cfde\", \"0396a169a9cc2cf0\", \"35fc10a1fbcc3e37\", \"e46e456f0fe37fd1\", \"44ad9381c62e2742\", \"24b10b490a6ca956\", \"9a0305bc7d3f809b\", \"f304ba3030748e7e\", \"08afb86878294897\", \"71bd159ecbe0b945\", \"4b73af8deab023e5\", \"a059c342d1e20171\", \"47577fcaed788a3c\", \"8c8f1e5fa9131f28\", \"59c49a76de18528d\", \"4819f4d3140c5159\", \"827248c8891ec5d5\", \"3d5608298180b02b\", \"98eb29d1bc8f329c\", \"f122070b9e9bec2a\", \"0a0742e4a4a5606c\", \"36c2e60f182757bb\", \"52396c17247f8302\", \"e53ca1cb56287c38\", \"1b93f5407c03c076\", \"0fa20331796a32c0\", \"3c10347e38ef39df\", \"e94936f8383d4b94\", \"56e4c774c7bbcbd8\", \"bcc0b0f3c5c08ca6\", \"f3bd60e63c7b5f4c\", \"17099cdf08431e7b\", \"24eb48186182c882\", \"ed8cfb3a09d4a2c1\", \"e5574fab9596da80\", \"876e2f7d839aad56\", \"40e8c47ff41fa3c8\", \"8088204a5308835f\", \"b1e656d68937efc8\", \"f0812ed30b7e2741\", \"407c1f691bcd35c8\", \"3372717299ef8162\", \"c3d21a34e42f9add\", \"edd74dd559b52ddf\", \"99a97a1b808e2141\", \"8ddc7dcbe626a3da\", \"ba172a4f2db6e9f8\", \"3ed055e73b9f1d0b\", \"1957eb4ca30aee79\"]}"
+    },
+    {
+      "name": "session_id_is_sanitised_and_truncated",
+      "session_id": "weird/../id with spaces!",
+      "ops": [
+        {
+          "op": "mark_spoken",
+          "text": "alpha"
+        },
+        {
+          "op": "is_spoken",
+          "text": "alpha"
+        }
+      ],
+      "trace": [
+        true
+      ],
+      "final_file": "{\"hashes\": [\"be76331b95dfc399\"]}"
+    },
+    {
+      "name": "empty_session_id_becomes_default",
+      "session_id": "",
+      "ops": [
+        {
+          "op": "mark_spoken",
+          "text": "alpha"
+        }
+      ],
+      "trace": [],
+      "final_file": "{\"hashes\": [\"be76331b95dfc399\"]}"
+    },
+    {
+      "name": "offsets_round_trip",
+      "session_id": "s1",
+      "ops": [
+        {
+          "op": "has_offset"
+        },
+        {
+          "op": "get_offset"
+        },
+        {
+          "op": "set_offset",
+          "offset": 4096
+        },
+        {
+          "op": "has_offset"
+        },
+        {
+          "op": "get_offset"
+        },
+        {
+          "op": "set_offset",
+          "offset": 0
+        },
+        {
+          "op": "get_offset"
+        }
+      ],
+      "trace": [
+        false,
+        0,
+        true,
+        4096,
+        0
+      ],
+      "final_file": null
+    }
+  ],
+  "initialize_at_eof": [
+    {
+      "name": "seeds_hashes_and_offset_from_a_transcript",
+      "session_id": "eof1",
+      "transcript": [
+        {
+          "type": "assistant",
+          "message": {
+            "content": [
+              {
+                "type": "text",
+                "text": "old one"
+              }
+            ]
+          }
+        },
+        {
+          "type": "user",
+          "message": {
+            "content": [
+              {
+                "type": "text",
+                "text": "ignore me"
+              }
+            ]
+          }
+        },
+        {
+          "type": "assistant",
+          "message": {
+            "content": [
+              {
+                "type": "text",
+                "text": "old two"
+              }
+            ]
+          }
+        }
+      ],
+      "existing_texts": [],
+      "probe": [
+        "old one",
+        "old two",
+        "ignore me",
+        "brand new"
+      ],
+      "transcript_lines": [
+        "{\"type\": \"assistant\", \"message\": {\"content\": [{\"type\": \"text\", \"text\": \"old one\"}]}}",
+        "{\"type\": \"user\", \"message\": {\"content\": [{\"type\": \"text\", \"text\": \"ignore me\"}]}}",
+        "{\"type\": \"assistant\", \"message\": {\"content\": [{\"type\": \"text\", \"text\": \"old two\"}]}}"
+      ],
+      "transcript_bytes": 252,
+      "expect_first": true,
+      "expect_offset": 252,
+      "expect_spoken": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "expect_file": "{\"hashes\": [\"40de09fc7bafe290\", \"deb092ae7181715e\"]}"
+    },
+    {
+      "name": "second_call_is_a_noop",
+      "session_id": "eof2",
+      "transcript": [
+        {
+          "type": "assistant",
+          "message": {
+            "content": [
+              {
+                "type": "text",
+                "text": "only"
+              }
+            ]
+          }
+        }
+      ],
+      "existing_texts": [],
+      "probe": [
+        "only"
+      ],
+      "twice": true,
+      "transcript_lines": [
+        "{\"type\": \"assistant\", \"message\": {\"content\": [{\"type\": \"text\", \"text\": \"only\"}]}}"
+      ],
+      "transcript_bytes": 82,
+      "expect_first": true,
+      "expect_second": false,
+      "expect_offset": 82,
+      "expect_spoken": [
+        true
+      ],
+      "expect_file": "{\"hashes\": [\"f8969a18a0daab6f\"]}"
+    },
+    {
+      "name": "existing_texts_are_seeded_too",
+      "session_id": "eof3",
+      "transcript": [],
+      "existing_texts": [
+        "handed in",
+        "handed in",
+        "another"
+      ],
+      "probe": [
+        "handed in",
+        "another",
+        "unseen"
+      ],
+      "transcript_lines": [],
+      "transcript_bytes": 0,
+      "expect_first": true,
+      "expect_offset": 0,
+      "expect_spoken": [
+        true,
+        true,
+        false
+      ],
+      "expect_file": "{\"hashes\": [\"80c802166e00b816\", \"b7c8ffb8fbc67c17\"]}"
+    },
+    {
+      "name": "missing_transcript_still_marks_the_session_seen",
+      "session_id": "eof4",
+      "transcript": null,
+      "existing_texts": [
+        "seed"
+      ],
+      "probe": [
+        "seed"
+      ],
+      "expect_first": true,
+      "expect_offset": 0,
+      "expect_spoken": [
+        true
+      ],
+      "expect_file": "{\"hashes\": [\"92713d4709377111\"]}"
+    }
+  ]
+}

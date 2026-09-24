@@ -1,0 +1,119 @@
+[
+  {
+    "backup": null,
+    "input": {
+      "cfg": {
+        "name": "jarvis",
+        "not_a_real_key": "x",
+        "speed": 1.05,
+        "voice": "am_onyx"
+      },
+      "op": "save"
+    },
+    "name": "save_writes_only_non_default_declared_keys",
+    "output": {
+      "voice": "am_onyx"
+    },
+    "returned": null,
+    "signed_out_marker": false,
+    "why": "the strict pass: keys absent from DEFAULTS are dropped (that is what stopped apply_preset leaking persona frontmatter), and a key equal to its default is not written"
+  },
+  {
+    "backup": null,
+    "input": {
+      "cfg": {
+        "first_run_attempt": "",
+        "first_run_completed_generation": 0,
+        "first_run_generation": 0,
+        "mode": "copilot",
+        "narrate_routine": false,
+        "narration_skill": "default",
+        "onboarded": false
+      },
+      "op": "save"
+    },
+    "name": "save_always_persists_the_narration_choices",
+    "output": {
+      "first_run_attempt": "",
+      "first_run_completed_generation": 0,
+      "first_run_generation": 0,
+      "mode": "copilot",
+      "narrate_routine": false,
+      "narration_skill": "default",
+      "onboarded": false
+    },
+    "returned": null,
+    "signed_out_marker": false,
+    "why": "_ALWAYS_PERSIST — a value that lands ON its default must still be written, or a later save silently reverts an explicit choice"
+  },
+  {
+    "backup": null,
+    "input": {
+      "key": "not_declared_anywhere",
+      "op": "set_value",
+      "value": "x"
+    },
+    "name": "set_value_of_an_undeclared_key_is_silently_dropped",
+    "output": {
+      "first_run_attempt": "",
+      "first_run_completed_generation": 0,
+      "first_run_generation": 0,
+      "mode": "copilot",
+      "narrate_routine": false,
+      "narration_skill": "default",
+      "onboarded": false
+    },
+    "returned": null,
+    "signed_out_marker": false,
+    "why": "the strict save() keeps only declared keys, so a key no layer declares vanishes silently"
+  },
+  {
+    "backup": null,
+    "input": {
+      "disk_yaml": "voice: am_onyx\n",
+      "op": "apply_preset",
+      "preset": {
+        "persona": "jarvis",
+        "verbosity": "normal"
+      }
+    },
+    "name": "apply_preset_merges_into_global",
+    "output": {
+      "first_run_attempt": "",
+      "first_run_completed_generation": 0,
+      "first_run_generation": 0,
+      "mode": "copilot",
+      "narrate_routine": false,
+      "narration_skill": "default",
+      "onboarded": false,
+      "voice": "am_onyx"
+    },
+    "returned": null,
+    "signed_out_marker": false,
+    "why": "test_config.py::test_apply_preset_merges_into_global — the untouched global value is preserved"
+  },
+  {
+    "backup": null,
+    "input": {
+      "op": "apply_preset",
+      "preset": {
+        "address": "sir",
+        "name": "Jarvis",
+        "voice": "george"
+      }
+    },
+    "name": "apply_preset_drops_persona_frontmatter",
+    "output": {
+      "first_run_attempt": "",
+      "first_run_completed_generation": 0,
+      "first_run_generation": 0,
+      "mode": "copilot",
+      "narrate_routine": false,
+      "narration_skill": "default",
+      "onboarded": false
+    },
+    "returned": null,
+    "signed_out_marker": false,
+    "why": "the leak the strict filter was added for: `name` / `address` are persona internals and must never reach config.yaml"
+  }
+]

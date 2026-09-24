@@ -1,0 +1,518 @@
+{
+  "start_time": 1000000.0,
+  "scripts": [
+    {
+      "name": "touch_creates_session_with_repo_name",
+      "ops": [
+        {
+          "op": "touch",
+          "session_id": "abc",
+          "cwd": "/Users/me/my-repo"
+        },
+        {
+          "op": "get",
+          "session_id": "abc"
+        }
+      ],
+      "trace": [
+        [
+          [
+            "repo_name",
+            "my-repo"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        [
+          [
+            "repo_name",
+            "my-repo"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "touch_idempotent_does_not_reset_failures",
+      "ops": [
+        {
+          "op": "touch",
+          "session_id": "abc",
+          "cwd": "/x/y/repo"
+        },
+        {
+          "op": "note_failure",
+          "session_id": "abc"
+        },
+        {
+          "op": "note_failure",
+          "session_id": "abc"
+        },
+        {
+          "op": "touch",
+          "session_id": "abc",
+          "cwd": "/x/y/repo"
+        },
+        {
+          "op": "get",
+          "session_id": "abc"
+        }
+      ],
+      "trace": [
+        [
+          [
+            "repo_name",
+            "repo"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        [
+          [
+            "repo_name",
+            "repo"
+          ],
+          [
+            "failure_count",
+            2
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        [
+          [
+            "repo_name",
+            "repo"
+          ],
+          [
+            "failure_count",
+            2
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "note_topic_sets_last_topic",
+      "ops": [
+        {
+          "op": "touch",
+          "session_id": "abc",
+          "cwd": "/r"
+        },
+        {
+          "op": "note_topic",
+          "session_id": "abc",
+          "topic": "tool_bash_test"
+        },
+        {
+          "op": "get",
+          "session_id": "abc"
+        }
+      ],
+      "trace": [
+        [
+          [
+            "repo_name",
+            "r"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        [
+          [
+            "repo_name",
+            "r"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            "tool_bash_test"
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "get_unknown_session_returns_empty_dict",
+      "ops": [
+        {
+          "op": "get",
+          "session_id": "missing"
+        }
+      ],
+      "trace": [
+        []
+      ]
+    },
+    {
+      "name": "note_failure_on_unknown_session_is_a_noop",
+      "ops": [
+        {
+          "op": "note_failure",
+          "session_id": "nope"
+        },
+        {
+          "op": "note_topic",
+          "session_id": "nope",
+          "topic": "t"
+        },
+        {
+          "op": "get",
+          "session_id": "nope"
+        }
+      ],
+      "trace": [
+        []
+      ]
+    },
+    {
+      "name": "repo_name_is_sticky_and_strips_trailing_slash",
+      "ops": [
+        {
+          "op": "touch",
+          "session_id": "s",
+          "cwd": "/a/b/first/"
+        },
+        {
+          "op": "touch",
+          "session_id": "s",
+          "cwd": "/a/b/second"
+        },
+        {
+          "op": "get",
+          "session_id": "s"
+        }
+      ],
+      "trace": [
+        [
+          [
+            "repo_name",
+            "first"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        [
+          [
+            "repo_name",
+            "first"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        [
+          [
+            "repo_name",
+            "first"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "tool_density_counts_within_the_window",
+      "ops": [
+        {
+          "op": "touch",
+          "session_id": "s",
+          "cwd": "/a/b/repo"
+        },
+        {
+          "op": "record_tool_event",
+          "session_id": "s"
+        },
+        {
+          "op": "advance",
+          "seconds": 10.0
+        },
+        {
+          "op": "record_tool_event",
+          "session_id": "s"
+        },
+        {
+          "op": "tool_density",
+          "session_id": "s"
+        },
+        {
+          "op": "advance",
+          "seconds": 21.0
+        },
+        {
+          "op": "tool_density",
+          "session_id": "s"
+        },
+        {
+          "op": "advance",
+          "seconds": 100.0
+        },
+        {
+          "op": "tool_density",
+          "session_id": "s"
+        }
+      ],
+      "trace": [
+        [
+          [
+            "repo_name",
+            "repo"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        2,
+        1,
+        0
+      ]
+    },
+    {
+      "name": "tool_density_unknown_session_is_zero",
+      "ops": [
+        {
+          "op": "tool_density",
+          "session_id": "ghost"
+        }
+      ],
+      "trace": [
+        0
+      ]
+    },
+    {
+      "name": "eviction_drops_a_session_idle_past_the_window",
+      "ops": [
+        {
+          "op": "touch",
+          "session_id": "old",
+          "cwd": "/a/old"
+        },
+        {
+          "op": "advance",
+          "seconds": 21601
+        },
+        {
+          "op": "touch",
+          "session_id": "new",
+          "cwd": "/a/new"
+        },
+        {
+          "op": "get",
+          "session_id": "old"
+        },
+        {
+          "op": "get",
+          "session_id": "new"
+        }
+      ],
+      "trace": [
+        [
+          [
+            "repo_name",
+            "old"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        [
+          [
+            "repo_name",
+            "new"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1021601.0
+          ]
+        ],
+        [],
+        [
+          [
+            "repo_name",
+            "new"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1021601.0
+          ]
+        ]
+      ]
+    },
+    {
+      "name": "cwd_that_is_only_slashes_falls_back_to_the_raw_cwd",
+      "ops": [
+        {
+          "op": "touch",
+          "session_id": "s",
+          "cwd": "/"
+        },
+        {
+          "op": "get",
+          "session_id": "s"
+        }
+      ],
+      "trace": [
+        [
+          [
+            "repo_name",
+            "/"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ],
+        [
+          [
+            "repo_name",
+            "/"
+          ],
+          [
+            "failure_count",
+            0
+          ],
+          [
+            "last_topic",
+            null
+          ],
+          [
+            "last_seen",
+            1000000.0
+          ]
+        ]
+      ]
+    }
+  ]
+}

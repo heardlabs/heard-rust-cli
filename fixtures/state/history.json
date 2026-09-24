@@ -1,0 +1,1072 @@
+{
+  "now_iso": "2026-09-22T12:00:00Z",
+  "scripts": [
+    {
+      "name": "append_writes_one_line_per_call",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "kind",
+              "intermediate"
+            ],
+            [
+              "spoken",
+              "first"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "kind",
+              "tool_pre"
+            ],
+            [
+              "spoken",
+              "second"
+            ]
+          ]
+        },
+        {
+          "op": "iter_all"
+        }
+      ],
+      "trace": [
+        [
+          [
+            [
+              "kind",
+              "intermediate"
+            ],
+            [
+              "spoken",
+              "first"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "kind",
+              "tool_pre"
+            ],
+            [
+              "spoken",
+              "second"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ]
+      ],
+      "final_jsonl": "{\"kind\": \"intermediate\", \"spoken\": \"first\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"kind\": \"tool_pre\", \"spoken\": \"second\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "append_handles_unicode_without_escaping",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "Three failures — all in auth.py."
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "Hyper — 1.5× and a café ☕"
+            ]
+          ]
+        },
+        {
+          "op": "iter_all"
+        }
+      ],
+      "trace": [
+        [
+          [
+            [
+              "spoken",
+              "Three failures — all in auth.py."
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "Hyper — 1.5× and a café ☕"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ]
+      ],
+      "final_jsonl": "{\"spoken\": \"Three failures — all in auth.py.\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"Hyper — 1.5× and a café ☕\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "append_escapes_control_characters_and_quotes",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "a \"quoted\" \\ back\nslash\ttab"
+            ]
+          ]
+        },
+        {
+          "op": "iter_all"
+        }
+      ],
+      "trace": [
+        [
+          [
+            [
+              "spoken",
+              "a \"quoted\" \\ back\nslash\ttab"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ]
+      ],
+      "final_jsonl": "{\"spoken\": \"a \\\"quoted\\\" \\\\ back\\nslash\\ttab\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "explicit_ts_is_not_overwritten",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "ts",
+              "1999-01-01T00:00:00Z"
+            ],
+            [
+              "spoken",
+              "old"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "new"
+            ]
+          ]
+        },
+        {
+          "op": "iter_all"
+        }
+      ],
+      "trace": [
+        [
+          [
+            [
+              "ts",
+              "1999-01-01T00:00:00Z"
+            ],
+            [
+              "spoken",
+              "old"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "new"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ]
+      ],
+      "final_jsonl": "{\"ts\": \"1999-01-01T00:00:00Z\", \"spoken\": \"old\"}\n{\"spoken\": \"new\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "nested_scalars_and_lists_survive",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "id",
+              "abc123"
+            ],
+            [
+              "kind",
+              "final"
+            ],
+            [
+              "spoken",
+              "done"
+            ],
+            [
+              "meta",
+              [
+                [
+                  "voice",
+                  "rachel"
+                ],
+                [
+                  "speed",
+                  1.15
+                ]
+              ]
+            ],
+            [
+              "tags",
+              [
+                "a",
+                "b"
+              ]
+            ],
+            [
+              "ok",
+              true
+            ],
+            [
+              "err",
+              null
+            ],
+            [
+              "n",
+              7
+            ]
+          ]
+        },
+        {
+          "op": "iter_all"
+        }
+      ],
+      "trace": [
+        [
+          [
+            [
+              "id",
+              "abc123"
+            ],
+            [
+              "kind",
+              "final"
+            ],
+            [
+              "spoken",
+              "done"
+            ],
+            [
+              "meta",
+              [
+                [
+                  "voice",
+                  "rachel"
+                ],
+                [
+                  "speed",
+                  1.15
+                ]
+              ]
+            ],
+            [
+              "tags",
+              [
+                "a",
+                "b"
+              ]
+            ],
+            [
+              "ok",
+              true
+            ],
+            [
+              "err",
+              null
+            ],
+            [
+              "n",
+              7
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ]
+      ],
+      "final_jsonl": "{\"id\": \"abc123\", \"kind\": \"final\", \"spoken\": \"done\", \"meta\": [[\"voice\", \"rachel\"], [\"speed\", 1.15]], \"tags\": [\"a\", \"b\"], \"ok\": true, \"err\": null, \"n\": 7, \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "feedback_lands_as_a_sibling_record",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "id",
+              "utt-1"
+            ],
+            [
+              "spoken",
+              "hello world"
+            ]
+          ]
+        },
+        {
+          "op": "append_feedback",
+          "utterance_id": "utt-1",
+          "source": "cli",
+          "text": "talk less about bash"
+        },
+        {
+          "op": "append_feedback",
+          "utterance_id": "utt-1",
+          "source": "pause",
+          "text": "pause_within_5s",
+          "kind": "implicit"
+        },
+        {
+          "op": "iter_all"
+        }
+      ],
+      "trace": [
+        [
+          [
+            [
+              "id",
+              "utt-1"
+            ],
+            [
+              "spoken",
+              "hello world"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "type",
+              "feedback"
+            ],
+            [
+              "ref",
+              "utt-1"
+            ],
+            [
+              "kind",
+              "explicit"
+            ],
+            [
+              "source",
+              "cli"
+            ],
+            [
+              "text",
+              "talk less about bash"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "type",
+              "feedback"
+            ],
+            [
+              "ref",
+              "utt-1"
+            ],
+            [
+              "kind",
+              "implicit"
+            ],
+            [
+              "source",
+              "pause"
+            ],
+            [
+              "text",
+              "pause_within_5s"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ]
+      ],
+      "final_jsonl": "{\"id\": \"utt-1\", \"spoken\": \"hello world\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"type\": \"feedback\", \"ref\": \"utt-1\", \"kind\": \"explicit\", \"source\": \"cli\", \"text\": \"talk less about bash\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"type\": \"feedback\", \"ref\": \"utt-1\", \"kind\": \"implicit\", \"source\": \"pause\", \"text\": \"pause_within_5s\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "iter_all_respects_limit",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-0"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-1"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-2"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-3"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-4"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-5"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-6"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-7"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-8"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "line-9"
+            ]
+          ]
+        },
+        {
+          "op": "iter_all",
+          "limit": 3
+        },
+        {
+          "op": "iter_all",
+          "limit": 0
+        },
+        {
+          "op": "iter_all",
+          "limit": 99
+        }
+      ],
+      "trace": [
+        [
+          [
+            [
+              "spoken",
+              "line-7"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-8"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-9"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ],
+        [
+          [
+            [
+              "spoken",
+              "line-0"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-1"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-2"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-3"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-4"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-5"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-6"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-7"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-8"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-9"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ],
+        [
+          [
+            [
+              "spoken",
+              "line-0"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-1"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-2"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-3"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-4"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-5"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-6"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-7"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-8"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ],
+          [
+            [
+              "spoken",
+              "line-9"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ]
+      ],
+      "final_jsonl": "{\"spoken\": \"line-0\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-1\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-2\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-3\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-4\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-5\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-6\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-7\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-8\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"line-9\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "iter_since_checkpoint_returns_only_new",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "a"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "b"
+            ]
+          ]
+        },
+        {
+          "op": "iter_since_checkpoint"
+        },
+        {
+          "op": "commit_offset_from_last_read"
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "c"
+            ]
+          ]
+        },
+        {
+          "op": "iter_since_checkpoint"
+        }
+      ],
+      "trace": [
+        {
+          "records": [
+            [
+              [
+                "spoken",
+                "a"
+              ],
+              [
+                "ts",
+                "2026-09-22T12:00:00Z"
+              ]
+            ],
+            [
+              [
+                "spoken",
+                "b"
+              ],
+              [
+                "ts",
+                "2026-09-22T12:00:00Z"
+              ]
+            ]
+          ],
+          "end": 92
+        },
+        {
+          "records": [
+            [
+              [
+                "spoken",
+                "c"
+              ],
+              [
+                "ts",
+                "2026-09-22T12:00:00Z"
+              ]
+            ]
+          ],
+          "end": 138
+        }
+      ],
+      "final_jsonl": "{\"spoken\": \"a\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"b\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"c\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "truncated_file_resets_checkpoint_gracefully",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "first"
+            ]
+          ]
+        },
+        {
+          "op": "iter_since_checkpoint"
+        },
+        {
+          "op": "write_checkpoint_past_eof"
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "second"
+            ]
+          ]
+        },
+        {
+          "op": "iter_since_checkpoint"
+        }
+      ],
+      "trace": [
+        {
+          "records": [
+            [
+              [
+                "spoken",
+                "first"
+              ],
+              [
+                "ts",
+                "2026-09-22T12:00:00Z"
+              ]
+            ]
+          ],
+          "end": 50
+        },
+        {
+          "records": [
+            [
+              [
+                "spoken",
+                "first"
+              ],
+              [
+                "ts",
+                "2026-09-22T12:00:00Z"
+              ]
+            ],
+            [
+              [
+                "spoken",
+                "second"
+              ],
+              [
+                "ts",
+                "2026-09-22T12:00:00Z"
+              ]
+            ]
+          ],
+          "end": 101
+        }
+      ],
+      "final_jsonl": "{\"spoken\": \"first\", \"ts\": \"2026-09-22T12:00:00Z\"}\n{\"spoken\": \"second\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "commit_checkpoint_and_prune_truncates_consumed",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "old-1"
+            ]
+          ]
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "old-2"
+            ]
+          ]
+        },
+        {
+          "op": "iter_since_checkpoint"
+        },
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "new-after-improve-started"
+            ]
+          ]
+        },
+        {
+          "op": "prune_at_last_read"
+        },
+        {
+          "op": "iter_all"
+        },
+        {
+          "op": "read_checkpoint"
+        }
+      ],
+      "trace": [
+        {
+          "records": [
+            [
+              [
+                "spoken",
+                "old-1"
+              ],
+              [
+                "ts",
+                "2026-09-22T12:00:00Z"
+              ]
+            ],
+            [
+              [
+                "spoken",
+                "old-2"
+              ],
+              [
+                "ts",
+                "2026-09-22T12:00:00Z"
+              ]
+            ]
+          ],
+          "end": 100
+        },
+        [
+          [
+            [
+              "spoken",
+              "new-after-improve-started"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ],
+        0
+      ],
+      "final_jsonl": "{\"spoken\": \"new-after-improve-started\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "prune_at_zero_is_a_noop",
+      "ops": [
+        {
+          "op": "append",
+          "record": [
+            [
+              "spoken",
+              "keep"
+            ]
+          ]
+        },
+        {
+          "op": "prune",
+          "offset": 0
+        },
+        {
+          "op": "iter_all"
+        }
+      ],
+      "trace": [
+        [
+          [
+            [
+              "spoken",
+              "keep"
+            ],
+            [
+              "ts",
+              "2026-09-22T12:00:00Z"
+            ]
+          ]
+        ]
+      ],
+      "final_jsonl": "{\"spoken\": \"keep\", \"ts\": \"2026-09-22T12:00:00Z\"}\n"
+    },
+    {
+      "name": "no_history_file_returns_empty",
+      "ops": [
+        {
+          "op": "iter_since_checkpoint"
+        },
+        {
+          "op": "iter_all"
+        }
+      ],
+      "trace": [
+        {
+          "records": [],
+          "end": 0
+        },
+        []
+      ],
+      "final_jsonl": null
+    }
+  ]
+}
