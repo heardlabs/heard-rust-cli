@@ -21,7 +21,7 @@
 //! | `event` | real — routes through [`Daemon::handle_event`] |
 //! | `event` + `health_probe` | real — echoes, with the same 32-char nonce and closed agent set |
 //! | `speak` (the `cmd`-less fall-through) | reaches the [`Speech`] sink directly, as `via=direct` |
-//! | `resume_intent` | real — the keyword classifier (an ambiguous answer is "fresh", the Python's no-model floor), catch-up flush or buffer drop |
+//! | `resume_intent` | real — the keyword classifier, then the extensions' `classify_resume_intent` (an edition's model fallback, off the accept loop), else "fresh" (the Python's no-model floor); catch-up flush or buffer drop |
 //! | `feedback` | real — `history.append_feedback` against the sink's last utterance id |
 //! | `report_defect` | offered to the [`Extension`]s first (an edition keeps the defect store); unclaimed, logged |
 //! | any other `cmd` | offered to the [`Extension`]s in order; unclaimed, it is logged as `cmd_unhandled` and falls through to `speak`, exactly as Python's `_handle` runs off the end of its `if cmd == …` chain |
@@ -241,6 +241,9 @@ pub struct Daemon {
     /// `--differential <python-sock-path>`, parsed and carried. The tee
     /// itself lives in the hook path and is the next lane.
     pub differential: Option<PathBuf>,
+    /// What `history.jsonl` may keep of the user's words (the `feedback`
+    /// command's text), read per append.
+    history_policy: heard_state::HistoryPolicySource,
 }
 
 impl std::fmt::Debug for Daemon {
@@ -270,6 +273,7 @@ pub struct DaemonBuilder {
     events: EventBus,
     clock: Option<Arc<dyn Clock>>,
     picker: Option<Box<dyn FnMut(usize) -> usize + Send>>,
+    history_policy: Option<heard_state::HistoryPolicySource>,
 }
 
 impl DaemonBuilder {
@@ -291,7 +295,17 @@ impl DaemonBuilder {
             events: EventBus::new(),
             clock: None,
             picker: None,
+            history_policy: None,
         }
+    }
+
+    /// What `history.jsonl` may keep of the user's words when the daemon
+    /// itself appends (`feedback`). Default:
+    /// [`crate::speech::config_history_policy`] over this daemon's config.
+    /// Hand the SAME source to the speech sink's history.
+    pub fn history_policy(mut self, policy: heard_state::HistoryPolicySource) -> Self {
+        self.history_policy = Some(policy);
+        self
     }
 
     /// The event bus `subscribe` streams (default: a fresh one). Share one
@@ -414,7 +428,11 @@ impl DaemonBuilder {
                 }
             }
         }
+        let history_policy = self
+            .history_policy
+            .unwrap_or_else(|| crate::speech::config_history_policy(config.clone()));
         Arc::new(Daemon {
+            history_policy,
             config,
             cfg: Mutex::new(cfg),
             router: Arc::new(MultiAgentRouter::new()),
@@ -461,6 +479,13 @@ impl DaemonBuilder {
 }
 
 impl Daemon {
+    /// The `history.jsonl` policy source this daemon was built with — the
+    /// one question "may the user's words be kept?", for extensions with
+    /// stores of their own.
+    pub fn history_policy(&self) -> heard_state::HistoryPolicySource {
+        Arc::clone(&self.history_policy)
+    }
+
     /// The merged config snapshot, as a JSON object (what
     /// [`heard_narrate::verbosity::Cfg`] reads).
     pub fn cfg_value(&self) -> Value {
@@ -676,7 +701,7 @@ impl Daemon {
             })
             .collect();
         let (speaking, queued) = self.speech.queue_state();
-        heard_proto::StatusResponse {
+        let mut status = heard_proto::StatusResponse {
             alive: true,
             backend: self.backend_name.clone(),
             persona: self
@@ -698,7 +723,18 @@ impl Daemon {
             pending_count: self.router.pending_count() as i64,
             awaiting_resume_intent: self.is_awaiting_resume(),
             pending_update: None,
+        };
+        for ext in &self.extensions {
+            ext.status_fields(&mut status);
         }
+        status
+    }
+
+    /// Silence one session: drop its queued lines and cut its line if it is
+    /// the one playing ([`Speech::cut_session`]). Returns how many queued
+    /// lines were dropped.
+    pub fn cut_session(&self, session_id: &str) -> usize {
+        self.speech.cut_session(session_id)
     }
 
     // ---- narration routing -------------------------------------------------
@@ -1819,12 +1855,9 @@ impl Daemon {
         }
         let source = if source.is_empty() { "cli" } else { source };
         let last = self.speech.last_utterance_id();
-        heard_state::history::History::new(&self.config.paths().config_dir).append_feedback(
-            last.as_deref().unwrap_or(""),
-            source,
-            text,
-            "explicit",
-        );
+        heard_state::history::History::new(&self.config.paths().config_dir)
+            .with_policy(Arc::clone(&self.history_policy))
+            .append_feedback(last.as_deref().unwrap_or(""), source, text, "explicit");
         crate::dlog!(
             "feedback_recorded",
             source = source,
@@ -1850,9 +1883,65 @@ impl Daemon {
     /// `cmd == "resume_intent"` — act on the resume panel's answer:
     /// `catch_up` speaks one rolled-up line per buffered project, `fresh`
     /// (and anything unrecognised) drops the buffer.
+    ///
+    /// An answer neither keyword set decides goes to the extensions'
+    /// [`Extension::classify_resume_intent`] (the Python's model fallback)
+    /// before landing on "fresh".
     pub fn resume_intent(&self, text: &str, from_timeout: bool) -> &'static str {
         self.clear_awaiting_resume();
-        let intent = classify_resume_intent(text);
+        let intent = self.classify_resume(text);
+        self.act_on_resume_intent(text, intent, from_timeout)
+    }
+
+    /// `resume_intent` from the socket: an answer only a model can classify
+    /// is classified OFF the accept loop (a model call must not stall the
+    /// socket); everything else is answered inline, exactly as
+    /// [`Daemon::resume_intent`] does.
+    pub fn resume_intent_from_socket(self: &Arc<Self>, text: &str) {
+        let stripped = text.trim();
+        let needs_model = !stripped.is_empty()
+            && keyword_resume_intent(stripped).is_none()
+            && !self.extensions.is_empty();
+        if !needs_model {
+            self.resume_intent(text, false);
+            return;
+        }
+        self.clear_awaiting_resume();
+        let daemon = Arc::clone(self);
+        let text = text.to_owned();
+        let spawned = std::thread::Builder::new()
+            .name("resume-intent".into())
+            .spawn(move || {
+                let intent = daemon.classify_resume(&text);
+                daemon.act_on_resume_intent(&text, intent, false);
+            });
+        if let Err(e) = spawned {
+            crate::dlog!("resume_intent_thread_failed", err = e.to_string());
+        }
+    }
+
+    /// `persona.classify_resume_intent`: empty → fresh, the keyword sets,
+    /// the extensions' classifiers in order, then "fresh".
+    fn classify_resume(&self, text: &str) -> &'static str {
+        let stripped = text.trim();
+        if stripped.is_empty() {
+            return "fresh";
+        }
+        if let Some(intent) = keyword_resume_intent(stripped) {
+            return intent;
+        }
+        self.extensions
+            .iter()
+            .find_map(|ext| ext.classify_resume_intent(stripped))
+            .unwrap_or("fresh")
+    }
+
+    fn act_on_resume_intent(
+        &self,
+        text: &str,
+        intent: &'static str,
+        from_timeout: bool,
+    ) -> &'static str {
         crate::dlog!(
             "resume_intent",
             intent = intent,
@@ -1862,6 +1951,10 @@ impl Daemon {
         if intent == "catch_up" {
             self.drain_pending_as_summary();
             return intent;
+        }
+        if intent == "other" {
+            let head: String = text.chars().take(160).collect();
+            crate::dlog!("resume_intent_other", text = head.as_str());
         }
         let cleared = self.router.clear_pending();
         if cleared > 0 {
@@ -1877,7 +1970,10 @@ impl Daemon {
         let flushes = self.router.force_flush_all(auto_voices, None);
         let mut spoken = 0;
         for flush in flushes {
-            let solo = flush.member_session_ids.len() <= 1;
+            // The catch-up always names the project, even for one agent:
+            // `_drain_pending_as_summary` calls `summarize_project` without
+            // `solo`, so it is False there (unlike the tick's flush).
+            let solo = false;
             let Some(text) = heard_state::multi_agent::project_flush_text(
                 self.summarizer.as_ref(),
                 &flush,
@@ -2173,7 +2269,7 @@ mod tests {
         );
         let lines = lines(&sink);
         assert_eq!(lines[0]["via"], "floor");
-        // The default persona is Jarvis: the floor appends his address (B3).
+        // The default persona is Jarvis: the floor appends his address.
         assert_eq!(lines[0]["text"], "All tests pass, Sir.");
     }
 

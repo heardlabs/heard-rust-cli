@@ -87,7 +87,7 @@ DEBUG_BUILD=0
 while [ $# -gt 0 ]; do
 	case "$1" in
 	--version)
-		[ $# -ge 2 ] || die "--version needs a value, e.g. --version 0.1.0"
+		[ $# -ge 2 ] || die "--version needs a value, e.g. --version 0.2.0"
 		VERSION=${2#v}
 		shift 2
 		;;

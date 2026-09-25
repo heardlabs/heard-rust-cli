@@ -235,6 +235,8 @@ struct State {
     queue: Vec<SpeechItem>,
     deferred: Vec<(SpeechItem, bool, f64)>,
     current: Option<Cancel>,
+    /// The session of the line in `current` (for [`Speech::cut_session`]).
+    current_session: Option<String>,
     worker_running: bool,
     mic_active: bool,
     mic_active_at: f64,
@@ -263,7 +265,13 @@ struct Inner {
     limits: SpeechLimits,
     hold_exempt: Vec<String>,
     events: Option<EventBus>,
+    settings_source: Option<SettingsSource>,
 }
+
+/// A per-utterance settings reader: given the queue's current settings,
+/// the settings this line is spoken with. See
+/// [`QueuedSpeechBuilder::settings_source`].
+pub type SettingsSource = Arc<dyn Fn(&SpeechSettings) -> SpeechSettings + Send + Sync>;
 
 /// The speech queue. Cheap to clone; clones are the same queue.
 #[derive(Clone)]
@@ -296,6 +304,8 @@ pub struct QueuedSpeechBuilder {
     settings: SpeechSettings,
     hold_exempt: Vec<String>,
     events: Option<EventBus>,
+    settings_source: Option<SettingsSource>,
+    history_policy: Option<heard_state::HistoryPolicySource>,
 }
 
 impl QueuedSpeechBuilder {
@@ -304,6 +314,14 @@ impl QueuedSpeechBuilder {
     #[must_use]
     pub fn history(mut self, config_dir: impl Into<PathBuf>) -> Self {
         self.history = Some(History::new(config_dir));
+        self
+    }
+    /// What `history.jsonl` may keep of the user's words, read per append
+    /// (default: everything; see `heard_state::history_policy`). Order with
+    /// [`QueuedSpeechBuilder::history`] does not matter.
+    #[must_use]
+    pub fn history_policy(mut self, policy: heard_state::HistoryPolicySource) -> Self {
+        self.history_policy = Some(policy);
         self
     }
     /// Add a [`SpeechObserver`] (default: none). Observers are told in the
@@ -359,6 +377,21 @@ impl QueuedSpeechBuilder {
         self.events = Some(bus);
         self
     }
+    /// Read the settings per utterance (the Python reads `cfg` and the
+    /// persona for every line it queues): called once per line, off the
+    /// queue lock, just before synthesis, with the queue's current settings.
+    /// Its answer is what the line is spoken with and becomes the queue's
+    /// settings. It must keep `muted` as given — mute is the queue's own
+    /// state. Default: none (the settings change only through
+    /// [`QueuedSpeech::set_settings`]).
+    #[must_use]
+    pub fn settings_source(
+        mut self,
+        f: impl Fn(&SpeechSettings) -> SpeechSettings + Send + Sync + 'static,
+    ) -> Self {
+        self.settings_source = Some(Arc::new(f));
+        self
+    }
     /// Finish.
     #[must_use]
     pub fn build(self) -> QueuedSpeech {
@@ -368,6 +401,7 @@ impl QueuedSpeechBuilder {
                     queue: Vec::new(),
                     deferred: Vec::new(),
                     current: None,
+                    current_session: None,
                     worker_running: false,
                     mic_active: false,
                     mic_active_at: 0.0,
@@ -381,7 +415,10 @@ impl QueuedSpeechBuilder {
                 }),
                 tts: RwLock::new(self.tts),
                 player: self.player,
-                history: self.history,
+                history: match (self.history, self.history_policy) {
+                    (Some(h), Some(p)) => Some(h.with_policy(p)),
+                    (h, _) => h,
+                },
                 observers: self.observers,
                 dedup: Dedup::new(),
                 clock: self.clock,
@@ -391,6 +428,7 @@ impl QueuedSpeechBuilder {
                 limits: self.limits,
                 hold_exempt: self.hold_exempt,
                 events: self.events,
+                settings_source: self.settings_source,
             }),
         }
     }
@@ -430,6 +468,8 @@ impl QueuedSpeech {
             settings: SpeechSettings::default(),
             hold_exempt: Vec::new(),
             events: None,
+            settings_source: None,
+            history_policy: None,
         }
     }
 
@@ -860,6 +900,7 @@ impl QueuedSpeech {
                 let item = st.queue.remove(0);
                 let cancel = Cancel::new();
                 st.current = Some(cancel.clone());
+                st.current_session = Some(item.session_id.clone());
                 (item, cancel)
             };
             let outcome = self.speak_one(&item, &cancel).await;
@@ -867,6 +908,7 @@ impl QueuedSpeech {
                 let mut st = self.lock();
                 if st.current.as_ref().is_some_and(|c| c.same(&cancel)) {
                     st.current = None;
+                    st.current_session = None;
                 }
                 st.delivered.push((item.text.clone(), outcome));
                 st.settings.clone()
@@ -918,6 +960,15 @@ impl QueuedSpeech {
                 return Delivery::Skipped("mic_active");
             }
             st.settings.clone()
+        };
+        let settings = match &self.inner.settings_source {
+            Some(source) => {
+                let mut fresh = source(&settings);
+                fresh.muted = settings.muted;
+                self.lock().settings.clone_from(&fresh);
+                fresh
+            }
+            None => settings,
         };
         let tts = Arc::clone(&self.inner.tts.read().unwrap_or_else(|e| e.into_inner()));
         if !tts.is_configured() {
@@ -1145,6 +1196,18 @@ impl Speech for QueuedSpeech {
         let mut st = self.lock();
         let before = st.queue.len();
         st.queue.retain(|i| i.session_id != session_id);
+        before - st.queue.len()
+    }
+
+    fn cut_session(&self, session_id: &str) -> usize {
+        let mut st = self.lock();
+        let before = st.queue.len();
+        st.queue.retain(|i| i.session_id != session_id);
+        if st.current_session.as_deref() == Some(session_id) {
+            if let Some(c) = &st.current {
+                c.set();
+            }
+        }
         before - st.queue.len()
     }
 

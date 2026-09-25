@@ -1,0 +1,246 @@
+[
+ {
+  "name": "empty",
+  "input": "",
+  "max_length": 510,
+  "normalized": "",
+  "batches": [],
+  "pauses": []
+ },
+ {
+  "name": "blank",
+  "input": "  \n ",
+  "max_length": 510,
+  "normalized": "",
+  "batches": [],
+  "pauses": []
+ },
+ {
+  "name": "one_sentence",
+  "input": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs.",
+  "max_length": 510,
+  "normalized": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs.",
+  "batches": [
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs."
+  ],
+  "pauses": [
+   0.25
+  ]
+ },
+ {
+  "name": "four_sentences",
+  "input": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+  "max_length": 510,
+  "normalized": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+  "batches": [
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!"
+  ],
+  "pauses": [
+   0.25
+  ]
+ },
+ {
+  "name": "twelve_sentences_510",
+  "input": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+  "max_length": 510,
+  "normalized": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+  "batches": [
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA.",
+   "kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!"
+  ],
+  "pauses": [
+   0.25,
+   0.25
+  ]
+ },
+ {
+  "name": "forty_sentences_510",
+  "input": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+  "max_length": 510,
+  "normalized": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+  "batches": [
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!"
+  ],
+  "pauses": [
+   0.25,
+   0.25,
+   0.25,
+   0.25,
+   0.25
+  ]
+ },
+ {
+  "name": "clauses_only_510",
+  "input": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs",
+  "max_length": 510,
+  "normalized": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs",
+  "batches": [
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs,",
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs,",
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs, ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs"
+  ],
+  "pauses": [
+   0.1,
+   0.1,
+   0.0
+  ]
+ },
+ {
+  "name": "words_only_510",
+  "input": "bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld",
+  "max_length": 510,
+  "normalized": "bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld",
+  "batches": [
+   "bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld",
+   "bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld",
+   "bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld bˈɪld"
+  ],
+  "pauses": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ {
+  "name": "unbroken_run_510",
+  "input": "ʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃ",
+  "max_length": 510,
+  "normalized": "ʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃ",
+  "batches": [
+   "ʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃ",
+   "ʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃ",
+   "ʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃʃ"
+  ],
+  "pauses": [
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ {
+  "name": "mixed_small_40",
+  "input": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin.",
+  "max_length": 40,
+  "normalized": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin.",
+  "batches": [
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl",
+   "pˈæs.",
+   "hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd,",
+   "sˌO ju kæn lˈʊk əwˈA.",
+   "kəkˈɔɹO ɹˈʌnz lˈOkəli;",
+   "nˈʌθɪŋ lˈivz ðɪs məʃˈin."
+  ],
+  "pauses": [
+   0.0,
+   0.25,
+   0.1,
+   0.25,
+   0.1,
+   0.25
+  ]
+ },
+ {
+  "name": "mixed_small_64",
+  "input": "hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs.",
+  "max_length": 64,
+  "normalized": "hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb! ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs.",
+  "batches": [
+   "hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA.",
+   "kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin. ˈI ɹifˈæktəɹd",
+   "ðə ʤˈAsᵊn kˈɑnfəɡ ænd ˈOpᵊnd ɐ pˌiˈɑɹ ˌɔn ɡˈɪthˌʌb!",
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs."
+  ],
+  "pauses": [
+   0.25,
+   0.0,
+   0.25,
+   0.25
+  ]
+ },
+ {
+  "name": "clause_small_20",
+  "input": "aa, bbb; cc: dddd, eeeeeeeeeeeeeeeeeeeeeeeeeee ff.",
+  "max_length": 20,
+  "normalized": "aa, bbb; cc: dddd, eeeeeeeeeeeeeeeeeeeeeeeeeee ff.",
+  "batches": [
+   "aa, bbb; cc: dddd,",
+   "eeeeeeeeeeeeeeeeeeee",
+   "eeeeeee ff."
+  ],
+  "pauses": [
+   0.1,
+   0.0,
+   0.25
+  ]
+ },
+ {
+  "name": "run_small_7",
+  "input": "abcdefghijklmnopqrstu v",
+  "max_length": 7,
+  "normalized": "abcdefghijklmnopqrstu v",
+  "batches": [
+   "abcdefg",
+   "hijklmn",
+   "opqrstu",
+   "v"
+  ],
+  "pauses": [
+   0.0,
+   0.0,
+   0.0,
+   0.0
+  ]
+ },
+ {
+  "name": "newlines",
+  "input": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs.\n\nhˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA.\nkəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin.",
+  "max_length": 60,
+  "normalized": "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs. hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd, sˌO ju kæn lˈʊk əwˈA. kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin.",
+  "batches": [
+   "ðə bˈɪld ɪz ɡɹˈin ænd ðə tˈɛsts ˈɔl pˈæs.",
+   "hˈɜɹd spˈiks jʊɹ ˈAʤᵊnts wˈɜɹk ˈWt lˈWd,",
+   "sˌO ju kæn lˈʊk əwˈA.",
+   "kəkˈɔɹO ɹˈʌnz lˈOkəli; nˈʌθɪŋ lˈivz ðɪs məʃˈin."
+  ],
+  "pauses": [
+   0.25,
+   0.1,
+   0.25,
+   0.25
+  ]
+ },
+ {
+  "name": "ellipsis_and_marks",
+  "input": "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. ",
+  "max_length": 50,
+  "normalized": "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+  "batches": [
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO.",
+   "wˈAt… ɹˈIt? jˈɛs! nˈO. wˈAt… ɹˈIt? jˈɛs! nˈO."
+  ],
+  "pauses": [
+   0.25,
+   0.25,
+   0.25,
+   0.25,
+   0.25,
+   0.25,
+   0.25,
+   0.25,
+   0.25,
+   0.25
+  ]
+ }
+]

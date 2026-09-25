@@ -108,9 +108,9 @@ fn append(path: &Path, lines: &[String]) {
 fn payload(event: &str, transcript: &Path) -> Value {
     json!({
         "hook_event_name": event,
-        "session_id": "b1-bounded",
+        "session_id": "bounded-transcript",
         "transcript_path": transcript.to_string_lossy(),
-        "cwd": "/tmp/b1-bounded-project",
+        "cwd": "/tmp/bounded-transcript-project",
         "tool_name": "Bash",
         "tool_input": {"command": "ls", "description": "Listing files"},
         "tool_response": {"stdout": "a\nb", "stderr": "", "interrupted": false},
@@ -119,7 +119,7 @@ fn payload(event: &str, transcript: &Path) -> Value {
 
 #[test]
 fn hook_events_over_a_large_transcript_stay_within_a_bounded_heap() {
-    let root = testing::temp_dir("b1-bounded");
+    let root = testing::temp_dir("bounded-transcript");
     let paths = heard_config::Paths::under(&root);
     fs::create_dir_all(&paths.config_dir).expect("config dir");
     // No flush wait: the test is about memory, not the agent's fsync timing.

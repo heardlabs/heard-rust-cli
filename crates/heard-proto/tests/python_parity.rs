@@ -662,3 +662,17 @@ fn first_run_hold_reply() {
         },
     );
 }
+
+#[test]
+fn a_pending_update_without_a_zip_round_trips_as_null() {
+    // `updater.UpdateInfo` for a release that ships no zip: `zip_url` and
+    // `zip_size` are `None` → `null` on the wire.
+    let python = r#"{"version": "1.2.41", "tag": "v1.2.41",
+      "url": "https://example.invalid/r", "zip_url": null, "zip_size": null}"#;
+    let parsed: heard_proto::PendingUpdate = serde_json::from_str(python).unwrap();
+    assert!(parsed.zip_url.is_none() && parsed.zip_size.is_none());
+    assert_eq!(
+        serde_json::to_value(&parsed).unwrap(),
+        serde_json::from_str::<serde_json::Value>(python).unwrap()
+    );
+}
