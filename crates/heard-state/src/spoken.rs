@@ -323,7 +323,7 @@ impl SpokenStore {
         }
 
         // Streamed line by line — the transcript of a resumed long session is
-        // tens of megabytes and must never be on the heap whole (bug B1).
+        // tens of megabytes and must never be on the heap whole.
         // The hashes found are only kept if the whole file decoded, as the
         // old whole-file `read_to_string` did.
         let mut eof: u64 = 0;

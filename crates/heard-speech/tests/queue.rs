@@ -841,3 +841,67 @@ fn nothing_in_the_test_suite_can_reach_afplay() {
     assert!(!src.contains(&needle));
     let _ = ManualClock::new(0.0).monotonic();
 }
+
+// --- per-utterance settings and cut_session -----------------------------------
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn a_settings_source_is_read_for_every_line() {
+    let n = Arc::new(AtomicUsize::new(0));
+    let counter = Arc::clone(&n);
+    let r = rig_with(
+        "settings-source",
+        FakeTts::new(),
+        Arc::new(RecordingPlayer::new()),
+        move |b| {
+            b.settings_source(move |cur: &SpeechSettings| {
+                let k = counter.fetch_add(1, Ordering::SeqCst);
+                SpeechSettings {
+                    voice: format!("voice-{k}"),
+                    // A source that tries to unmute is overridden: mute is the
+                    // queue's own state.
+                    muted: false,
+                    ..cur.clone()
+                }
+            })
+        },
+    );
+    r.q.start_speech(line("one"));
+    assert!(r.q.wait_idle(WAIT).await);
+    r.q.start_speech(line("two"));
+    assert!(r.q.wait_idle(WAIT).await);
+    let seen: Vec<String> = r
+        .tts
+        .seen
+        .lock()
+        .unwrap()
+        .iter()
+        .map(|s| s.1.clone())
+        .collect();
+    assert_eq!(seen, vec!["voice-0".to_string(), "voice-1".to_string()]);
+    assert_eq!(r.q.settings().voice, "voice-1");
+    assert_eq!(n.load(Ordering::SeqCst), 2);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn cut_session_cuts_only_that_sessions_lines() {
+    let tts = FakeTts::new();
+    tts.hold.store(true, Ordering::SeqCst);
+    let r = rig_with("cut-session", tts, Arc::new(RecordingPlayer::new()), |b| b);
+    r.q.start_speech(line("preview line").session("__preview__"));
+    let deadline = Instant::now() + WAIT;
+    while r.tts.synth_started.load(Ordering::SeqCst) == 0 && Instant::now() < deadline {
+        tokio::time::sleep(Duration::from_millis(2)).await;
+    }
+    r.q.start_speech(line("queued preview").session("__preview__"));
+    r.q.start_speech(line("agent line").session("A").coexists(true));
+    assert_eq!(Speech::cut_session(&r.q, "__preview__"), 1);
+    r.tts.release();
+    assert!(r.q.wait_idle(WAIT).await);
+    let played: Vec<String> =
+        r.q.deliveries()
+            .into_iter()
+            .filter(|(_, d)| *d == Delivery::Played)
+            .map(|(t, _)| t)
+            .collect();
+    assert_eq!(played, vec!["agent line".to_string()]);
+}

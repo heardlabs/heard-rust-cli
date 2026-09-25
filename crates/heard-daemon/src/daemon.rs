@@ -241,6 +241,9 @@ pub struct Daemon {
     /// `--differential <python-sock-path>`, parsed and carried. The tee
     /// itself lives in the hook path and is the next lane.
     pub differential: Option<PathBuf>,
+    /// What `history.jsonl` may keep of the user's words (the `feedback`
+    /// command's text), read per append.
+    history_policy: heard_state::HistoryPolicySource,
 }
 
 impl std::fmt::Debug for Daemon {
@@ -270,6 +273,7 @@ pub struct DaemonBuilder {
     events: EventBus,
     clock: Option<Arc<dyn Clock>>,
     picker: Option<Box<dyn FnMut(usize) -> usize + Send>>,
+    history_policy: Option<heard_state::HistoryPolicySource>,
 }
 
 impl DaemonBuilder {
@@ -291,7 +295,17 @@ impl DaemonBuilder {
             events: EventBus::new(),
             clock: None,
             picker: None,
+            history_policy: None,
         }
+    }
+
+    /// What `history.jsonl` may keep of the user's words when the daemon
+    /// itself appends (`feedback`). Default:
+    /// [`crate::speech::config_history_policy`] over this daemon's config.
+    /// Hand the SAME source to the speech sink's history.
+    pub fn history_policy(mut self, policy: heard_state::HistoryPolicySource) -> Self {
+        self.history_policy = Some(policy);
+        self
     }
 
     /// The event bus `subscribe` streams (default: a fresh one). Share one
@@ -414,7 +428,11 @@ impl DaemonBuilder {
                 }
             }
         }
+        let history_policy = self
+            .history_policy
+            .unwrap_or_else(|| crate::speech::config_history_policy(config.clone()));
         Arc::new(Daemon {
+            history_policy,
             config,
             cfg: Mutex::new(cfg),
             router: Arc::new(MultiAgentRouter::new()),
@@ -461,6 +479,13 @@ impl DaemonBuilder {
 }
 
 impl Daemon {
+    /// The `history.jsonl` policy source this daemon was built with — the
+    /// one question "may the user's words be kept?", for extensions with
+    /// stores of their own.
+    pub fn history_policy(&self) -> heard_state::HistoryPolicySource {
+        Arc::clone(&self.history_policy)
+    }
+
     /// The merged config snapshot, as a JSON object (what
     /// [`heard_narrate::verbosity::Cfg`] reads).
     pub fn cfg_value(&self) -> Value {
@@ -676,7 +701,7 @@ impl Daemon {
             })
             .collect();
         let (speaking, queued) = self.speech.queue_state();
-        heard_proto::StatusResponse {
+        let mut status = heard_proto::StatusResponse {
             alive: true,
             backend: self.backend_name.clone(),
             persona: self
@@ -698,7 +723,18 @@ impl Daemon {
             pending_count: self.router.pending_count() as i64,
             awaiting_resume_intent: self.is_awaiting_resume(),
             pending_update: None,
+        };
+        for ext in &self.extensions {
+            ext.status_fields(&mut status);
         }
+        status
+    }
+
+    /// Silence one session: drop its queued lines and cut its line if it is
+    /// the one playing ([`Speech::cut_session`]). Returns how many queued
+    /// lines were dropped.
+    pub fn cut_session(&self, session_id: &str) -> usize {
+        self.speech.cut_session(session_id)
     }
 
     // ---- narration routing -------------------------------------------------
@@ -1819,12 +1855,9 @@ impl Daemon {
         }
         let source = if source.is_empty() { "cli" } else { source };
         let last = self.speech.last_utterance_id();
-        heard_state::history::History::new(&self.config.paths().config_dir).append_feedback(
-            last.as_deref().unwrap_or(""),
-            source,
-            text,
-            "explicit",
-        );
+        heard_state::history::History::new(&self.config.paths().config_dir)
+            .with_policy(Arc::clone(&self.history_policy))
+            .append_feedback(last.as_deref().unwrap_or(""), source, text, "explicit");
         crate::dlog!(
             "feedback_recorded",
             source = source,
@@ -1877,7 +1910,10 @@ impl Daemon {
         let flushes = self.router.force_flush_all(auto_voices, None);
         let mut spoken = 0;
         for flush in flushes {
-            let solo = flush.member_session_ids.len() <= 1;
+            // The catch-up always names the project, even for one agent:
+            // `_drain_pending_as_summary` calls `summarize_project` without
+            // `solo`, so it is False there (unlike the tick's flush).
+            let solo = false;
             let Some(text) = heard_state::multi_agent::project_flush_text(
                 self.summarizer.as_ref(),
                 &flush,
@@ -2173,7 +2209,7 @@ mod tests {
         );
         let lines = lines(&sink);
         assert_eq!(lines[0]["via"], "floor");
-        // The default persona is Jarvis: the floor appends his address (B3).
+        // The default persona is Jarvis: the floor appends his address.
         assert_eq!(lines[0]["text"], "All tests pass, Sir.");
     }
 

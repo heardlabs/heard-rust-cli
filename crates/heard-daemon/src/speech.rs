@@ -28,6 +28,18 @@ use std::sync::Mutex;
 use heard_state::history::History;
 use heard_state::pyjson::PyValue;
 
+/// The core's `history.jsonl` policy source: [`heard_config::Config::load`]
+/// read fresh on every append, and `history_user_text` interpreted by
+/// [`heard_state::history_policy::from_config`] (absent = record the user's
+/// words; `false` = withhold them). An edition with its own consent setting
+/// builds its own source instead.
+pub fn config_history_policy(config: heard_config::Config) -> heard_state::HistoryPolicySource {
+    std::sync::Arc::new(move || {
+        let cfg = config.load(None).unwrap_or_default();
+        heard_state::history_policy::from_config(&cfg)
+    })
+}
+
 /// One utterance the daemon would have spoken.
 ///
 /// Borrowed end to end: every field is already owned by the event being
@@ -119,6 +131,15 @@ pub trait Speech: Send + Sync {
         0
     }
 
+    /// Silence `session_id` only: drop its queued lines AND cut its line if
+    /// that is the one playing now; other sessions' lines are untouched (a
+    /// voice preview cancelled by the next click). Returns how many queued
+    /// lines were dropped. Default: [`Speech::drop_session`] (a sink with no
+    /// playback has nothing to cut).
+    fn cut_session(&self, session_id: &str) -> usize {
+        self.drop_session(session_id)
+    }
+
     /// The `history.jsonl` id of the last line recorded, for `feedback`.
     fn last_utterance_id(&self) -> Option<String> {
         None
@@ -170,6 +191,8 @@ pub const VIA_NOTICE: &str = "notice";
 pub struct LogSpeech {
     path: PathBuf,
     history: Option<History>,
+    /// What `history.jsonl` may keep of the user's words.
+    history_policy: Option<heard_state::HistoryPolicySource>,
     /// Serialises the append so two session tasks can't interleave a line.
     /// The write itself is one `write_all` of a whole line, which the OS
     /// already keeps atomic below `PIPE_BUF`; the lock is what keeps the
@@ -196,6 +219,7 @@ impl LogSpeech {
         Self {
             path: path.into(),
             history: None,
+            history_policy: None,
             lock: Mutex::new(()),
             last_id: Mutex::new(None),
             clock: Box::new(crate::log::now_epoch),
@@ -205,7 +229,23 @@ impl LogSpeech {
     /// Also append a `history.jsonl` record under `config_dir`, exactly as
     /// `daemon.py` does after a successful play.
     pub fn with_history(mut self, config_dir: impl Into<PathBuf>) -> Self {
-        self.history = Some(History::new(config_dir));
+        let history = History::new(config_dir);
+        self.history = Some(match &self.history_policy {
+            Some(p) => history.with_policy(std::sync::Arc::clone(p)),
+            None => history,
+        });
+        self
+    }
+
+    /// What `history.jsonl` may keep of the user's words, read per append
+    /// (default: everything; see `heard_state::history_policy`). Order with
+    /// [`LogSpeech::with_history`] does not matter.
+    pub fn with_history_policy(mut self, policy: heard_state::HistoryPolicySource) -> Self {
+        self.history = self
+            .history
+            .take()
+            .map(|h| h.with_policy(std::sync::Arc::clone(&policy)));
+        self.history_policy = Some(policy);
         self
     }
 
@@ -344,5 +384,28 @@ mod tests {
         let body = std::fs::read_to_string(dir.join("history.jsonl")).expect("history written");
         assert!(body.contains("\"spoken\": \"Done.\""), "{body}");
         assert!(body.contains("\"via\": \"floor\""), "{body}");
+    }
+
+    #[test]
+    fn a_withholding_policy_blanks_a_quoting_line_in_history_only() {
+        let dir = crate::testing::temp_dir("speech-history-policy");
+        // Policy before history: the order must not matter.
+        let sink = LogSpeech::new(dir.join("speech.jsonl"))
+            .with_history_policy(heard_state::HistoryPolicy::withholding().fixed())
+            .with_history(&dir);
+        let line = |text, kind| Utterance {
+            text,
+            tag: kind,
+            kind,
+            session_id: "s1",
+            via: "brain",
+            project: "heard",
+        };
+        sink.speak(&line("Starting on SECRET-PROMPT.", "prompt_intent"));
+        sink.speak(&line("All green.", "final"));
+        let body = std::fs::read_to_string(dir.join("history.jsonl")).expect("history written");
+        assert!(!body.contains("SECRET"), "{body}");
+        assert!(body.contains("\"spoken\": \"\""), "{body}");
+        assert!(body.contains("\"spoken\": \"All green.\""), "{body}");
     }
 }

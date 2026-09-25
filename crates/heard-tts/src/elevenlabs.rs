@@ -36,10 +36,10 @@
 //!   there is no filesystem bundle to miss, so the workaround has nothing to
 //!   work around. This is the one place the port is strictly better rather
 //!   than equal.
-//! * **`fetch_voice_library` is not ported.** It backs `heard voices --all`,
-//!   a CLI path, not the daemon's speech path, and it is the one method whose
-//!   contract is "return an empty list on any failure" — worth porting with
-//!   the CLI, not with the backend.
+//! * **`fetch_voice_library`** ([`ElevenLabsTts::fetch_voice_library`]) keeps
+//!   the Python's contract — "an empty list on any failure" — and returns
+//!   typed [`LibraryVoice`] rows instead of dicts. A row whose fields are not
+//!   strings is read as blank rather than raising.
 
 use std::time::Duration;
 
@@ -190,6 +190,76 @@ impl ElevenLabsTts {
                 speed: clamp_speed(speed),
             },
         }
+    }
+}
+
+/// One voice in the account's ElevenLabs library (`GET /v1/voices`) — the
+/// Python's `{id, name, description, category}` dict.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct LibraryVoice {
+    /// `voice_id`.
+    pub id: String,
+    /// `name`, or `—` when blank.
+    pub name: String,
+    /// `description`, possibly empty.
+    pub description: String,
+    /// `category` (`premade`, `cloned`, `generated`, …), possibly empty.
+    pub category: String,
+}
+
+impl ElevenLabsTts {
+    /// `fetch_voice_library` — the user's whole ElevenLabs voice library
+    /// (custom, cloned and the current default catalogue), for a "show every
+    /// voice" listing. Empty on any failure (no key, network down, non-2xx,
+    /// not JSON): a listing is decoration, never a reason to fail.
+    #[must_use]
+    pub fn fetch_voice_library(&self) -> Vec<LibraryVoice> {
+        if self.api_key.is_empty() {
+            return Vec::new();
+        }
+        let agent = ureq::AgentBuilder::new().timeout(self.timeout).build();
+        let Ok(resp) = agent
+            .get(&format!("{}/voices", self.api_base))
+            .set("xi-api-key", &self.api_key)
+            .call()
+        else {
+            return Vec::new();
+        };
+        let Ok(body) = crate::read_body(resp) else {
+            return Vec::new();
+        };
+        let Ok(payload) = serde_json::from_slice::<serde_json::Value>(&body) else {
+            return Vec::new();
+        };
+        let text = |v: &serde_json::Value, k: &str| {
+            v.get(k)
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or("")
+                .trim()
+                .to_string()
+        };
+        payload
+            .get("voices")
+            .and_then(serde_json::Value::as_array)
+            .map(|voices| {
+                voices
+                    .iter()
+                    .filter_map(|v| {
+                        let id = text(v, "voice_id");
+                        if id.is_empty() {
+                            return None;
+                        }
+                        let name = text(v, "name");
+                        Some(LibraryVoice {
+                            id,
+                            name: if name.is_empty() { "—".into() } else { name },
+                            description: text(v, "description"),
+                            category: text(v, "category"),
+                        })
+                    })
+                    .collect()
+            })
+            .unwrap_or_default()
     }
 }
 

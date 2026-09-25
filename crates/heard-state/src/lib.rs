@@ -58,6 +58,7 @@ pub mod agent_state;
 pub mod clock;
 pub mod event;
 pub mod history;
+pub mod history_policy;
 pub mod jsonl;
 pub mod multi_agent;
 pub mod project_name;
@@ -72,6 +73,7 @@ pub use agent_state::{AgentState, AgentStateRegistry, ResponseShape, Salience};
 pub use clock::{Clock, ManualClock, SystemClock};
 pub use event::{AgentEvent, EventKind};
 pub use history::History;
+pub use history_policy::{HistoryPolicy, HistoryPolicySource};
 pub use multi_agent::{
     Action, Mode, MultiAgentRouter, ProjectFlush, ProjectSummarizer, RoutingDecision, TemplateOnly,
 };
