@@ -307,7 +307,7 @@ pub fn dispatch(daemon: &Arc<Daemon>, hooks: &Arc<HookQueue>, raw: &[u8]) -> Opt
         // Python reads each with `req.get(…) or default`); a typed parse only
         // lands here if that path could not read the frame.
         Request::ResumeIntent(cmd) => {
-            daemon.resume_intent(cmd.text, false);
+            daemon.resume_intent_from_socket(cmd.text);
             None
         }
         Request::Feedback(cmd) => {
@@ -412,7 +412,7 @@ fn dispatch_untyped(daemon: &Arc<Daemon>, raw: &[u8]) -> Option<Option<Vec<u8>>>
             Some(None)
         }
         "resume_intent" => {
-            daemon.resume_intent(field(&value, "text"), false);
+            daemon.resume_intent_from_socket(field(&value, "text"));
             Some(None)
         }
         // The defect store belongs to an edition: offered to the extensions

@@ -21,7 +21,7 @@
 //! | `event` | real — routes through [`Daemon::handle_event`] |
 //! | `event` + `health_probe` | real — echoes, with the same 32-char nonce and closed agent set |
 //! | `speak` (the `cmd`-less fall-through) | reaches the [`Speech`] sink directly, as `via=direct` |
-//! | `resume_intent` | real — the keyword classifier (an ambiguous answer is "fresh", the Python's no-model floor), catch-up flush or buffer drop |
+//! | `resume_intent` | real — the keyword classifier, then the extensions' `classify_resume_intent` (an edition's model fallback, off the accept loop), else "fresh" (the Python's no-model floor); catch-up flush or buffer drop |
 //! | `feedback` | real — `history.append_feedback` against the sink's last utterance id |
 //! | `report_defect` | offered to the [`Extension`]s first (an edition keeps the defect store); unclaimed, logged |
 //! | any other `cmd` | offered to the [`Extension`]s in order; unclaimed, it is logged as `cmd_unhandled` and falls through to `speak`, exactly as Python's `_handle` runs off the end of its `if cmd == …` chain |
@@ -1883,9 +1883,65 @@ impl Daemon {
     /// `cmd == "resume_intent"` — act on the resume panel's answer:
     /// `catch_up` speaks one rolled-up line per buffered project, `fresh`
     /// (and anything unrecognised) drops the buffer.
+    ///
+    /// An answer neither keyword set decides goes to the extensions'
+    /// [`Extension::classify_resume_intent`] (the Python's model fallback)
+    /// before landing on "fresh".
     pub fn resume_intent(&self, text: &str, from_timeout: bool) -> &'static str {
         self.clear_awaiting_resume();
-        let intent = classify_resume_intent(text);
+        let intent = self.classify_resume(text);
+        self.act_on_resume_intent(text, intent, from_timeout)
+    }
+
+    /// `resume_intent` from the socket: an answer only a model can classify
+    /// is classified OFF the accept loop (a model call must not stall the
+    /// socket); everything else is answered inline, exactly as
+    /// [`Daemon::resume_intent`] does.
+    pub fn resume_intent_from_socket(self: &Arc<Self>, text: &str) {
+        let stripped = text.trim();
+        let needs_model = !stripped.is_empty()
+            && keyword_resume_intent(stripped).is_none()
+            && !self.extensions.is_empty();
+        if !needs_model {
+            self.resume_intent(text, false);
+            return;
+        }
+        self.clear_awaiting_resume();
+        let daemon = Arc::clone(self);
+        let text = text.to_owned();
+        let spawned = std::thread::Builder::new()
+            .name("resume-intent".into())
+            .spawn(move || {
+                let intent = daemon.classify_resume(&text);
+                daemon.act_on_resume_intent(&text, intent, false);
+            });
+        if let Err(e) = spawned {
+            crate::dlog!("resume_intent_thread_failed", err = e.to_string());
+        }
+    }
+
+    /// `persona.classify_resume_intent`: empty → fresh, the keyword sets,
+    /// the extensions' classifiers in order, then "fresh".
+    fn classify_resume(&self, text: &str) -> &'static str {
+        let stripped = text.trim();
+        if stripped.is_empty() {
+            return "fresh";
+        }
+        if let Some(intent) = keyword_resume_intent(stripped) {
+            return intent;
+        }
+        self.extensions
+            .iter()
+            .find_map(|ext| ext.classify_resume_intent(stripped))
+            .unwrap_or("fresh")
+    }
+
+    fn act_on_resume_intent(
+        &self,
+        text: &str,
+        intent: &'static str,
+        from_timeout: bool,
+    ) -> &'static str {
         crate::dlog!(
             "resume_intent",
             intent = intent,
@@ -1895,6 +1951,10 @@ impl Daemon {
         if intent == "catch_up" {
             self.drain_pending_as_summary();
             return intent;
+        }
+        if intent == "other" {
+            let head: String = text.chars().take(160).collect();
+            crate::dlog!("resume_intent_other", text = head.as_str());
         }
         let cleared = self.router.clear_pending();
         if cleared > 0 {

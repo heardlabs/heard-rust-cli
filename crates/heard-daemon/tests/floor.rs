@@ -423,3 +423,90 @@ async fn subscribe_streams_hello_then_emitted_events_over_a_real_socket() {
     let _ = UnixStream::connect(&socket);
     let _ = tokio::time::timeout(Duration::from_secs(5), serving).await;
 }
+
+/// An edition's resume classifier: answers every ambiguous reply with a
+/// fixed label and records what it was asked.
+struct Classifier(&'static str, Mutex<Vec<String>>);
+
+impl Extension for Classifier {
+    fn name(&self) -> &'static str {
+        "classifier"
+    }
+    fn classify_resume_intent(&self, text: &str) -> Option<&'static str> {
+        self.1.lock().unwrap().push(text.to_owned());
+        Some(self.0)
+    }
+}
+
+fn classifier_rig(label: &str, answer: &'static str) -> (Rig, Arc<Classifier>) {
+    let root = testing::temp_dir(label);
+    let paths = heard_config::Paths::under(&root);
+    std::fs::create_dir_all(&paths.config_dir).unwrap();
+    std::fs::write(&paths.config_path, "onboarded: true\n").unwrap();
+    let sink = Arc::new(Sink::default());
+    let clock = Arc::new(ManualClock::new(100.0));
+    let classifier = Arc::new(Classifier(answer, Mutex::new(Vec::new())));
+    let daemon = DaemonBuilder::new(paths)
+        .speech(sink.clone())
+        .clock(clock.clone())
+        .picker(|_n| 0)
+        .extension(classifier.clone())
+        .build();
+    let hooks = Arc::new(HookQueue::new(Arc::clone(&daemon)));
+    (
+        Rig {
+            daemon,
+            hooks,
+            sink,
+            clock,
+            root,
+        },
+        classifier,
+    )
+}
+
+fn buffer_one(r: &Rig) {
+    r.daemon.router.note_event("s1", "/tmp/proj", None);
+    r.daemon
+        .router
+        .add_to_digest("s1", "tool_pre", "tool_bash", "Running tests.", None);
+    r.daemon.unmute("menu");
+}
+
+#[test]
+fn an_ambiguous_resume_answer_goes_to_the_edition_classifier() {
+    let (r, c) = classifier_rig("resume-classifier", "catch_up");
+    buffer_one(&r);
+    send(
+        &r,
+        json!({"cmd": "resume_intent", "text": "  hmm what happened  "}),
+    );
+    assert!(!r.daemon.status().awaiting_resume_intent, "cleared at once");
+    let deadline = std::time::Instant::now() + Duration::from_secs(5);
+    while r.daemon.router.pending_count() > 0 && std::time::Instant::now() < deadline {
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    assert_eq!(r.daemon.router.pending_count(), 0);
+    assert_eq!(
+        r.sink.texts().len(),
+        2,
+        "the catch-up spoke: {:?}",
+        r.sink.texts()
+    );
+    assert_eq!(*c.1.lock().unwrap(), vec!["hmm what happened".to_string()]);
+}
+
+#[test]
+fn keywords_and_empty_answers_never_reach_the_classifier() {
+    let (r, c) = classifier_rig("resume-keywords", "catch_up");
+    assert_eq!(r.daemon.resume_intent("", false), "fresh");
+    assert_eq!(r.daemon.resume_intent("nope", false), "fresh");
+    assert_eq!(r.daemon.resume_intent("yes", false), "catch_up");
+    assert!(c.1.lock().unwrap().is_empty());
+    // "other" drops the buffer like "fresh".
+    let (r2, _) = classifier_rig("resume-other", "other");
+    buffer_one(&r2);
+    assert_eq!(r2.daemon.resume_intent("tell me a joke", false), "other");
+    assert_eq!(r2.daemon.router.pending_count(), 0);
+    assert_eq!(r2.sink.texts().len(), 1, "no catch-up line");
+}

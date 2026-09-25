@@ -110,6 +110,15 @@ pub trait Extension: Send + Sync {
         let _ = status;
     }
 
+    /// Classify a resume-panel answer that neither keyword set decided:
+    /// `Some("catch_up" | "fresh" | "other")`, or `None` to leave it to the
+    /// next extension (and finally to "fresh"). Called off the accept loop,
+    /// so it may block on a model call.
+    fn classify_resume_intent(&self, text: &str) -> Option<&'static str> {
+        let _ = text;
+        None
+    }
+
     /// Context for `session`, if this extension has any. The daemon returns
     /// the first non-blank answer, trimmed, in extension order.
     fn context_for(&self, session: &str) -> Option<String> {
