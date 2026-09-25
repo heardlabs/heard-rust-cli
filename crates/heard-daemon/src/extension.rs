@@ -103,6 +103,13 @@ pub trait Extension: Send + Sync {
         let _ = hello;
     }
 
+    /// Fill the `status` fields this extension owns (the core reports
+    /// `account_usage`, `pending_update`, `last_error`, … as empty). Called
+    /// in extension order on every `status`; a later extension overwrites.
+    fn status_fields(&self, status: &mut heard_proto::StatusResponse) {
+        let _ = status;
+    }
+
     /// Context for `session`, if this extension has any. The daemon returns
     /// the first non-blank answer, trimmed, in extension order.
     fn context_for(&self, session: &str) -> Option<String> {

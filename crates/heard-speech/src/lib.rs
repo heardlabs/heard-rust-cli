@@ -35,4 +35,6 @@ pub mod queue;
 
 pub use observer::SpeechObserver;
 pub use player::{AfplayPlayer, Cancel, PlayOutcome, Player, RecordingPlayer};
-pub use queue::{Admission, Delivery, QueuedSpeech, SpeechItem, SpeechLimits, SpeechSettings};
+pub use queue::{
+    Admission, Delivery, QueuedSpeech, SettingsSource, SpeechItem, SpeechLimits, SpeechSettings,
+};

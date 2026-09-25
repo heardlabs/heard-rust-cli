@@ -196,6 +196,40 @@ The CLI uses `heard_config::CLI_APP` (`"heard-cli"`): config and data under
 overlaps the app's paths. An app edition can keep `Paths::resolve` /
 `from_env`.
 
+### 6.1 What `history.jsonl` keeps of the user's words — `heard_state::HistoryPolicy`
+
+`history.jsonl` is mostly what Heard SAID. Two kinds of record carry what
+the USER said instead: a `feedback` line's `text`, and a spoken line whose
+kind quotes the user (the core's `prompt_intent` restates the prompt just
+submitted). A `HistoryPolicy { record_user_text: false, .. }` keeps those
+records' shape (`id`, `ts`, `kind`, `ref`, …) and blanks the words
+(`text` / `spoken` → `""`, plus `"redacted": true`).
+
+The policy is read through a `HistoryPolicySource` (`Arc<dyn Fn() ->
+HistoryPolicy>`) on every append, so a config change applies to the next
+line. Hand the same source to every history writer:
+
+```rust
+let policy = heard_daemon::speech::config_history_policy(Config::new(paths.clone()));
+let speech = QueuedSpeech::builder(tts, player, handle)
+    .history(&paths.config_dir)
+    .history_policy(Arc::clone(&policy))   // or LogSpeech::with_history_policy
+    .build();
+let daemon = DaemonBuilder::new(paths).history_policy(policy) /* … */ .build();
+```
+
+| `history_user_text` in config | user words in `history.jsonl` |
+|---|---|
+| absent (default) | recorded — the behaviour before the policy existed |
+| `true` | recorded |
+| `false` | withheld |
+| anything else | withheld (a value that cannot be read is not permission) |
+
+An edition that speaks more quoting kinds adds them with
+`HistoryPolicy::with_user_text_kinds`, and an edition with its own consent
+setting builds its own source; `Daemon::history_policy()` hands the daemon's
+source to extensions that keep stores of their own.
+
 ## 7. Wiring it together (a composition root)
 
 ```rust
@@ -234,6 +268,7 @@ the core crates only:
 | brain | `NoBrain` — templates and the no-LLM floor (the brain seam is where an optional LLM narrator would plug in) |
 | personas | `persona::CliPersonas` — bundled + `<root>/personas/*.md` front matter |
 | extensions | `notify::NotifyExtension` — `on_spoken` → macOS notification for needs-you lines (see `crates/heard-cli/src/notify.rs` for the classification table), coalesced on one worker thread, `osascript` with a constant `on run argv` script |
+| history policy | `heard_daemon::speech::config_history_policy` — ONE source handed to the queue (`.history_policy`) and the daemon (`.history_policy`, for `feedback`). The CLI edition has no consent UI, so it records by default; `history_user_text: false` in `config.yaml` withholds the user's words (see §6.1) |
 | background | project-digest drain (1 s), queue settings refresh when the snapshot changes (the on-disk pause every 5 s), `config.yaml` mtime watch (2 s → `reload`) |
 
 The process: provider env vars are removed; `setsid()` (a process-group
@@ -317,3 +352,45 @@ during first run answers `{"ok": false, "error": "first_run_hold"}`,
 `Daemon::say_line(&Line)` speaks with explicit placement and an optional
 first-run setup pass (`first_run_generation`); `Daemon::first_run_state()`
 and `Daemon::first_run_reset()` serve an edition's `first_run_hold`.
+
+## 9. TTS, speech settings and status seams
+
+**Kokoro download — `heard_tts::download`** (no `kokoro` feature needed):
+`Source { base_url, files, retry }` (`Source::pinned(retry)`,
+`with_base_url`), `download(&src, dir, &mut dyn Progress) ->
+Result<Vec<(name, Outcome)>, DownloadError { message, fix }>`, `status`,
+`installed`, `remove`, `sha256_file`, `pinned()`, `human`. Resumable
+(`Range`), pinned by size and SHA-256, atomic rename, size-capped. Nothing
+downloads by itself; `heard models download` (and the app's "download the
+local voice") call it. `Progress` has no-op defaults (`NoProgress`).
+
+**Long text — `heard_tts::chunk`**: `kokoro_onnx` 0.6.1's chunker
+(`split_phonemes`, `split_phonemes_max`, `pause_after`, `normalize`,
+`batches`). `KokoroTts::synth_chunked` / `Tts::synth` batch at 510 phonemes
+(sentence → clause → word → mid-word, balanced), trim each batch, add 0.25 s
+after a sentence / 0.1 s after a clause, concatenate. `synth_pcm` stays the
+raw single window.
+
+**Kokoro as a real rung** (`kokoro` feature): `heard_tts::kokoro::KokoroFactory::new(models_dir)`
+claims `Fallback` when both model files are present (the built-in rung's
+position when registered after any other `Fallback` backend) and builds a
+`LazyKokoro` (loaded on first synth; `warm()` loads ahead). Without it,
+`select_backend` turns a Kokoro decision into `NullTts`. ONNX Runtime is
+linked statically by `ort` (a prebuilt `libonnxruntime.a`; no dylib to ship).
+
+**Voice library**: `ElevenLabsTts::fetch_voice_library() -> Vec<LibraryVoice
+{ id, name, description, category }>` — `GET /v1/voices`, empty on any
+failure.
+
+**Per-utterance settings**: `QueuedSpeechBuilder::settings_source(Fn(&SpeechSettings)
+-> SpeechSettings)` — called once per line just before synthesis (off the
+lock); the answer is what the line is spoken with and becomes the queue's
+settings; `muted` is always kept from the queue.
+
+**Cut one session**: `Speech::cut_session(sid) -> usize` (default
+`drop_session`); `QueuedSpeech` also cuts the playing line when it belongs to
+`sid`. `Daemon::cut_session(sid)`.
+
+**Status fields**: `Extension::status_fields(&mut StatusResponse)` — called in
+extension order on every `status`, so an edition fills `account_usage`,
+`pending_update`, … (the core leaves them empty).

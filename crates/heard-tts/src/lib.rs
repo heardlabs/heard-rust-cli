@@ -70,6 +70,8 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
+pub mod chunk;
+pub mod download;
 pub mod elevenlabs;
 #[cfg(feature = "kokoro")]
 pub mod kokoro;
@@ -78,7 +80,7 @@ pub mod select;
 pub mod trim;
 pub mod voices;
 
-pub use elevenlabs::{ElevenLabsError, ElevenLabsTts};
+pub use elevenlabs::{ElevenLabsError, ElevenLabsTts, LibraryVoice};
 pub use null::{NullTts, NullTtsError};
 pub use select::{
     register_backend, registered_backends, select_backend, Backend, BackendFactory,

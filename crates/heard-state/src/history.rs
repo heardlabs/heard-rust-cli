@@ -36,6 +36,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::{SystemTime, UNIX_EPOCH};
 
+use crate::history_policy::HistoryPolicySource;
 use crate::pyjson::PyValue;
 
 /// Safety-net rotation. The intended pattern is `heard improve` pruning
@@ -127,12 +128,16 @@ pub struct History {
     /// The timestamp stamped onto a record that doesn't carry one. Injected so
     /// the golden corpus can pin exact bytes.
     clock: Arc<dyn Fn() -> String + Send + Sync>,
+    /// What the log may keep of the user's words, read per append. `None` =
+    /// [`crate::history_policy::HistoryPolicy::default`] (record everything).
+    policy: Option<HistoryPolicySource>,
 }
 
 impl std::fmt::Debug for History {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("History")
             .field("config_dir", &self.config_dir)
+            .field("policy", &self.policy.is_some())
             .finish_non_exhaustive()
     }
 }
@@ -142,6 +147,7 @@ impl History {
         Self {
             config_dir: config_dir.into(),
             clock: Arc::new(now_iso),
+            policy: None,
         }
     }
 
@@ -153,7 +159,16 @@ impl History {
         Self {
             config_dir: config_dir.into(),
             clock,
+            policy: None,
         }
+    }
+
+    /// Read what the log may keep of the user's words from `policy`, on
+    /// every append (see [`crate::history_policy`]).
+    #[must_use]
+    pub fn with_policy(mut self, policy: HistoryPolicySource) -> Self {
+        self.policy = Some(policy);
+        self
     }
 
     pub fn history_path(&self) -> PathBuf {
@@ -173,6 +188,9 @@ impl History {
     /// — the daemon must never fail to speak because logging failed.
     pub fn append(&self, record: &Record) {
         let mut value = PyValue::Dict(record.clone());
+        if let Some(policy) = &self.policy {
+            policy().apply(&mut value);
+        }
         value.set_default("ts", PyValue::Str((self.clock)()));
         let path = self.history_path();
         let _ = fs::create_dir_all(&self.config_dir);
@@ -440,6 +458,38 @@ mod tests {
         assert!(a.chars().all(|c| c.is_ascii_hexdigit()));
         assert_eq!(&a[12..13], "4", "version nibble");
         assert!(matches!(&a[16..17], "8" | "9" | "a" | "b"), "variant bits");
+    }
+
+    #[test]
+    fn a_withholding_policy_keeps_no_user_words_on_disk() {
+        let (history, dir) = temp_history("policy");
+        let on = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        let flag = std::sync::Arc::clone(&on);
+        let history = history.with_policy(std::sync::Arc::new(move || {
+            crate::history_policy::HistoryPolicy {
+                record_user_text: flag.load(Ordering::SeqCst),
+                ..Default::default()
+            }
+        }));
+        history.append_feedback("u1", "cli", "SECRET-FEEDBACK words", "explicit");
+        history.append(&vec![
+            ("kind".into(), PyValue::Str("prompt_intent".into())),
+            (
+                "spoken".into(),
+                PyValue::Str("SECRET-PROMPT restated".into()),
+            ),
+        ]);
+        history.append(&spoken("Tests are green."));
+        let body = fs::read_to_string(history.history_path()).expect("read");
+        assert!(!body.contains("SECRET"), "{body}");
+        assert!(body.contains("Tests are green."));
+        assert_eq!(body.matches("\"redacted\": true").count(), 2, "{body}");
+        // Re-read per append: flipping back on records again.
+        on.store(true, Ordering::SeqCst);
+        history.append_feedback("u1", "cli", "now recorded", "explicit");
+        let body = fs::read_to_string(history.history_path()).expect("read");
+        assert!(body.contains("now recorded"));
+        let _ = fs::remove_dir_all(dir);
     }
 
     #[test]

@@ -74,10 +74,11 @@ pub struct PendingUpdate {
     pub tag: String,
     /// The release page URL.
     pub url: String,
-    /// Direct URL of the downloadable zip.
-    pub zip_url: String,
-    /// Size of that zip in bytes.
-    pub zip_size: i64,
+    /// Direct URL of the downloadable zip; `null` for a release that ships
+    /// none (the client falls back to the release page).
+    pub zip_url: Option<String>,
+    /// Size of that zip in bytes; `null` when unknown.
+    pub zip_size: Option<i64>,
 }
 
 /// The reply to `mute_session` / `unmute_session`.

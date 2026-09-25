@@ -202,6 +202,25 @@ fn feedback_lands_in_history_against_the_last_utterance() {
 }
 
 #[test]
+fn feedback_text_is_withheld_when_the_config_says_so() {
+    let r = rig(
+        "feedback-withheld",
+        "onboarded: true\nhistory_user_text: false\n",
+    );
+    send(&r, json!({"cmd": "feedback", "text": "SECRET too chatty"}));
+    let path = heard_config::Paths::under(&r.root)
+        .config_dir
+        .join("history.jsonl");
+    let body = std::fs::read_to_string(path).unwrap();
+    assert!(!body.contains("SECRET"), "{body}");
+    let line: Value = serde_json::from_str(body.trim()).unwrap();
+    assert_eq!(line["type"], "feedback");
+    assert_eq!(line["ref"], "utt-1");
+    assert_eq!(line["text"], "");
+    assert_eq!(line["redacted"], true);
+}
+
+#[test]
 fn mute_session_flushes_that_sessions_queue() {
     let r = rig("mute-session", "onboarded: true\n");
     assert_eq!(

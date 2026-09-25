@@ -282,6 +282,10 @@ pub fn build(paths: &Paths, opts: &Options, overrides: Overrides) -> Wired {
     let link = DaemonLink::new();
     let personas_dir = paths::personas_dir(paths);
 
+    // One `history.jsonl` policy for the sink AND the daemon's own appends:
+    // the CLI edition has no consent UI, so the user's words are recorded
+    // unless `history_user_text: false` (heard_state::history_policy).
+    let history_policy = heard_daemon::speech::config_history_policy(Config::new(paths.clone()));
     let mut queued = None;
     let mut would_say = None;
     let mut kokoro = false;
@@ -292,7 +296,11 @@ pub fn build(paths: &Paths, opts: &Options, overrides: Overrides) -> Wired {
             let p = would_say_path(paths);
             would_say = Some(p.clone());
             (
-                Arc::new(LogSpeech::new(&p).with_history(&paths.config_dir)),
+                Arc::new(
+                    LogSpeech::new(&p)
+                        .with_history(&paths.config_dir)
+                        .with_history_policy(Arc::clone(&history_policy)),
+                ),
                 "LogSpeech".into(),
             )
         }
@@ -313,6 +321,7 @@ pub fn build(paths: &Paths, opts: &Options, overrides: Overrides) -> Wired {
             let _ = std::fs::create_dir_all(&audio_dir);
             let q = QueuedSpeech::builder(tts, player, tokio::runtime::Handle::current())
                 .history(&paths.config_dir)
+                .history_policy(Arc::clone(&history_policy))
                 .tmp_dir(audio_dir)
                 .settings(speech_settings(&cfg, &personas_dir, kokoro))
                 .events(events.clone())
@@ -337,6 +346,7 @@ pub fn build(paths: &Paths, opts: &Options, overrides: Overrides) -> Wired {
         None => NotifyExtension::new(Arc::clone(&link)),
     };
     let daemon = DaemonBuilder::new(paths.clone())
+        .history_policy(history_policy)
         .events(events)
         .speech(speech)
         .brain(Arc::new(NoBrain))
