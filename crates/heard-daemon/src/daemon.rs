@@ -661,6 +661,23 @@ impl Daemon {
         crate::dlog!("stop", dropped = dropped, shutdown = self.stop_shuts_down);
     }
 
+    /// Ask the owning service to terminate, independent of the user-facing
+    /// `stop` policy.
+    ///
+    /// Installed Heard deliberately configures [`Daemon::stop`] as a
+    /// cancellation-only command because push-to-talk uses it to barge in over
+    /// narration. Process supervisors still need an unambiguous way to end a
+    /// poisoned service generation (for example, when an owned agent child
+    /// dies). This method is that control-plane boundary; it is not exposed as
+    /// the ordinary socket `stop` command.
+    pub fn shutdown(&self) {
+        self.speech.cancel();
+        let dropped = self.router.clear_pending();
+        self.stopping.store(true, Ordering::SeqCst);
+        self.shutdown.notify_waiters();
+        crate::dlog!("shutdown", dropped = dropped);
+    }
+
     /// `cmd == "cancel"` — the notch's Mute/Pause cut: stop what is playing
     /// now, change no state.
     pub fn cancel(&self) {
@@ -2465,6 +2482,19 @@ mod tests {
         assert!(!daemon.is_stopping());
         daemon.stop();
         daemon.stop();
+        assert!(daemon.is_stopping());
+    }
+
+    #[test]
+    fn explicit_shutdown_latches_even_when_socket_stop_only_cancels() {
+        let dir = crate::testing::temp_dir("explicit-shutdown");
+        let daemon = DaemonBuilder::new(Paths::under(&dir))
+            .stop_shuts_down(false)
+            .build();
+        daemon.stop();
+        assert!(!daemon.is_stopping());
+        daemon.shutdown();
+        daemon.shutdown();
         assert!(daemon.is_stopping());
     }
 }
