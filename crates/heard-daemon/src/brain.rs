@@ -11,7 +11,7 @@
 //! | `narrate` returns | `daemon.py` does | here |
 //! |---|---|---|
 //! | `None` (punt / raised) | the no-LLM floor | [`crate::floor`] |
-//! | `Some(speak: false)` | suppress — except a `final` or the turn opener, which override to the floor | same |
+//! | `Some(speak: false)` | suppress — except a `final` or the turn opener, which override to the floor unless the brain explicitly owns attention | same |
 //! | `Some(speak: true)` | enqueue `decision.text` | hand it to the [`Speech`](crate::speech::Speech) sink |
 //!
 //! [`NoBrain`] is the default and returns `None` for everything, so a daemon
@@ -97,6 +97,16 @@ pub trait Brain: Send + Sync {
         None
     }
 
+    /// Whether this brain owns the speak-versus-silence decision for this
+    /// request. The default preserves the original Heard behavior: a silent
+    /// final or turn opener is rescued by the deterministic floor. A bounded
+    /// attention policy may return true so its deliberate silence remains
+    /// authoritative. This does not bypass mute, safety or routing policy.
+    fn silence_is_authoritative(&self, request: &BrainRequest<'_>) -> bool {
+        let _ = request;
+        false
+    }
+
     /// `harness.is_enabled(cfg)`. When false, `_handle_event` skips the model
     /// branch entirely and the event is dropped — NOT floored.
     fn is_enabled(&self) -> bool {
@@ -128,6 +138,7 @@ mod tests {
             last_prompt: "",
         };
         assert!(NoBrain.narrate(&request).is_none());
+        assert!(!NoBrain.silence_is_authoritative(&request));
         assert!(NoBrain.is_enabled());
     }
 }

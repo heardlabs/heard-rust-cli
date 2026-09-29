@@ -1150,10 +1150,12 @@ impl Daemon {
                         };
                         return self.emit(event, &text, &project, "brain");
                     }
-                    // A final is the result the listener explicitly wants;
-                    // the brain is not allowed to swallow it. Same for the
-                    // turn opener, which is the immediate "I'm on it".
-                    if kind == "final" && !focus_mode {
+                    // Legacy brains do not own human attention, so preserve
+                    // the original final/opener floor. A bounded attention
+                    // brain can explicitly make deliberate silence final.
+                    let authoritative_silence =
+                        self.brain.silence_is_authoritative(&request);
+                    if kind == "final" && !focus_mode && !authoritative_silence {
                         crate::dlog!(
                             "harness_skip_override",
                             kind = kind,
@@ -1165,7 +1167,7 @@ impl Daemon {
                             return self.emit(event, &text, &project, "floor");
                         }
                     }
-                    if is_opener && !focus_mode {
+                    if is_opener && !focus_mode && !authoritative_silence {
                         let lead = floor::final_lead(neutral, 160);
                         if !lead.is_empty() {
                             crate::dlog!(
@@ -2368,6 +2370,30 @@ mod tests {
             Outcome::Spoke("floor")
         );
         assert_eq!(lines(&sink)[0]["text"], "All good, Sir.");
+    }
+
+    #[test]
+    fn an_attention_brain_can_authoritatively_silence_a_final() {
+        struct AttentionBrain;
+        impl Brain for AttentionBrain {
+            fn narrate(&self, _r: &BrainRequest<'_>) -> Option<crate::brain::BrainDecision> {
+                Some(crate::brain::BrainDecision::silence())
+            }
+
+            fn silence_is_authoritative(&self, _r: &BrainRequest<'_>) -> bool {
+                true
+            }
+        }
+        let (daemon, sink) = daemon_with(
+            "attention-silence",
+            "onboarded: true\n",
+            Some(Arc::new(AttentionBrain)),
+        );
+        assert_eq!(
+            daemon.handle_event(&event("final", "final_short", "All good")),
+            Outcome::Dropped("harness_skip")
+        );
+        assert!(lines(&sink).is_empty());
     }
 
     #[test]
