@@ -12,6 +12,8 @@
 //! a daemon extension can read it with exactly the wire bytes the client
 //! sent.
 
+use std::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 use serde_json::value::RawValue;
 
@@ -146,7 +148,7 @@ pub struct Hook<'a> {
 pub struct Pin<'a> {
     /// The session to pin. The daemon strips it and ignores a blank.
     #[serde(borrow)]
-    pub session_id: &'a str,
+    pub session_id: Cow<'a, str>,
 }
 
 /// `{"cmd":"mute","source":"…"}`
@@ -155,7 +157,7 @@ pub struct Mute<'a> {
     /// Who asked: `"client"` (the `client.mute()` default), `"cli"`,
     /// `"menu"`, … The daemon defaults a missing value to `"socket"`.
     #[serde(borrow)]
-    pub source: &'a str,
+    pub source: Cow<'a, str>,
 }
 
 /// `{"cmd":"unmute","source":"…"}`
@@ -163,7 +165,7 @@ pub struct Mute<'a> {
 pub struct Unmute<'a> {
     /// Who asked. See [`Mute::source`].
     #[serde(borrow)]
-    pub source: &'a str,
+    pub source: Cow<'a, str>,
 }
 
 /// `{"cmd":"resume_intent","text":"…"}`
@@ -172,7 +174,7 @@ pub struct ResumeIntent<'a> {
     /// The user's answer to "catch you up, or start fresh?". `client.py`
     /// sends `""` rather than omitting it.
     #[serde(borrow)]
-    pub text: &'a str,
+    pub text: Cow<'a, str>,
 }
 
 /// `{"cmd":"feedback","text":"…","source":"…"}`
@@ -180,10 +182,10 @@ pub struct ResumeIntent<'a> {
 pub struct Feedback<'a> {
     /// The feedback itself. Blank text is recorded as nothing.
     #[serde(borrow)]
-    pub text: &'a str,
+    pub text: Cow<'a, str>,
     /// `"cli"` by default.
     #[serde(borrow)]
-    pub source: &'a str,
+    pub source: Cow<'a, str>,
 }
 
 /// `{"cmd":"report_defect","category":"…","note":"…","source":"…"}`
@@ -191,13 +193,13 @@ pub struct Feedback<'a> {
 pub struct ReportDefect<'a> {
     /// A `defects` category; anything unrecognised is logged as `other`.
     #[serde(borrow)]
-    pub category: &'a str,
+    pub category: Cow<'a, str>,
     /// Free-text note. `client.py` sends `""` rather than omitting it.
     #[serde(borrow)]
-    pub note: &'a str,
+    pub note: Cow<'a, str>,
     /// `"cli"` by default.
     #[serde(borrow)]
-    pub source: &'a str,
+    pub source: Cow<'a, str>,
 }
 
 /// `{"cmd":"mute_session","session_id":"…"}`
@@ -205,7 +207,7 @@ pub struct ReportDefect<'a> {
 pub struct MuteSession<'a> {
     /// The session to silence.
     #[serde(borrow)]
-    pub session_id: &'a str,
+    pub session_id: Cow<'a, str>,
 }
 
 /// `{"cmd":"unmute_session","session_id":"…"}`
@@ -213,7 +215,7 @@ pub struct MuteSession<'a> {
 pub struct UnmuteSession<'a> {
     /// The session to un-silence.
     #[serde(borrow)]
-    pub session_id: &'a str,
+    pub session_id: Cow<'a, str>,
 }
 
 /// `{"text":"…"}` — the `cmd`-less payload `client.speak()` sends.
@@ -224,7 +226,7 @@ pub struct UnmuteSession<'a> {
 pub struct Speak<'a> {
     /// The literal text to speak (persona is bypassed).
     #[serde(borrow, default)]
-    pub text: &'a str,
+    pub text: Cow<'a, str>,
     /// Jump the queue. `client.speak()` never sends this key; the daemon
     /// reads it as `bool(req.get("priority"))`, so absent means `false`.
     #[serde(default, skip_serializing_if = "is_false")]

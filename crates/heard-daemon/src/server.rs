@@ -202,7 +202,7 @@ pub fn dispatch(daemon: &Arc<Daemon>, hooks: &Arc<HookQueue>, raw: &[u8]) -> Opt
                 crate::dlog!("speech_skipped", reason = "first_run_hold", via = "direct");
                 return reply(&serde_json::json!({"ok": false, "error": "first_run_hold"}));
             }
-            daemon.speak_direct(speak.text);
+            daemon.speak_direct(&speak.text);
             return None;
         }
         Message::Command(request) => request,
@@ -237,11 +237,11 @@ pub fn dispatch(daemon: &Arc<Daemon>, hooks: &Arc<HookQueue>, raw: &[u8]) -> Opt
             None
         }
         Request::Mute(mute) => {
-            daemon.mute(blank_to_socket(mute.source));
+            daemon.mute(blank_to_socket(&mute.source));
             None
         }
         Request::Unmute(unmute) => {
-            daemon.unmute(blank_to_socket(unmute.source));
+            daemon.unmute(blank_to_socket(&unmute.source));
             None
         }
 
@@ -281,7 +281,7 @@ pub fn dispatch(daemon: &Arc<Daemon>, hooks: &Arc<HookQueue>, raw: &[u8]) -> Opt
                 return Some(b"{}".to_vec());
             }
             reply(&heard_proto::HealthProbeResponse {
-                nonce: probe.nonce.to_owned(),
+                nonce: probe.nonce.into_owned(),
                 agent: probe.agent.as_str().to_owned(),
             })
         }
@@ -307,18 +307,18 @@ pub fn dispatch(daemon: &Arc<Daemon>, hooks: &Arc<HookQueue>, raw: &[u8]) -> Opt
         // Python reads each with `req.get(…) or default`); a typed parse only
         // lands here if that path could not read the frame.
         Request::ResumeIntent(cmd) => {
-            daemon.resume_intent_from_socket(cmd.text);
+            daemon.resume_intent_from_socket(&cmd.text);
             None
         }
         Request::Feedback(cmd) => {
-            daemon.feedback(cmd.text, cmd.source);
+            daemon.feedback(&cmd.text, &cmd.source);
             None
         }
         Request::ReportDefect(cmd) => {
             crate::dlog!(
                 "report_defect_unhandled",
-                category = cmd.category,
-                source = cmd.source
+                category = cmd.category.as_ref(),
+                source = cmd.source.as_ref()
             );
             None
         }
@@ -491,7 +491,7 @@ pub fn dispatch_extension(daemon: &Arc<Daemon>, cmd: &ExtensionCommand<'_>) -> O
         }
     }
     crate::dlog!("cmd_unhandled", cmd = cmd.cmd.as_ref());
-    daemon.speak_direct(cmd.fallback.text);
+    daemon.speak_direct(&cmd.fallback.text);
     None
 }
 
@@ -515,17 +515,17 @@ fn narration_from_wire(event: &heard_proto::NarrationEvent<'_>) -> NarrationEven
             if info.id.is_empty() {
                 "default"
             } else {
-                info.id
+                info.id.as_ref()
             }
             .to_owned(),
-            info.cwd.unwrap_or("").to_owned(),
+            info.cwd.as_deref().unwrap_or("").to_owned(),
         ),
         Session::Empty(_) => ("default".to_owned(), String::new()),
     };
     NarrationEvent {
-        kind: event.kind.to_owned(),
-        neutral: event.neutral.to_owned(),
-        tag: event.tag.to_owned(),
+        kind: event.kind.clone().into_owned(),
+        neutral: event.neutral.clone().into_owned(),
+        tag: event.tag.clone().into_owned(),
         ctx: event.ctx.clone(),
         session_id,
         cwd,

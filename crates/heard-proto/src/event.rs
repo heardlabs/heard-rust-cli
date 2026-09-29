@@ -11,6 +11,8 @@
 //! The raw agent hook payload is **not** one of them: it is its own
 //! top-level command, [`crate::Hook`] under `{"cmd": "hook"}`.
 
+use std::borrow::Cow;
+
 use serde::{Deserialize, Serialize};
 
 /// `kind` values used by [`NarrationEvent`], as `client.py` emits them.
@@ -81,7 +83,7 @@ pub struct HealthProbe<'a> {
     pub agent: Agent,
     /// A 32-character nonce the daemon must echo.
     #[serde(borrow)]
-    pub nonce: &'a str,
+    pub nonce: Cow<'a, str>,
 }
 
 impl<'a> HealthProbe<'a> {
@@ -90,7 +92,7 @@ impl<'a> HealthProbe<'a> {
         Self {
             kind: HealthProbeKind::HealthProbe,
             agent,
-            nonce,
+            nonce: Cow::Borrowed(nonce),
         }
     }
 }
@@ -104,13 +106,13 @@ impl<'a> HealthProbe<'a> {
 pub struct NarrationEvent<'a> {
     /// One of the [`kind`] constants.
     #[serde(borrow)]
-    pub kind: &'a str,
+    pub kind: Cow<'a, str>,
     /// The persona-free text — what happened, plainly.
     #[serde(borrow)]
-    pub neutral: &'a str,
+    pub neutral: Cow<'a, str>,
     /// Routing / verbosity tag (`final_long`, `intermediate_short`, …).
     #[serde(borrow)]
-    pub tag: &'a str,
+    pub tag: Cow<'a, str>,
     /// Open-ended context map (`length`, `recent_intent`, template ctx…).
     #[serde(default)]
     pub ctx: serde_json::Map<String, serde_json::Value>,
@@ -166,13 +168,13 @@ pub struct EmptySession {}
 pub struct SessionInfo<'a> {
     /// `data["session_id"]`, or `"default"` when the payload has none.
     #[serde(borrow)]
-    pub id: &'a str,
+    pub id: Cow<'a, str>,
     /// The agent's working directory; `null` when the payload omits it.
     #[serde(borrow)]
-    pub cwd: Option<&'a str>,
+    pub cwd: Option<Cow<'a, str>>,
     /// Path to the agent's JSONL transcript; `null` when absent.
     #[serde(borrow)]
-    pub transcript_path: Option<&'a str>,
+    pub transcript_path: Option<Cow<'a, str>>,
     /// The terminal/editor that owns the hook process, when identifiable.
     /// Omitted entirely — not `null` — when `_terminal_binding_from_env`
     /// returns `None`.
@@ -191,13 +193,13 @@ pub struct SessionInfo<'a> {
 pub struct Binding<'a> {
     /// `Ghostty` / `iTerm` / `Terminal` / `VS Code` / `Cursor` / `Windsurf` / `Herdr`.
     #[serde(borrow)]
-    pub host_name: &'a str,
+    pub host_name: Cow<'a, str>,
     /// `terminal` or `editor_terminal`.
     #[serde(borrow)]
-    pub host_type: &'a str,
+    pub host_type: Cow<'a, str>,
     /// Always `"env_terminal_binding"` from this path.
     #[serde(borrow)]
-    pub provenance: &'a str,
+    pub provenance: Cow<'a, str>,
     /// `0.9` from the env path.
     pub confidence: f64,
     /// The hook process's parent pid (the agent CLI).
@@ -208,20 +210,20 @@ pub struct Binding<'a> {
     pub process_started_at: Option<f64>,
     /// `HERDR_PANE_ID`.
     #[serde(borrow, default, skip_serializing_if = "Option::is_none")]
-    pub herdr_pane_id: Option<&'a str>,
+    pub herdr_pane_id: Option<Cow<'a, str>>,
     /// `HERDR_TAB_ID`.
     #[serde(borrow, default, skip_serializing_if = "Option::is_none")]
-    pub herdr_tab_id: Option<&'a str>,
+    pub herdr_tab_id: Option<Cow<'a, str>>,
     /// `HERDR_WORKSPACE_ID`.
     #[serde(borrow, default, skip_serializing_if = "Option::is_none")]
-    pub herdr_workspace_id: Option<&'a str>,
+    pub herdr_workspace_id: Option<Cow<'a, str>>,
     /// `HERDR_SESSION` — `""` for the default session.
     #[serde(borrow, default, skip_serializing_if = "Option::is_none")]
-    pub herdr_session: Option<&'a str>,
+    pub herdr_session: Option<Cow<'a, str>>,
     /// `HERDR_SOCKET_PATH`.
     #[serde(borrow, default, skip_serializing_if = "Option::is_none")]
-    pub herdr_socket_path: Option<&'a str>,
+    pub herdr_socket_path: Option<Cow<'a, str>>,
     /// `HERDR_BIN_PATH`.
     #[serde(borrow, default, skip_serializing_if = "Option::is_none")]
-    pub herdr_bin_path: Option<&'a str>,
+    pub herdr_bin_path: Option<Cow<'a, str>>,
 }

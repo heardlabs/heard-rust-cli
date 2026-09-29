@@ -207,13 +207,17 @@ async fn status_round_trips_as_the_proto_type() {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn mute_and_unmute_persist_through_config() {
     let harness = Harness::start("mute").await;
-    harness.send(&Request::Mute(Mute { source: "cli" }));
+    harness.send(&Request::Mute(Mute {
+        source: "cli".into(),
+    }));
     assert_eq!(harness.request(&Request::Status)["muted"], true);
     // The flag is on DISK, which is what the hook gate and the menu read.
     let body = std::fs::read_to_string(harness.config_dir.join("config.yaml")).expect("config");
     assert!(body.contains("muted: true"), "{body}");
 
-    harness.send(&Request::Unmute(heard_proto::Unmute { source: "cli" }));
+    harness.send(&Request::Unmute(heard_proto::Unmute {
+        source: "cli".into(),
+    }));
     assert_eq!(harness.request(&Request::Status)["muted"], false);
 }
 
@@ -235,10 +239,14 @@ async fn reload_picks_up_a_changed_config() {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn mute_session_and_unmute_session_have_the_documented_reply_shapes() {
     let harness = Harness::start("mute-session").await;
-    let ok = harness.request(&Request::MuteSession(MuteSession { session_id: "s1" }));
+    let ok = harness.request(&Request::MuteSession(MuteSession {
+        session_id: "s1".into(),
+    }));
     assert_eq!(ok, serde_json::json!({"ok": true, "session_id": "s1"}));
 
-    let bad = harness.request(&Request::MuteSession(MuteSession { session_id: "  " }));
+    let bad = harness.request(&Request::MuteSession(MuteSession {
+        session_id: "  ".into(),
+    }));
     assert_eq!(
         bad,
         serde_json::json!({"ok": false, "error": "missing_session_id"})
@@ -246,7 +254,7 @@ async fn mute_session_and_unmute_session_have_the_documented_reply_shapes() {
     assert!(bad.get("session_id").is_none(), "a failure carries no id");
 
     let ok = harness.request(&Request::UnmuteSession(heard_proto::UnmuteSession {
-        session_id: "s1",
+        session_id: "s1".into(),
     }));
     assert_eq!(ok, serde_json::json!({"ok": true, "session_id": "s1"}));
 }
@@ -255,7 +263,9 @@ async fn mute_session_and_unmute_session_have_the_documented_reply_shapes() {
 async fn a_muted_session_reaches_no_sink() {
     let harness = Harness::start("session-muted").await;
     configure(&harness, "");
-    harness.request(&Request::MuteSession(MuteSession { session_id: "s1" }));
+    harness.request(&Request::MuteSession(MuteSession {
+        session_id: "s1".into(),
+    }));
     harness.send(&hook_frame(
         "s1",
         serde_json::json!({
@@ -277,7 +287,9 @@ async fn pin_and_unpin_move_the_router() {
         "session": {"id": "s1", "cwd": "/tmp/p", "transcript_path": null},
     }));
     harness.settle().await;
-    harness.send(&Request::Pin(Pin { session_id: "s1" }));
+    harness.send(&Request::Pin(Pin {
+        session_id: "s1".into(),
+    }));
     harness.settle().await;
     assert_eq!(harness.request(&Request::Status)["router_mode"], "pinned");
     harness.send(&Request::Unpin);
@@ -305,12 +317,80 @@ async fn a_health_probe_echoes_a_valid_nonce_and_rejects_a_short_one() {
 async fn the_cmdless_fallthrough_speaks_literal_text() {
     let harness = Harness::start("speak").await;
     harness.send(&Speak {
-        text: "Hello there",
+        text: "Hello there".into(),
         priority: false,
     });
     let spoken = harness.wait_for_lines(1).await;
     assert_eq!(spoken[0]["text"], "Hello there");
     assert_eq!(spoken[0]["via"], "direct");
+}
+
+/// Frames as Swift's `JSONEncoder` writes them: `/` escaped as `\/`, plus
+/// quotes, newlines, `\u` escapes and raw non-ASCII. A borrowed `&str` field
+/// cannot hold an unescaped string, so each of these used to fail to parse
+/// and fall through to a blank `speak` — silently doing nothing.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn escaped_speak_text_is_spoken_unescaped() {
+    let harness = Harness::start("speak-escaped").await;
+    harness.send_raw(
+        br#"{"text":"Edited \"src\/main.rs\"\nand caf\u00e9 \ud83d\ude80 \u2014 na\u00efve"}"#,
+    );
+    let spoken = harness.wait_for_lines(1).await;
+    let text = spoken[0]["text"].as_str().expect("text");
+    assert!(text.contains("\"src/main.rs\""), "{text:?}");
+    assert!(text.contains("caf\u{e9} \u{1f680}"), "{text:?}");
+    assert!(text.contains("na\u{ef}ve"), "{text:?}");
+    assert!(
+        !text.contains('\\'),
+        "escapes must not reach the sink: {text:?}"
+    );
+    assert_eq!(spoken[0]["via"], "direct");
+
+    // Raw UTF-8 (no escapes) is spoken as-is too.
+    harness.send_raw("{\"text\":\"d\u{e9}j\u{e0} vu \u{1f389}\"}".as_bytes());
+    let spoken = harness.wait_for_lines(2).await;
+    assert_eq!(spoken[1]["text"], "d\u{e9}j\u{e0} vu \u{1f389}");
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn escaped_command_fields_act_on_the_unescaped_value() {
+    let harness = Harness::start("cmd-escaped").await;
+
+    // mute_session echoes the id it acted on.
+    let raw = request_to(
+        &harness.socket,
+        br#"{"cmd":"mute_session","session_id":"proj\/s\u00e9 \"1\""}"#,
+    );
+    let reply: Value = serde_json::from_slice(&raw).expect("reply");
+    assert_eq!(
+        reply,
+        serde_json::json!({"ok": true, "session_id": "proj/s\u{e9} \"1\""})
+    );
+
+    // A muted source with escapes still mutes.
+    harness.send_raw(br#"{"cmd":"mute","source":"menu\/bar"}"#);
+    assert_eq!(harness.request(&Request::Status)["muted"], true);
+    harness.send_raw(br#"{"cmd":"unmute","source":"menu\/bar"}"#);
+    assert_eq!(harness.request(&Request::Status)["muted"], false);
+
+    // A narration event whose session id and cwd carry escapes, then a pin
+    // to that same (escaped) id: the router must see one session.
+    harness.send_raw(
+        br#"{"cmd":"event","kind":"tool_pre","tag":"tool_bash","neutral":"Running \"cargo\"\nnow","ctx":{},"session":{"id":"s\/1","cwd":"\/tmp\/caf\u00e9","transcript_path":null}}"#,
+    );
+    harness.settle().await;
+    harness.send_raw(br#"{"cmd":"pin","session_id":"s\/1"}"#);
+    harness.settle().await;
+    assert_eq!(harness.request(&Request::Status)["router_mode"], "pinned");
+
+    // A health probe whose nonce is 32 characters once unescaped.
+    let raw = request_to(
+        &harness.socket,
+        br#"{"cmd":"event","kind":"health_probe","agent":"claude-code","nonce":"abcdefghijklmno\/pqrstuvwxyz01234"}"#,
+    );
+    let reply: Value = serde_json::from_slice(&raw).expect("reply");
+    assert_eq!(reply["nonce"], "abcdefghijklmno/pqrstuvwxyz01234");
+    assert_eq!(reply["agent"], "claude-code");
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
