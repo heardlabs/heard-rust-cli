@@ -634,14 +634,24 @@ async fn serve(paths: &Paths, opts: Options) -> CliResult<()> {
     let wired = build(paths, &opts, Overrides::default());
     let alerts =
         crate::settings::alerts_of(wired.daemon.cfg_value().as_object().unwrap_or(&Map::new()));
-    let server = Server::bind(Arc::clone(&wired.daemon), &paths.socket_path)
-        .await
-        .map_err(|e| {
-            CliError::failure(
+    // Handlers go in BEFORE the socket is bound: a client (or `heard stop`)
+    // that sees the socket may signal at once, and a SIGTERM that beat the
+    // handler would take the default action and leave daemon.sock and
+    // daemon.pid behind. `serve` checks `is_stopping` before its first
+    // accept, so a signal that lands before it starts is not lost.
+    let signals = spawn_signals(Arc::clone(&wired.daemon));
+    let server = match Server::bind(Arc::clone(&wired.daemon), &paths.socket_path).await {
+        Ok(server) => server,
+        Err(e) => {
+            for t in signals {
+                t.abort();
+            }
+            return Err(CliError::failure(
                 format!("cannot listen on {}: {e}", paths.socket_path.display()),
                 "check nothing else owns that path, then `heard start`",
-            )
-        })?;
+            ));
+        }
+    };
     heard_daemon::dlog!(
         "cli_daemon_start",
         pid = i64::from(std::process::id()),
@@ -654,7 +664,6 @@ async fn serve(paths: &Paths, opts: Options) -> CliResult<()> {
         sock = paths.socket_path.display().to_string()
     );
     let tasks = spawn_background(&wired);
-    let signals = spawn_signals(Arc::clone(&wired.daemon));
     server.serve().await;
     for t in tasks.into_iter().chain(signals) {
         t.abort();
