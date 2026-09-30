@@ -131,7 +131,7 @@ mod tests {
         assert_eq!(
             f,
             Frame::Core(Message::Speak(Speak {
-                text: "hi",
+                text: "hi".into(),
                 priority: false
             }))
         );

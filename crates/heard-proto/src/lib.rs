@@ -40,10 +40,14 @@
 //!
 //! # Borrowing
 //!
-//! Request types borrow from the input buffer (`&'a str`) wherever the shape
-//! allows it, so a daemon can parse a frame without copying its strings. The
-//! two exceptions are `ctx` and the daemon's `status` reply, which are
-//! genuinely open-ended maps and are modelled as [`serde_json::Value`].
+//! Every text field of a request is a `Cow<'a, str>`: borrowed from the
+//! input buffer when the wire bytes are the string itself, owned when they
+//! are not. Never a bare `&'a str` — a borrowed `&str` cannot represent a
+//! JSON string with escapes (`\/`, which Swift's `JSONEncoder` writes for
+//! every `/`, `\"`, `\n`, `\uXXXX`), and a frame carrying one would fail to
+//! parse and fall through to a blank `speak`. The two exceptions to typed
+//! fields are `ctx` and the daemon's `status` reply, which are genuinely
+//! open-ended maps and are modelled as [`serde_json::Value`].
 
 #![forbid(unsafe_code)]
 

@@ -86,19 +86,29 @@ impl Daemon {
 
     /// `{"cmd":"mute","source":"cli"}` — pause narration.
     pub fn mute(&self) -> std::io::Result<()> {
-        self.send(&Request::Mute(Mute { source: "cli" }).into())
+        self.send(
+            &Request::Mute(Mute {
+                source: "cli".into(),
+            })
+            .into(),
+        )
     }
 
     /// `{"cmd":"unmute","source":"cli"}` — resume narration.
     pub fn unmute(&self) -> std::io::Result<()> {
-        self.send(&Request::Unmute(Unmute { source: "cli" }).into())
+        self.send(
+            &Request::Unmute(Unmute {
+                source: "cli".into(),
+            })
+            .into(),
+        )
     }
 
     /// `{"text":…}` — speak one line.
     pub fn speak(&self, text: &str) -> CliResult<()> {
         self.send(
             &Speak {
-                text,
+                text: text.into(),
                 priority: false,
             }
             .into(),
@@ -109,9 +119,15 @@ impl Daemon {
     /// `{"cmd":"mute_session"|"unmute_session","session_id":…}`.
     pub fn session_mute(&self, session_id: &str, mute: bool) -> CliResult<Value> {
         let msg: Message<'_> = if mute {
-            Request::MuteSession(MuteSession { session_id }).into()
+            Request::MuteSession(MuteSession {
+                session_id: session_id.into(),
+            })
+            .into()
         } else {
-            Request::UnmuteSession(UnmuteSession { session_id }).into()
+            Request::UnmuteSession(UnmuteSession {
+                session_id: session_id.into(),
+            })
+            .into()
         };
         self.request(&msg)
             .map_err(|e| down_error("change a session's mute", &e))

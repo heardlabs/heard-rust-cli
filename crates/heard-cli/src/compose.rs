@@ -282,6 +282,10 @@ pub fn build(paths: &Paths, opts: &Options, overrides: Overrides) -> Wired {
     let link = DaemonLink::new();
     let personas_dir = paths::personas_dir(paths);
 
+    // One `history.jsonl` policy for the sink AND the daemon's own appends:
+    // the CLI edition has no consent UI, so the user's words are recorded
+    // unless `history_user_text: false` (heard_state::history_policy).
+    let history_policy = heard_daemon::speech::config_history_policy(Config::new(paths.clone()));
     let mut queued = None;
     let mut would_say = None;
     let mut kokoro = false;
@@ -292,7 +296,11 @@ pub fn build(paths: &Paths, opts: &Options, overrides: Overrides) -> Wired {
             let p = would_say_path(paths);
             would_say = Some(p.clone());
             (
-                Arc::new(LogSpeech::new(&p).with_history(&paths.config_dir)),
+                Arc::new(
+                    LogSpeech::new(&p)
+                        .with_history(&paths.config_dir)
+                        .with_history_policy(Arc::clone(&history_policy)),
+                ),
                 "LogSpeech".into(),
             )
         }
@@ -313,6 +321,7 @@ pub fn build(paths: &Paths, opts: &Options, overrides: Overrides) -> Wired {
             let _ = std::fs::create_dir_all(&audio_dir);
             let q = QueuedSpeech::builder(tts, player, tokio::runtime::Handle::current())
                 .history(&paths.config_dir)
+                .history_policy(Arc::clone(&history_policy))
                 .tmp_dir(audio_dir)
                 .settings(speech_settings(&cfg, &personas_dir, kokoro))
                 .events(events.clone())
@@ -337,6 +346,7 @@ pub fn build(paths: &Paths, opts: &Options, overrides: Overrides) -> Wired {
         None => NotifyExtension::new(Arc::clone(&link)),
     };
     let daemon = DaemonBuilder::new(paths.clone())
+        .history_policy(history_policy)
         .events(events)
         .speech(speech)
         .brain(Arc::new(NoBrain))
@@ -624,14 +634,24 @@ async fn serve(paths: &Paths, opts: Options) -> CliResult<()> {
     let wired = build(paths, &opts, Overrides::default());
     let alerts =
         crate::settings::alerts_of(wired.daemon.cfg_value().as_object().unwrap_or(&Map::new()));
-    let server = Server::bind(Arc::clone(&wired.daemon), &paths.socket_path)
-        .await
-        .map_err(|e| {
-            CliError::failure(
+    // Handlers go in BEFORE the socket is bound: a client (or `heard stop`)
+    // that sees the socket may signal at once, and a SIGTERM that beat the
+    // handler would take the default action and leave daemon.sock and
+    // daemon.pid behind. `serve` checks `is_stopping` before its first
+    // accept, so a signal that lands before it starts is not lost.
+    let signals = spawn_signals(Arc::clone(&wired.daemon));
+    let server = match Server::bind(Arc::clone(&wired.daemon), &paths.socket_path).await {
+        Ok(server) => server,
+        Err(e) => {
+            for t in signals {
+                t.abort();
+            }
+            return Err(CliError::failure(
                 format!("cannot listen on {}: {e}", paths.socket_path.display()),
                 "check nothing else owns that path, then `heard start`",
-            )
-        })?;
+            ));
+        }
+    };
     heard_daemon::dlog!(
         "cli_daemon_start",
         pid = i64::from(std::process::id()),
@@ -644,7 +664,6 @@ async fn serve(paths: &Paths, opts: Options) -> CliResult<()> {
         sock = paths.socket_path.display().to_string()
     );
     let tasks = spawn_background(&wired);
-    let signals = spawn_signals(Arc::clone(&wired.daemon));
     server.serve().await;
     for t in tasks.into_iter().chain(signals) {
         t.abort();

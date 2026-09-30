@@ -62,7 +62,9 @@ fn status_request() {
 fn pin_and_unpin() {
     round_trip(
         r#"{"cmd": "pin", "session_id": "s1"}"#,
-        &Request::Pin(Pin { session_id: "s1" }),
+        &Request::Pin(Pin {
+            session_id: "s1".into(),
+        }),
     );
     round_trip(r#"{"cmd": "unpin"}"#, &Request::Unpin);
 }
@@ -78,16 +80,22 @@ fn mute_and_unmute() {
     // client.mute("cli")
     round_trip(
         r#"{"cmd": "mute", "source": "cli"}"#,
-        &Request::Mute(Mute { source: "cli" }),
+        &Request::Mute(Mute {
+            source: "cli".into(),
+        }),
     );
     // client.mute() — the default source is "client", not "socket".
     round_trip(
         r#"{"cmd": "mute", "source": "client"}"#,
-        &Request::Mute(Mute { source: "client" }),
+        &Request::Mute(Mute {
+            source: "client".into(),
+        }),
     );
     round_trip(
         r#"{"cmd": "unmute", "source": "menu"}"#,
-        &Request::Unmute(Unmute { source: "menu" }),
+        &Request::Unmute(Unmute {
+            source: "menu".into(),
+        }),
     );
 }
 
@@ -95,7 +103,9 @@ fn mute_and_unmute() {
 fn resume_intent() {
     round_trip(
         r#"{"cmd": "resume_intent", "text": "keep going"}"#,
-        &Request::ResumeIntent(ResumeIntent { text: "keep going" }),
+        &Request::ResumeIntent(ResumeIntent {
+            text: "keep going".into(),
+        }),
     );
 }
 
@@ -104,8 +114,8 @@ fn feedback() {
     round_trip(
         r#"{"cmd": "feedback", "text": "too chatty", "source": "cli"}"#,
         &Request::Feedback(Feedback {
-            text: "too chatty",
-            source: "cli",
+            text: "too chatty".into(),
+            source: "cli".into(),
         }),
     );
 }
@@ -115,9 +125,9 @@ fn report_defect() {
     round_trip(
         r#"{"cmd": "report_defect", "category": "wrong_voice", "note": "note", "source": "menu"}"#,
         &Request::ReportDefect(ReportDefect {
-            category: "wrong_voice",
-            note: "note",
-            source: "menu",
+            category: "wrong_voice".into(),
+            note: "note".into(),
+            source: "menu".into(),
         }),
     );
 }
@@ -129,13 +139,13 @@ fn session_mute_commands() {
     round_trip(
         r#"{"cmd": "mute_session", "session_id": "sess-1"}"#,
         &Request::MuteSession(MuteSession {
-            session_id: "sess-1",
+            session_id: "sess-1".into(),
         }),
     );
     round_trip(
         r#"{"cmd": "unmute_session", "session_id": "sess-1"}"#,
         &Request::UnmuteSession(UnmuteSession {
-            session_id: "sess-1",
+            session_id: "sess-1".into(),
         }),
     );
 }
@@ -148,14 +158,14 @@ fn speak_has_no_cmd_key() {
     round_trip(
         r#"{"text": "hello there"}"#,
         &Speak {
-            text: "hello there",
+            text: "hello there".into(),
             priority: false,
         },
     );
     round_trip(
         r#"{"text": "urgent", "priority": true}"#,
         &Speak {
-            text: "urgent",
+            text: "urgent".into(),
             priority: true,
         },
     );
@@ -170,7 +180,7 @@ fn message_prefers_a_known_command_and_falls_through_to_speak() {
     assert_eq!(
         m,
         Message::Speak(Speak {
-            text: "hello there",
+            text: "hello there".into(),
             priority: false
         })
     );
@@ -182,7 +192,7 @@ fn message_prefers_a_known_command_and_falls_through_to_speak() {
     assert_eq!(
         m,
         Message::Speak(Speak {
-            text: "hi",
+            text: "hi".into(),
             priority: false
         })
     );
@@ -199,14 +209,14 @@ fn narration_event_full() {
     round_trip(
         python,
         &Request::Event(Event::Narration(NarrationEvent {
-            kind: kind::TOOL_PRE,
-            neutral: "Editing auth.py",
-            tag: "edit",
+            kind: kind::TOOL_PRE.into(),
+            neutral: "Editing auth.py".into(),
+            tag: "edit".into(),
             ctx,
             session: Session::Known(SessionInfo {
-                id: "s1",
-                cwd: Some("/tmp/p"),
-                transcript_path: Some("/tmp/t.jsonl"),
+                id: "s1".into(),
+                cwd: Some("/tmp/p".into()),
+                transcript_path: Some("/tmp/t.jsonl".into()),
                 binding: None,
             }),
         })),
@@ -221,9 +231,9 @@ fn narration_event_with_empty_ctx_and_session() {
     round_trip(
         python,
         &Request::Event(Event::Narration(NarrationEvent {
-            kind: kind::FINAL,
-            neutral: "done",
-            tag: "final_short",
+            kind: kind::FINAL.into(),
+            neutral: "done".into(),
+            tag: "final_short".into(),
             ctx: serde_json::Map::new(),
             session: Session::Empty(EmptySession {}),
         })),
@@ -238,7 +248,7 @@ fn session_carries_null_cwd_when_the_payload_had_none() {
     round_trip(
         python,
         &Session::Known(SessionInfo {
-            id: "default",
+            id: "default".into(),
             cwd: None,
             transcript_path: None,
             binding: None,
@@ -254,9 +264,9 @@ fn binding_vscode() {
     round_trip(
         python,
         &Binding {
-            host_name: "VS Code",
-            host_type: "editor_terminal",
-            provenance: "env_terminal_binding",
+            host_name: "VS Code".into(),
+            host_type: "editor_terminal".into(),
+            provenance: "env_terminal_binding".into(),
             confidence: 0.9,
             pid: 11973,
             process_started_at: None,
@@ -277,18 +287,18 @@ fn binding_herdr_adds_six_keys() {
     round_trip(
         python,
         &Binding {
-            host_name: "Herdr",
-            host_type: "terminal",
-            provenance: "env_terminal_binding",
+            host_name: "Herdr".into(),
+            host_type: "terminal".into(),
+            provenance: "env_terminal_binding".into(),
             confidence: 0.9,
             pid: 11973,
             process_started_at: None,
-            herdr_pane_id: Some("p1"),
-            herdr_tab_id: Some("t1"),
-            herdr_workspace_id: Some("w1"),
-            herdr_session: Some(""),
-            herdr_socket_path: Some("/s"),
-            herdr_bin_path: Some("/b"),
+            herdr_pane_id: Some("p1".into()),
+            herdr_tab_id: Some("t1".into()),
+            herdr_workspace_id: Some("w1".into()),
+            herdr_session: Some("".into()),
+            herdr_socket_path: Some("/s".into()),
+            herdr_bin_path: Some("/b".into()),
         },
     );
 }
@@ -660,5 +670,19 @@ fn first_run_hold_reply() {
             ok: false,
             error: Some("first_run_hold".into()),
         },
+    );
+}
+
+#[test]
+fn a_pending_update_without_a_zip_round_trips_as_null() {
+    // `updater.UpdateInfo` for a release that ships no zip: `zip_url` and
+    // `zip_size` are `None` → `null` on the wire.
+    let python = r#"{"version": "1.2.41", "tag": "v1.2.41",
+      "url": "https://example.invalid/r", "zip_url": null, "zip_size": null}"#;
+    let parsed: heard_proto::PendingUpdate = serde_json::from_str(python).unwrap();
+    assert!(parsed.zip_url.is_none() && parsed.zip_size.is_none());
+    assert_eq!(
+        serde_json::to_value(&parsed).unwrap(),
+        serde_json::from_str::<serde_json::Value>(python).unwrap()
     );
 }

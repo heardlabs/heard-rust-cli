@@ -17,6 +17,9 @@ once_cell.workspace = true
 # the certifi workaround the Python carries for py2app's frozen interpreter:
 # the CA roots are compiled in, so there is no filesystem bundle to miss.
 ureq = { version = "2.12", default-features = false, features = ["tls", "gzip"] }
+# SHA-256 for the pinned Kokoro model checksums (`download`); already in the
+# graph under rustls.
+ring.workspace = true
 
 # The Kokoro spike. Optional so the cloud path never builds ONNX Runtime:
 # `ort` DOWNLOADS a prebuilt ONNX Runtime at build time — that is a supply-chain

@@ -29,7 +29,7 @@ pub fn extract_assistant_texts_from(path: &Path, start_offset: u64) -> (Vec<Stri
     let start = if start_offset > size { 0 } else { start_offset };
 
     // Streamed from `start`, one line in memory at a time — never the whole
-    // file (that was bug B1: a 38 MB transcript copied onto the heap per
+    // file (a 38 MB transcript copied onto the heap per
     // hook event).
     let mut out = Vec::new();
     let mut undecodable = false;

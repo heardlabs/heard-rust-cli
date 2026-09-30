@@ -164,20 +164,20 @@ impl HookEnv {
         };
         let h = self.herdr.as_ref();
         Some(Binding {
-            host_name,
-            host_type,
-            provenance: PROVENANCE,
+            host_name: host_name.into(),
+            host_type: host_type.into(),
+            provenance: PROVENANCE.into(),
             confidence: CONFIDENCE,
             pid: self.pid,
             // No cheap, dependency-free way to read a process's start time
             // on macOS (no /proc); Python leaves it None and so do we.
             process_started_at: None,
-            herdr_pane_id: h.map(|h| h.pane_id.as_str()),
-            herdr_tab_id: h.map(|h| h.tab_id.as_str()),
-            herdr_workspace_id: h.map(|h| h.workspace_id.as_str()),
-            herdr_session: h.map(|h| h.session.as_str()),
-            herdr_socket_path: h.map(|h| h.socket_path.as_str()),
-            herdr_bin_path: h.map(|h| h.bin_path.as_str()),
+            herdr_pane_id: h.map(|h| h.pane_id.as_str().into()),
+            herdr_tab_id: h.map(|h| h.tab_id.as_str().into()),
+            herdr_workspace_id: h.map(|h| h.workspace_id.as_str().into()),
+            herdr_session: h.map(|h| h.session.as_str().into()),
+            herdr_socket_path: h.map(|h| h.socket_path.as_str().into()),
+            herdr_bin_path: h.map(|h| h.bin_path.as_str().into()),
         })
     }
 }

@@ -32,12 +32,16 @@
 //!   [`KokoroTts::new`] fails with a sentence if they are absent. The download
 //!   is opt-in through the app's "Options → Download voice", and a library
 //!   that can quietly pull 325 MB is how that became a bug in the first place.
-//! * **Long text is refused, not batched.** `kokoro-onnx` splits >510-phoneme
-//!   input at punctuation and concatenates the audio. That is a real feature,
-//!   but it is the speech *queue's* concern and the queue is not ported yet;
-//!   [`split_phonemes`] is here and tested, wired up when the queue lands.
+//! * **Long text is batched, as `kokoro-onnx` 0.6.1 does.** [`Tts::synth`]
+//!   phonemises the whole text, splits it into ≤510-phoneme batches at
+//!   sentence, then clause, then word boundaries ([`crate::chunk`]),
+//!   synthesises and trims each batch, follows every batch but the last with
+//!   the pause its final mark calls for (0.25 s after a sentence, 0.1 s after
+//!   a clause), and concatenates. [`KokoroTts::synth_pcm`] stays the raw
+//!   single-window pass the spike compares sample for sample.
 
 pub mod g2p;
+pub mod lazy;
 pub mod vocab;
 pub mod voices_npz;
 
@@ -51,6 +55,7 @@ use ort::value::Value;
 #[cfg(feature = "espeak")]
 pub use g2p::EspeakCliG2p;
 pub use g2p::{G2p, MisakiG2p, PhonemesAsGiven};
+pub use lazy::{KokoroFactory, LazyKokoro};
 pub use voices_npz::Voices;
 
 use crate::{Audio, Pcm, Tts, TtsError};
@@ -329,39 +334,42 @@ fn run(
     })
 }
 
-/// Split a phoneme string into windows of at most [`vocab::MAX_PHONEME_LENGTH`],
-/// preferring punctuation boundaries and then word boundaries.
-///
-/// `Kokoro._split_phonemes`. Not yet wired into [`KokoroTts::synth_pcm`] — the
-/// concatenation it feeds belongs to the speech queue — but ported and tested
-/// here so the queue lane inherits it rather than re-deriving it.
-#[must_use]
-pub fn split_phonemes(phonemes: &str) -> Vec<String> {
-    const PUNCTUATION: &[char] = &[';', ':', ',', '.', '!', '?', '—', '…'];
-    let max = vocab::MAX_PHONEME_LENGTH;
+pub use crate::chunk::split_phonemes;
 
-    let mut out = Vec::new();
-    let chars: Vec<char> = phonemes.chars().collect();
-    let mut start = 0usize;
-
-    while start < chars.len() {
-        let end = (start + max).min(chars.len());
-        if end == chars.len() {
-            out.push(chars[start..end].iter().collect());
-            break;
+impl KokoroTts {
+    /// `create(text, voice, speed)` with its defaults (`trim=True`,
+    /// `sentence_pause=0.25`, `clause_pause=0.1`): phonemise, normalise the
+    /// whitespace, batch at ≤510 phonemes, synthesise + trim each batch, pad
+    /// the pause after it, concatenate.
+    ///
+    /// # Errors
+    /// See [`KokoroError`]; a text that phonemises to nothing is
+    /// [`KokoroError::NoPhonemes`].
+    pub fn synth_chunked(&self, text: &str, voice: &str, speed: f64) -> Result<Pcm, KokoroError> {
+        if !(MIN_SPEED..=MAX_SPEED).contains(&speed) {
+            return Err(KokoroError::BadSpeed(speed));
         }
-        // Prefer the last punctuation mark in the window, then the last space.
-        let window = &chars[start..end];
-        let cut = window
-            .iter()
-            .rposition(|c| PUNCTUATION.contains(c))
-            .or_else(|| window.iter().rposition(|c| *c == ' '))
-            .map_or(max, |i| i + 1);
-        out.push(chars[start..start + cut].iter().collect());
-        start += cut;
+        let phonemes = self.g2p.phonemize(text, "en-us")?;
+        let batches = crate::chunk::batches(&phonemes);
+        if batches.is_empty() {
+            return Err(KokoroError::NoPhonemes(text.to_string()));
+        }
+        let mut samples = Vec::new();
+        for (batch, pause) in batches {
+            let mut pcm = self.synth_phonemes(&batch, voice, speed, &batch)?;
+            let (start, end) = crate::trim::trim_interval(&pcm.samples);
+            pcm.samples.truncate(end);
+            pcm.samples.drain(..start);
+            samples.extend_from_slice(&pcm.samples);
+            #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+            let silence = (pause * f64::from(SAMPLE_RATE)) as usize;
+            samples.extend(std::iter::repeat_n(0.0f32, silence));
+        }
+        Ok(Pcm {
+            samples,
+            sample_rate: SAMPLE_RATE,
+        })
     }
-    out.retain(|s: &String| !s.trim().is_empty());
-    out
 }
 
 impl Tts for KokoroTts {
@@ -389,14 +397,11 @@ impl Tts for KokoroTts {
 
     fn synth(&self, text: &str, voice: &str, speed: f64, _lang: &str) -> Result<Audio, TtsError> {
         // `Kokoro.create(..., trim=True)` is the Python default and what
-        // `kokoro.py` calls, so the backend's audio is the TRIMMED audio.
-        // `synth_pcm` / `synth_phonemes` stay raw: they are the graph's
-        // output, which is what the spike's sample-for-sample test compares.
-        let mut pcm = self.synth_pcm(text, voice, speed)?;
-        let (start, end) = crate::trim::trim_interval(&pcm.samples);
-        pcm.samples.truncate(end);
-        pcm.samples.drain(..start);
-        Ok(Audio::Pcm(pcm))
+        // `kokoro.py` calls: batched at 510 phonemes, each batch trimmed,
+        // the punctuation's pause between batches. `synth_pcm` /
+        // `synth_phonemes` stay raw: they are the graph's output, which is
+        // what the spike's sample-for-sample test compares.
+        Ok(Audio::Pcm(self.synth_chunked(text, voice, speed)?))
     }
 }
 
@@ -414,57 +419,12 @@ mod tests {
     }
 
     #[test]
-    fn short_phonemes_are_one_window() {
-        let s = "ðə bˈɪld";
-        assert_eq!(split_phonemes(s), vec![s.to_string()]);
-    }
-
-    #[test]
-    fn a_long_run_splits_at_punctuation_first() {
-        // 600 phonemes with a comma at 400: the cut should take the comma,
-        // not the 510 boundary.
-        let mut s = "a".repeat(399);
-        s.push(',');
-        s.push_str(&"b".repeat(200));
-        let parts = split_phonemes(&s);
-        assert_eq!(parts.len(), 2);
-        assert!(parts[0].ends_with(','));
-        assert_eq!(parts[0].chars().count(), 400);
-        assert_eq!(parts[1].chars().count(), 200);
-    }
-
-    #[test]
-    fn with_no_punctuation_it_splits_at_a_space() {
-        let mut s = "a".repeat(300);
-        s.push(' ');
-        s.push_str(&"b".repeat(300));
-        let parts = split_phonemes(&s);
-        assert_eq!(parts.len(), 2);
-        assert!(parts[0].ends_with(' '));
-    }
-
-    #[test]
-    fn with_neither_it_splits_at_the_hard_limit() {
-        let s = "a".repeat(1_100);
-        let parts = split_phonemes(&s);
-        assert_eq!(parts.len(), 3);
-        assert_eq!(parts[0].chars().count(), vocab::MAX_PHONEME_LENGTH);
-        assert_eq!(parts[1].chars().count(), vocab::MAX_PHONEME_LENGTH);
-        assert_eq!(parts[2].chars().count(), 80);
-    }
-
-    #[test]
-    fn every_window_fits_the_graph() {
-        let long = "ðə bˈɪld ɪz ɡɹˈiːn, ".repeat(80);
+    fn every_batch_fits_the_graph() {
+        let long = "ðə bˈɪld ɪz ɡɹˈin, ".repeat(80);
         for part in split_phonemes(&long) {
             assert!(part.chars().count() <= vocab::MAX_PHONEME_LENGTH);
         }
-    }
-
-    #[test]
-    fn empty_input_splits_to_nothing() {
-        assert!(split_phonemes("").is_empty());
-        assert!(split_phonemes("   ").is_empty());
+        assert_eq!(crate::chunk::MAX_PHONEME_LENGTH, vocab::MAX_PHONEME_LENGTH);
     }
 
     #[test]

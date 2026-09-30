@@ -102,6 +102,10 @@ Kokoro through ONNX Runtime. Nothing leaves your machine unless you choose
 ElevenLabs by setting your own key with `heard config set elevenlabs_api_key`.
 
 Everything is stored under `~/Library/Application Support/heard-cli/`.
+`history.jsonl` there records what Heard said, plus your `heard feedback`
+text and the lines that restate your prompt. To keep your own words out of
+it, run `heard config set history_user_text false`: those records keep
+their timestamps and ids but lose the text.
 
 ## Develop
 
