@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.4 — 2026-10-02
+
+- **heard-daemon: a Claude Code Stop speaks the message it carries.** Claude
+  Code hands the turn's final message over as `last_assistant_message`. The
+  Stop handler read only the transcript, and when a session's transcript stops
+  being written (seen with a resumed session: nothing after 18:05 while Stop
+  kept firing) it found no new text and said nothing for hours. It now speaks
+  `last_assistant_message` when the transcript has no new prose, falling back
+  to the transcript's last assistant text, as the Codex handler already does.
+
 ## 0.2.3 — 2026-10-02
 
 - **heard-daemon: blocking work no longer strands async tasks.** Narration

@@ -674,6 +674,43 @@ async fn a_stop_hook_narrates_the_final_through_the_floor() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn a_stop_speaks_the_handed_message_when_the_transcript_stopped_updating() {
+    // Live 2026-10-02: a resumed session's transcript stopped being written
+    // while Stop kept firing with `last_assistant_message`; Jarvis went silent.
+    let harness = Harness::start("hook-stop-stale").await;
+    configure(&harness, "");
+
+    let transcript = harness.config_dir.join("t.jsonl");
+    std::fs::write(&transcript, "").expect("transcript");
+    let path = transcript.to_string_lossy().to_string();
+    harness.send(&hook_frame(
+        "s1",
+        serde_json::json!({
+            "hook_event_name": "PreToolUse", "cwd": "/tmp/proj",
+            "transcript_path": path, "tool_name": "Bash",
+            "tool_input": {"command": "cargo test"},
+        }),
+    ));
+    harness.wait_for_lines(1).await;
+
+    // The transcript never gets the final; the payload carries it.
+    harness.send(&hook_frame(
+        "s1",
+        serde_json::json!({
+            "hook_event_name": "Stop", "cwd": "/tmp/proj",
+            "transcript_path": path,
+            "last_assistant_message": "The release branch is pushed and the tests pass",
+        }),
+    ));
+    let spoken = harness.wait_for_lines(2).await;
+    assert_eq!(spoken[1]["kind"], "final");
+    assert_eq!(
+        spoken[1]["text"],
+        "The release branch is pushed and the tests pass, Sir."
+    );
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn a_short_prompt_is_not_worth_a_prompt_intent() {
     let harness = Harness::start("hook-prompt").await;
     configure(&harness, "");

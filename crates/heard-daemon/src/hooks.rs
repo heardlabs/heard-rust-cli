@@ -352,9 +352,20 @@ async fn cc_stop(daemon: &Daemon, payload: &Value) {
     if spoke > 0 {
         return;
     }
-    // No new text — fall back to the legacy "last assistant text" path so we
-    // never go silent on edge-case transcripts.
-    let text = transcript::extract_last_assistant_text(&path);
+    // No new text. Claude Code hands the final message over directly
+    // (`last_assistant_message`); prefer it, since the transcript can lag or
+    // stop updating (a resumed or compacted session wrote nothing after 18:05
+    // while Stop kept firing, 2026-10-02, and Jarvis went silent). Fall back
+    // to the transcript's last assistant text, as Codex does.
+    let mut text = payload
+        .get("last_assistant_message")
+        .and_then(Value::as_str)
+        .unwrap_or("")
+        .trim()
+        .to_owned();
+    if text.is_empty() {
+        text = transcript::extract_last_assistant_text(&path);
+    }
     let clean = markdown::strip(&text).into_owned();
     if clean.chars().count() >= cfg.skip_under_chars && !daemon.spoken.is_spoken(&session_id, &text)
     {
