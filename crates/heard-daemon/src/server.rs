@@ -147,7 +147,12 @@ impl Server {
                 spawn_subscriber(&self.daemon, stream);
                 continue;
             }
-            let reply = dispatch(&self.daemon, &self.hooks, &buf);
+            // Dispatch stays in the loop (accept order is the event order), but
+            // it can block: a narration event runs the brain's model call
+            // synchronously for seconds. Tell the runtime, so the tasks queued
+            // on this worker (a Parrot reply reader, a wake read) move to
+            // another one instead of waiting the call out.
+            let reply = run_blocking(|| dispatch(&self.daemon, &self.hooks, &buf));
             if let Some(bytes) = reply {
                 tokio::spawn(async move {
                     if let Err(e) = stream.write_all(&bytes).await {
@@ -161,6 +166,19 @@ impl Server {
         self.hooks.stop();
         let _ = std::fs::remove_file(&self.path);
         crate::dlog!("daemon_stopped");
+    }
+}
+
+/// Run `f`, which may block, from the serve loop. On a multi-thread runtime
+/// it is [`tokio::task::block_in_place`]: this worker's queued tasks are handed
+/// to another worker for the duration. Anywhere else (a current-thread runtime,
+/// no runtime) it simply runs, as before.
+fn run_blocking<T>(f: impl FnOnce() -> T) -> T {
+    match tokio::runtime::Handle::try_current() {
+        Ok(h) if h.runtime_flavor() == tokio::runtime::RuntimeFlavor::MultiThread => {
+            tokio::task::block_in_place(f)
+        }
+        _ => f(),
     }
 }
 
@@ -535,4 +553,43 @@ fn narration_from_wire(event: &heard_proto::NarrationEvent<'_>) -> NarrationEven
 /// An empty `ctx`, for callers building an event by hand.
 pub fn empty_ctx() -> Map<String, Value> {
     Map::new()
+}
+
+#[cfg(test)]
+mod blocking_dispatch_tests {
+    use std::time::{Duration, Instant};
+
+    /// A task woken while the serve loop blocks in dispatch (Parrot's reply
+    /// reader) must run on another worker, not wait the blocking call out:
+    /// a brain call on the loop starved the wake listener's 2 s read.
+    #[test]
+    fn a_blocking_dispatch_does_not_strand_tasks_on_its_worker() {
+        let rt = tokio::runtime::Builder::new_multi_thread()
+            .worker_threads(2)
+            .enable_all()
+            .build()
+            .unwrap();
+        let waited = rt.block_on(async {
+            tokio::spawn(async {
+                let started = Instant::now();
+                let (tx, rx) = tokio::sync::oneshot::channel();
+                // Woken on THIS worker, so it would sit in its LIFO slot.
+                tokio::spawn(async move {
+                    let _ = tx.send(started.elapsed());
+                });
+                super::run_blocking(|| std::thread::sleep(Duration::from_millis(1500)));
+                rx.await.unwrap()
+            })
+            .await
+            .unwrap()
+        });
+        assert!(waited < Duration::from_millis(500), "{waited:?}");
+    }
+
+    #[test]
+    fn run_blocking_runs_inline_without_a_multi_thread_runtime() {
+        assert_eq!(super::run_blocking(|| 7), 7);
+        let rt = tokio::runtime::Builder::new_current_thread().build().unwrap();
+        assert_eq!(rt.block_on(async { super::run_blocking(|| 8) }), 8);
+    }
 }
