@@ -173,7 +173,7 @@ impl Server {
 /// it is [`tokio::task::block_in_place`]: this worker's queued tasks are handed
 /// to another worker for the duration. Anywhere else (a current-thread runtime,
 /// no runtime) it simply runs, as before.
-fn run_blocking<T>(f: impl FnOnce() -> T) -> T {
+pub(crate) fn run_blocking<T>(f: impl FnOnce() -> T) -> T {
     match tokio::runtime::Handle::try_current() {
         Ok(h) if h.runtime_flavor() == tokio::runtime::RuntimeFlavor::MultiThread => {
             tokio::task::block_in_place(f)

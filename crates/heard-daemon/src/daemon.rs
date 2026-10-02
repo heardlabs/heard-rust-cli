@@ -786,7 +786,10 @@ impl Daemon {
         if agent_kind {
             self.capture.event_received(&event.kind);
         }
-        let outcome = self.route_event(event);
+        // Routing may call the brain (blocking HTTP, seconds). Hook lanes and
+        // the serve loop call this from async workers; hand the worker's other
+        // tasks on for the duration (a Parrot reply reader among them).
+        let outcome = crate::server::run_blocking(|| self.route_event(event));
         if agent_kind {
             match &outcome {
                 Outcome::Spoke(_) => self.capture.decision(&event.kind, true, None),
