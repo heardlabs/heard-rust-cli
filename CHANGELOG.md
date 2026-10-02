@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.3 — 2026-10-02
+
+- **heard-daemon: blocking work no longer strands async tasks.** Narration
+  routing can call the brain synchronously (a blocking model request, often
+  seconds), and both the serve loop and the hook lanes reach it from tokio
+  workers. On a small multi-thread runtime that held a worker and stranded
+  the tasks queued on it: in Heard's product build a Parrot wake read missed
+  its 2 s reply on ~42% of brain-narrated lines, and other socket requests
+  waited behind the call. `Daemon::handle_event` and the serve loop's
+  dispatch now run under `tokio::task::block_in_place` on a multi-thread
+  runtime (inline elsewhere, as before), so the worker's queue moves to
+  another worker for the duration. Event order is unchanged.
+
 ## 0.2.2 — 2026-09-29
 
 - **heard-proto: socket frame text is owned when it must be.** Every text
