@@ -85,6 +85,8 @@ impl Server {
     /// closes or half-closes immediately, so this only bounds a client that
     /// connected and went away.
     const READ_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(2);
+    /// Pause after a failed accept, so a persistent failure can't spin the loop.
+    const ACCEPT_BACKOFF: std::time::Duration = std::time::Duration::from_millis(100);
 
     /// Accept until `stop` arrives.
     ///
@@ -126,8 +128,14 @@ impl Server {
                 Ok((stream, _)) => stream,
                 Err(e) => {
                     // A failed accept is not a reason to stop listening; the
-                    // Python loop logs and continues too.
+                    // Python loop logs and continues too. But never spin: an
+                    // accept that fails instantly and forever (the runtime shutting
+                    // down, or EMFILE) made this loop hot, logging nonstop and never
+                    // yielding, so runtime shutdown hung waiting on it. Yield first
+                    // (shutdown can cancel the task there), then back off.
                     crate::dlog!("accept_failed", err = e.kind().to_string());
+                    tokio::task::yield_now().await;
+                    tokio::time::sleep(Self::ACCEPT_BACKOFF).await;
                     continue;
                 }
             };
