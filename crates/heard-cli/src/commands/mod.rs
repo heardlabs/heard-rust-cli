@@ -36,7 +36,6 @@ pub fn dispatch(ctx: &Ctx, cmd: Command) -> CliResult<()> {
     }
     match cmd {
         Command::Setup => setup::run(ctx),
-        Command::Mode { value, .. } => mode(ctx, joined(value)),
         Command::Voice {
             name,
             preview,
@@ -103,15 +102,6 @@ fn say_text(words: &[String]) -> String {
 fn porcelain(ctx: &Ctx, cmd: &Command) -> Option<CliResult<()>> {
     let v = |x: &Vec<String>| joined(x.clone());
     let r: CliResult<String> = match cmd {
-        Command::Mode {
-            value,
-            porcelain: true,
-        } => match v(value) {
-            Some(x) => settings::parse_mode(&x).and_then(|m| settings::set_mode(ctx, m)),
-            None => ctx
-                .load()
-                .map(|c| format!("mode: {}", settings::current_mode(&c))),
-        },
         Command::Voice {
             name,
             porcelain: true,
@@ -212,13 +202,12 @@ fn porcelain_status(ctx: &Ctx) -> CliResult<String> {
         "on"
     };
     Ok(format!(
-        "daemon {} · {} · {} ({}) · {} · alerts: {} · narration {state}",
+        "daemon {} · {} ({}) · {} · alerts: {} · narration {state}",
         if ctx.daemon.is_up() {
             "running"
         } else {
             "stopped"
         },
-        s.mode,
         s.persona,
         s.voice,
         settings::fmt_speed(s.speed),
@@ -231,24 +220,6 @@ fn porcelain_status(ctx: &Ctx) -> CliResult<String> {
 fn out(r: CliResult<String>) -> CliResult<()> {
     println!("{}", r?);
     Ok(())
-}
-
-fn mode(ctx: &Ctx, value: Option<String>) -> CliResult<()> {
-    let m = match value {
-        Some(v) => settings::parse_mode(&v)?,
-        None => {
-            let cur = settings::current_mode(&ctx.load()?);
-            if !ui::interactive() {
-                println!("{cur}");
-                return Ok(());
-            }
-            match pick::mode(&cur)? {
-                Some(m) => m,
-                None => return Ok(()),
-            }
-        }
-    };
-    out(settings::set_mode(ctx, m))
 }
 
 fn voice(ctx: &Ctx, name: Option<String>, preview: bool, list: bool, json: bool) -> CliResult<()> {
@@ -445,7 +416,6 @@ pub fn status_json(ctx: &Ctx) -> CliResult<Value> {
             "socket": ctx.paths.socket_path,
             "pid": if running { pid.map(Value::from).unwrap_or(Value::Null) } else { Value::Null },
         },
-        "mode": snap.mode,
         "persona": snap.persona,
         "voice": snap.voice,
         "speed": snap.speed,
@@ -475,7 +445,6 @@ fn status(ctx: &Ctx, json: bool) -> CliResult<()> {
             format!("{} — start it: heard start", ui::yellow("stopped"))
         },
     );
-    row("mode", s("mode"));
     row("persona", s("persona"));
     row(
         "voice",
@@ -680,7 +649,7 @@ fn validate(key: &str, raw: &str) -> CliResult<Value> {
         )
     };
     match key {
-        "verbosity" | "swarm_verbosity" => {
+        "swarm_verbosity" => {
             let v = raw.to_ascii_lowercase();
             const OK: [&str; 6] = ["quiet", "brief", "normal", "verbose", "low", "high"];
             if OK.contains(&v.as_str()) {
@@ -772,7 +741,12 @@ fn config_cmd(ctx: &Ctx, action: ConfigCmd) -> CliResult<()> {
         }
         ConfigCmd::Set { key, value } => {
             let msg = match key.as_str() {
-                "mode" => settings::set_mode(ctx, settings::parse_mode(&value)?)?,
+                k if heard_config::RETIRED_KEYS.contains(&k) => {
+                    return Err(CliError::usage(
+                        format!("{k} is retired"),
+                        "Heard's modes were retired in 0.2.6: it has one behaviour, so there is nothing to set",
+                    ))
+                }
                 "persona" => settings::set_persona(ctx, &value)?,
                 "speed" => settings::set_speed(ctx, settings::parse_speed(&value)?)?,
                 "kokoro_voice" if value.trim().is_empty() => settings::clear_voice(ctx)?,

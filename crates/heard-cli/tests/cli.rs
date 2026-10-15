@@ -79,37 +79,37 @@ fn console_without_a_terminal_is_a_usage_error() {
 // ── settings ────────────────────────────────────────────────────────────
 
 #[test]
-fn mode_sets_the_preset_and_its_primitives() {
+fn the_retired_mode_command_is_gone() {
+    // Modes retired 2026-10-14: no `heard mode`, and the retired keys cannot
+    // be set through `heard config set` either.
     let env = Env::new();
-    env.cmd()
-        .args(["mode", "focus"])
-        .assert()
-        .success()
-        .stdout(contains("mode: focus").and(contains("daemon not running")));
-    let y = env.config_yaml();
-    assert!(y.contains("mode: focus"), "{y}");
-    assert!(y.contains("narration_volume: 0"), "{y}");
-    assert!(y.contains("send_mode: prefill"), "{y}");
-    assert!(y.contains("verbosity: quiet"), "{y}");
-    env.cmd().arg("mode").assert().success().stdout("focus\n");
-
-    env.cmd().args(["mode", "co-pilot"]).assert().success();
-    assert!(env.config_yaml().contains("mode: copilot"));
-    env.cmd().arg("mode").assert().stdout("co-pilot\n");
-
-    env.cmd()
-        .args(["mode", "loud"])
-        .assert()
-        .code(2)
-        .stderr(contains("unknown mode").and(contains("fix:")));
+    env.cmd().args(["mode", "focus"]).assert().code(2);
+    for key in [
+        "mode",
+        "send_mode",
+        "narration_volume",
+        "narrate_routine",
+        "verbosity",
+    ] {
+        env.cmd()
+            .args(["config", "set", key, "focus"])
+            .assert()
+            .code(2)
+            .stderr(contains("retired").and(contains("fix:")));
+    }
+    assert!(
+        !env.config_yaml().contains("focus"),
+        "{}",
+        env.config_yaml()
+    );
 }
 
 #[test]
-fn mode_change_sends_reload_to_a_running_daemon() {
+fn a_setting_change_sends_reload_to_a_running_daemon() {
     let env = Env::new();
     let d = FakeDaemon::start(&env.socket(), status_reply(json!([])));
     env.cmd()
-        .args(["mode", "companion"])
+        .args(["speed", "1.1"])
         .assert()
         .success()
         .stdout(contains("daemon reloaded"));
@@ -483,7 +483,6 @@ fn status_json_shape() {
     for k in [
         "version",
         "daemon",
-        "mode",
         "persona",
         "voice",
         "speed",
@@ -497,7 +496,7 @@ fn status_json_shape() {
         assert!(v.get(k).is_some(), "missing {k}: {v}");
     }
     assert_eq!(v["daemon"]["running"], false);
-    assert_eq!(v["mode"], "co-pilot");
+    assert!(v.get("mode").is_none(), "modes are retired: {v}");
     assert_eq!(v["persona"], "jarvis");
     assert_eq!(v["voice"], "bm_george");
     assert_eq!(v["speed"], 1.05);
@@ -514,7 +513,7 @@ fn status_json_shape() {
         .arg("status")
         .assert()
         .success()
-        .stdout(contains("running").and(contains("co-pilot")));
+        .stdout(contains("running").and(contains("jarvis")));
 }
 
 // ── lifecycle and stubs ─────────────────────────────────────────────────
@@ -567,7 +566,7 @@ fn install_and_uninstall_round_trip_in_a_temp_home() {
     assert!(env
         .home
         .path()
-        .join(".claude/commands/heard-mode.md")
+        .join(".claude/commands/heard-voice.md")
         .exists());
     run(&["install", "claude-code"])
         .success()
@@ -584,7 +583,7 @@ fn install_and_uninstall_round_trip_in_a_temp_home() {
     assert!(!env
         .home
         .path()
-        .join(".claude/commands/heard-mode.md")
+        .join(".claude/commands/heard-voice.md")
         .exists());
 
     env.cmd().args(["install", "vim"]).assert().code(2);
@@ -628,7 +627,7 @@ fn completions_for_each_shell() {
             .args(["completions", sh])
             .assert()
             .success()
-            .stdout(contains("heard").and(contains("mode")));
+            .stdout(contains("heard").and(contains("voice")));
     }
     env.cmd().args(["completions", "tcsh"]).assert().code(2);
 }
@@ -643,7 +642,7 @@ fn setup_without_a_terminal_prints_the_commands() {
         .success()
         .stdout(
             contains("heard models download")
-                .and(contains("heard mode"))
+                .and(contains("heard voice"))
                 .and(contains("heard install")),
         );
     assert!(
@@ -687,8 +686,8 @@ fn config_get_set_list_path() {
     env.cmd()
         .args(["config", "set", "mode", "focus"])
         .assert()
-        .success();
-    assert!(env.config_yaml().contains("narration_volume: 0"));
+        .code(2)
+        .stderr(contains("retired"));
     env.cmd().args(["config", "get", "nope"]).assert().code(1);
 
     // Secrets are redacted in list (a fake value, in a temp dir).
@@ -972,7 +971,7 @@ fn no_color_output_has_no_escapes() {
     let env = Env::new();
     let out = env.cmd().arg("status").output().unwrap();
     assert!(!String::from_utf8_lossy(&out.stdout).contains('\x1b'));
-    let out = env.cmd().args(["mode", "bogus"]).output().unwrap();
+    let out = env.cmd().args(["speed", "bogus"]).output().unwrap();
     assert!(!String::from_utf8_lossy(&out.stderr).contains('\x1b'));
 }
 
@@ -994,13 +993,6 @@ fn one_plain_line(out: &std::process::Output) -> String {
 fn porcelain_prints_exactly_one_line_for_every_forwarded_verb() {
     let env = Env::new();
     let cases: Vec<(Vec<&str>, i32, &str)> = vec![
-        (vec!["mode", "--porcelain", "focus"], 0, "mode: focus"),
-        (vec!["mode", "--porcelain"], 0, "mode: focus"),
-        (
-            vec!["mode", "--porcelain", "loud"],
-            2,
-            "error: unknown mode",
-        ),
         (
             vec!["voice", "--porcelain", "af_heart"],
             0,
@@ -1018,14 +1010,14 @@ fn porcelain_prints_exactly_one_line_for_every_forwarded_verb() {
         (
             vec!["status", "--porcelain"],
             0,
-            "daemon stopped · focus · aria (af_heart)",
+            "daemon stopped · aria (af_heart)",
         ),
         (
             vec!["say", "--porcelain", "hi", "there"],
             1,
             "error: cannot speak",
         ),
-        (vec!["mode", "--porcelain", "--bogus"], 2, "error:"),
+        (vec!["voice", "--porcelain", "--bogus"], 2, "error:"),
     ];
     for (args, code, prefix) in cases {
         let out = env.cmd().args(&args).output().unwrap();

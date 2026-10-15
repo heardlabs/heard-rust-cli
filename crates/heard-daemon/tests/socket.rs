@@ -165,13 +165,15 @@ fn hook_frame(session_id: &str, mut payload: Value) -> Value {
     serde_json::json!({ "cmd": "hook", "agent": "claude-code", "payload": payload })
 }
 
-/// Write a `config.yaml` with no flush wait and the play-by-play profile, so
-/// tool events actually speak and the lane does not sleep 800 ms per hook.
+/// Write a `config.yaml` with no flush wait, so the lane does not sleep
+/// 800 ms per hook. Since modes were retired (2026-10-14) there is no
+/// play-by-play profile: routine tool events never speak, so the hook-path
+/// tests use the ones that do (questions, failures, finals).
 fn configure(harness: &Harness, extra: &str) {
     std::fs::create_dir_all(&harness.config_dir).expect("config dir");
     std::fs::write(
         harness.config_dir.join("config.yaml"),
-        format!("onboarded: true\nflush_delay_ms: 0\nverbosity: verbose\nnarrate_routine: true\n{extra}"),
+        format!("onboarded: true\nflush_delay_ms: 0\n{extra}"),
     )
     .expect("config");
     harness.daemon.reload();
@@ -449,13 +451,14 @@ async fn a_pre_and_post_tool_pair_reach_the_sink_in_order() {
     let harness = Harness::start("hook-order").await;
     configure(&harness, "");
 
+    // A question and a failure: the two tool events that always speak.
     harness.send(&hook_frame(
         "s1",
         serde_json::json!({
             "hook_event_name": "PreToolUse",
             "cwd": "/tmp/proj",
-            "tool_name": "Bash",
-            "tool_input": {"command": "cargo test"},
+            "tool_name": "AskUserQuestion",
+            "tool_input": {"questions": [{"question": "Ship it now?"}]},
         }),
     ));
     harness.send(&hook_frame(
@@ -474,9 +477,8 @@ async fn a_pre_and_post_tool_pair_reach_the_sink_in_order() {
     assert_eq!(spoken[0]["kind"], "tool_pre");
     assert_eq!(spoken[1]["kind"], "tool_post");
     assert_eq!(spoken[0]["session_id"], "s1");
-    // `cargo test` is `tool_bash_test`, a harness wake tag: it skips the
-    // fast path, the brain punts and the floor reads its template (Python).
-    assert_eq!(spoken[0]["via"], "floor");
+    assert_eq!(spoken[0]["tag"], "tool_question");
+    assert_eq!(spoken[0]["via"], "fastpath");
     assert_eq!(spoken[1]["tag"], "tool_post_command_failed");
     assert!(spoken[0]["ts"].as_f64().expect("ts") > 0.0);
     assert!(!spoken[0]["text"].as_str().expect("text").is_empty());
@@ -485,7 +487,7 @@ async fn a_pre_and_post_tool_pair_reach_the_sink_in_order() {
     let history = harness.history();
     assert_eq!(history.len(), 2);
     assert_eq!(history[0]["spoken"], spoken[0]["text"]);
-    assert_eq!(history[0]["via"], "floor");
+    assert_eq!(history[0]["via"], "fastpath");
     assert_eq!(history[0]["id"].as_str().expect("id").len(), 32);
 }
 
@@ -576,7 +578,7 @@ async fn a_paused_heard_narrates_nothing_and_advances_the_offset() {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-async fn fresh_prose_suppresses_the_tool_line() {
+async fn prose_before_a_tool_is_consumed_and_neither_speaks() {
     let harness = Harness::start("hook-prose-wins").await;
     configure(&harness, "");
 
@@ -595,22 +597,14 @@ async fn fresh_prose_suppresses_the_tool_line() {
         )
     };
 
-    // 1. First hook for this session initialises the offset at EOF (so a
-    //    fresh install never replays the whole transcript) and, finding no
-    //    fresh prose, speaks its tool line.
+    // The first hook for this session initialises the offset at EOF (so a
+    // fresh install never replays the whole transcript).
     harness.send(&pre("cargo test"));
-    let spoken = harness.wait_for_lines(1).await;
-    assert_eq!(spoken[0]["kind"], "tool_pre");
+    harness.settle().await;
 
-    // 2. Still no new prose: the next tool line speaks too.
-    harness.send(&pre("cargo build"));
-    let spoken = harness.wait_for_lines(2).await;
-    assert_eq!(spoken[1]["kind"], "tool_pre");
-
-    // 3. The agent writes prose, THEN calls a tool. The prose is what gets
-    //    handled (as an `intermediate`, which the no-LLM floor then drops —
-    //    see `_floor_text`), and the tool announcement is skipped: it would
-    //    only be noise on top of prose we just narrated.
+    // The agent writes prose, THEN calls a tool. The prose is handled (as an
+    // `intermediate`, which is not spoken: `copilot_prose_off`) and the tool
+    // line is skipped (tool progress is not spoken either).
     std::fs::write(
         &transcript,
         "{\"type\":\"assistant\",\"message\":{\"content\":[{\"type\":\"text\",\
@@ -621,7 +615,7 @@ async fn fresh_prose_suppresses_the_tool_line() {
     harness.settle().await;
 
     let spoken = harness.spoken();
-    assert_eq!(spoken.len(), 2, "no third tool line: {spoken:#?}");
+    assert!(spoken.is_empty(), "{spoken:#?}");
     // The prose was consumed, not merely ignored: the offset moved to EOF.
     let size = std::fs::metadata(&transcript).expect("stat").len();
     assert_eq!(harness.daemon.spoken.get_offset("s1"), size);
@@ -636,8 +630,8 @@ async fn a_stop_hook_narrates_the_final_through_the_floor() {
     std::fs::write(&transcript, "").expect("transcript");
     let path = transcript.to_string_lossy().to_string();
 
-    // Seed the offset, as the first hook of a session always does. It speaks
-    // its own tool line on the way past.
+    // Seed the offset, as the first hook of a session always does (its tool
+    // line is routine progress, not spoken).
     harness.send(&hook_frame(
         "s1",
         serde_json::json!({
@@ -646,7 +640,7 @@ async fn a_stop_hook_narrates_the_final_through_the_floor() {
             "tool_input": {"command": "cargo test"},
         }),
     ));
-    harness.wait_for_lines(1).await;
+    harness.settle().await;
 
     std::fs::write(
         &transcript,
@@ -661,14 +655,14 @@ async fn a_stop_hook_narrates_the_final_through_the_floor() {
             "transcript_path": path,
         }),
     ));
-    let spoken = harness.wait_for_lines(2).await;
+    let spoken = harness.wait_for_lines(1).await;
 
-    assert_eq!(spoken[1]["kind"], "final");
-    assert_eq!(spoken[1]["via"], "floor");
-    assert_eq!(spoken[1]["tag"], "final_short");
+    assert_eq!(spoken[0]["kind"], "final");
+    assert_eq!(spoken[0]["via"], "floor");
+    assert_eq!(spoken[0]["tag"], "final_short");
     // A short final is read as-is by the floor, with Jarvis's address.
     assert_eq!(
-        spoken[1]["text"],
+        spoken[0]["text"],
         "All twenty tests pass and the build is clean, Sir."
     );
 }
@@ -691,7 +685,7 @@ async fn a_stop_speaks_the_handed_message_when_the_transcript_stopped_updating()
             "tool_input": {"command": "cargo test"},
         }),
     ));
-    harness.wait_for_lines(1).await;
+    harness.settle().await;
 
     // The transcript never gets the final; the payload carries it.
     harness.send(&hook_frame(
@@ -702,10 +696,10 @@ async fn a_stop_speaks_the_handed_message_when_the_transcript_stopped_updating()
             "last_assistant_message": "The release branch is pushed and the tests pass",
         }),
     ));
-    let spoken = harness.wait_for_lines(2).await;
-    assert_eq!(spoken[1]["kind"], "final");
+    let spoken = harness.wait_for_lines(1).await;
+    assert_eq!(spoken[0]["kind"], "final");
     assert_eq!(
-        spoken[1]["text"],
+        spoken[0]["text"],
         "The release branch is pushed and the tests pass, Sir."
     );
 }
@@ -724,14 +718,11 @@ async fn a_short_prompt_is_not_worth_a_prompt_intent() {
         ));
     }
     harness.settle().await;
-    // Both are retired — a `prompt_intent` is never spoken — but only the
-    // long one gets as far as arming the turn. `narrate_routine` makes this
-    // companion mode, so the submit gets its ONE canned filler (the second
-    // would be two fillers back to back).
+    // Both are retired — a `prompt_intent` is never spoken — and only the
+    // long one gets as far as arming the turn. No canned "On it." filler
+    // either: that was Companion's, retired with the modes (2026-10-14).
     let spoken = harness.spoken();
-    assert_eq!(spoken.len(), 1, "{spoken:?}");
-    assert_eq!(spoken[0]["via"], "filler");
-    assert_eq!(spoken[0]["kind"], "");
+    assert!(spoken.is_empty(), "{spoken:?}");
 }
 
 // ---------------------------------------------------------------------------

@@ -56,7 +56,7 @@ impl Prompt for HeardPrompt {
     }
 }
 
-/// The status line: ` heard · co-pilot · jarvis (bm_george) · 1.05× · alerts: voice+notify`.
+/// The status line: ` heard · jarvis (bm_george) · 1.05× · alerts: voice+notify`.
 pub fn status_line(ctx: &Ctx) -> String {
     let dot = ui::dim(" · ");
     let (running, snap) = (ctx.daemon.is_up(), settings::snapshot(ctx));
@@ -64,9 +64,8 @@ pub fn status_line(ctx: &Ctx) -> String {
     match snap {
         Ok(sn) => {
             s.push_str(&format!(
-                "{dot}{}{dot}{} ({}){dot}{}{dot}alerts: {}",
-                ui::cyan(&sn.mode),
-                sn.persona,
+                "{dot}{} ({}){dot}{}{dot}alerts: {}",
+                ui::cyan(&sn.persona),
                 sn.voice,
                 settings::fmt_speed(sn.speed),
                 settings::Alerts::parse(&sn.alerts)
@@ -267,16 +266,6 @@ pub fn handle(ctx: &Ctx, line: &str) -> CliResult<Flow> {
     };
     let arg = (!arg.is_empty()).then_some(arg);
     match cmd {
-        "mode" => {
-            let m = match arg {
-                Some(a) => settings::parse_mode(a)?,
-                None => match pick::mode(&settings::current_mode(&ctx.load()?))? {
-                    Some(m) => m,
-                    None => return Ok(Flow::Continue),
-                },
-            };
-            say_line(settings::set_mode(ctx, m))
-        }
         "voice" => {
             let id = match arg {
                 Some(a) => settings::parse_voice(a)?.to_string(),

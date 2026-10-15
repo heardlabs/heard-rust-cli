@@ -1,6 +1,6 @@
 //! Claude Code slash commands: `<home>/.claude/commands/heard-*.md`.
 //!
-//! Each file surfaces as `/heard-mode focus` and so on. The normal path never
+//! Each file surfaces as `/heard-voice bm_george` and so on. The normal path never
 //! runs them: `heard-hook`'s `UserPromptSubmit` intercept sees the prompt
 //! first and answers it with a `block` decision, zero tokens. If Claude Code
 //! expands the command before the hook sees it, the body is the fallback: it
@@ -16,6 +16,9 @@
 //! Every file carries [`COMMAND_MARKER`]; uninstall removes only files that
 //! have it, and install never overwrites a same-named file without it
 //! (unless forced).
+//!
+//! `heard-mode.md` was retired with the modes (2026-10-14): install and
+//! uninstall both remove a copy of it that carries the marker.
 
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -38,11 +41,6 @@ pub struct CommandFile {
 
 /// The command files `heard install claude-code` writes.
 pub const COMMAND_FILES: &[CommandFile] = &[
-    CommandFile {
-        verb: "mode",
-        description: "Set Heard's narration mode (copilot, companion or focus)",
-        argument_hint: "[copilot|companion|focus]",
-    },
     CommandFile {
         verb: "voice",
         description: "Set Heard's voice",
@@ -74,6 +72,11 @@ pub const COMMAND_FILES: &[CommandFile] = &[
         argument_hint: "",
     },
 ];
+
+/// Verbs whose command file earlier releases wrote and this one does not:
+/// `heard-<verb>.md` is removed (when it carries the marker) by install and
+/// uninstall alike.
+pub const RETIRED_COMMAND_VERBS: &[&str] = &["mode"];
 
 impl CommandFile {
     pub fn file_name(&self) -> String {
@@ -138,7 +141,21 @@ pub(crate) fn write_all(
         fsutil::atomic_write(&path, want.as_bytes())?;
         written.push(path);
     }
+    remove_retired(home)?;
     Ok((written, warnings))
+}
+
+/// Remove the retired command files that carry our marker.
+fn remove_retired(home: &Path) -> Result<Vec<PathBuf>, InstallError> {
+    let mut removed = Vec::new();
+    for verb in RETIRED_COMMAND_VERBS {
+        let path = dir(home).join(format!("heard-{verb}.md"));
+        if fsutil::read_opt(&path)?.is_some_and(|t| is_ours(&t)) {
+            fs::remove_file(&path).map_err(|e| io_err(&path, e))?;
+            removed.push(path);
+        }
+    }
+    Ok(removed)
 }
 
 /// Remove every command file that carries our marker.
@@ -151,6 +168,7 @@ pub(crate) fn remove_all(home: &Path) -> Result<Vec<PathBuf>, InstallError> {
             removed.push(path);
         }
     }
+    removed.extend(remove_retired(home)?);
     Ok(removed)
 }
 

@@ -14,13 +14,12 @@ const HELP_TEMPLATE: &str = "\
 Run `heard` with no command to open the interactive console.
 
 Get started:
-  setup        Guided setup: voice model, voice, mode, agent hooks
+  setup        Guided setup: voice model, voice, agent hooks
   doctor       Check the install and print a fix for anything wrong
   install      Add Heard's hooks to Claude Code and/or Codex
   uninstall    Remove Heard's hooks (--purge also deletes models and state)
 
 How Heard sounds:
-  mode         How much Heard says: co-pilot, companion or focus
   voice        Pick the Kokoro voice (--preview to hear it, --list to browse)
   persona      Who narrates: jarvis, aria, friday, atlas, raw, or a file
   speed        Speaking rate, 0.5 to 2.0
@@ -70,25 +69,9 @@ pub struct Cli {
 /// Every subcommand.
 #[derive(Debug, Subcommand)]
 pub enum Command {
-    /// Guided setup: download the voice model, pick a voice and a mode, and
-    /// offer hooks for the agents found on PATH.
+    /// Guided setup: download the voice model, pick a voice, and offer hooks
+    /// for the agents found on PATH.
     Setup,
-
-    /// Show or set how much Heard says.
-    ///
-    /// co-pilot: at the screen: turn results and anything that needs you.
-    /// companion: away from it: the agent's prose and steps too.
-    /// focus: heads-down: only failures, questions and approvals.
-    ///
-    /// With no value: a picker on a terminal, the current mode otherwise.
-    Mode {
-        /// copilot (co-pilot), companion or focus.
-        #[arg(num_args = 0.., value_name = "VALUE")]
-        value: Vec<String>,
-        /// One plain line, for the hook (internal).
-        #[arg(long, hide = true)]
-        porcelain: bool,
-    },
 
     /// Show or set the Kokoro voice.
     ///

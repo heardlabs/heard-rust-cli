@@ -48,7 +48,7 @@ pub mod paths;
 pub mod pyyaml;
 mod yaml;
 
-pub use defaults::{defaults, APP, CLI_APP, PROJECT_FILE};
+pub use defaults::{defaults, APP, CLI_APP, PROJECT_FILE, RETIRED_KEYS};
 pub use error::{ConfigError, Result};
 pub use paths::{PathEnv, Paths};
 
@@ -64,7 +64,9 @@ use std::time::{SystemTime, UNIX_EPOCH};
 ///
 /// Without this an explicitly-chosen value that happens to land on the default
 /// (`narration_skill = "default"`) stops being written, and a later save can
-/// silently revert the choice.
+/// silently revert the choice. `narrate_routine` and `mode` are retired
+/// ([`RETIRED_KEYS`]) and read by nothing; they stay listed so the persisted
+/// file shape is unchanged.
 pub const ALWAYS_PERSIST: [&str; 7] = [
     "narration_skill",
     "narrate_routine",

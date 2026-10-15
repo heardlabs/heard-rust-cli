@@ -26,6 +26,26 @@ pub const CLI_APP: &str = "heard-cli";
 /// (`config.PROJECT_FILE`).
 pub const PROJECT_FILE: &str = ".heard.yaml";
 
+/// Keys that are RETIRED: still declared in [`defaults`] with their old
+/// default values, so an existing `config.yaml` that carries them stays valid
+/// and a migration can read what they defaulted to, but read by nothing.
+///
+/// Heard's modes (Copilot / Companion / Focus over the `send_mode` and
+/// `narration_volume` dials, and the older `mode` / `narrate_routine` /
+/// `verbosity` knobs) were retired on 2026-10-14: Heard has one behaviour,
+/// exactly what these defaults produced. The last three keys only served
+/// Focus and Companion.
+pub const RETIRED_KEYS: [&str; 8] = [
+    "mode",
+    "send_mode",
+    "narration_volume",
+    "narrate_routine",
+    "verbosity",
+    "narrate_routine_before_focus",
+    "companion_thinking_nudge",
+    "companion_thinking_nudge_seconds",
+];
+
 /// The core `config.DEFAULTS` — the lowest of the three config layers,
 /// before any registered layer (see [`crate::all_defaults`]).
 pub fn defaults() -> &'static Map<String, Value> {
@@ -56,11 +76,12 @@ pub fn defaults() -> &'static Map<String, Value> {
         // DEFAULTS, so we never overwrite an explicit selection.
         m.insert("persona".into(), json!("jarvis"));
         // Verbosity profile names (heard/profiles/<name>.yaml). Bundled:
-        // quiet / brief / normal / verbose. Custom: drop your own YAML in
-        // $CONFIG_DIR/profiles/<name>.yaml. swarm_verbosity applies to
+        // quiet / brief / normal / verbose. swarm_verbosity applies to
         // non-focus sessions when 2+ agents are active concurrently —
         // default "brief" so background agents stay quiet without losing
         // their critical signals.
+        // RETIRED 2026-10-14 (modes): `verbosity` is read by nothing; solo
+        // events always use the normal profile. Kept so old configs stay valid.
         m.insert("verbosity".into(), json!("normal"));
         m.insert("swarm_verbosity".into(), json!("brief"));
         // True "Pause Heard" (menu item). Distinct from muted/audio_off, which only silence
@@ -72,13 +93,16 @@ pub fn defaults() -> &'static Map<String, Value> {
         m.insert("first_run_generation".into(), json!(0));
         m.insert("first_run_completed_generation".into(), json!(0));
         m.insert("first_run_attempt".into(), json!(""));
-        // Remembered by engine_api when Focus turns "Narrate routine steps" off, so
-        // leaving Focus restores the user's choice.
+        // RETIRED 2026-10-14 (modes): read by nothing. Was: remembered by
+        // engine_api when Focus turns "Narrate routine steps" off, so leaving
+        // Focus restores the user's choice.
         m.insert("narrate_routine_before_focus".into(), json!(false));
         // Settings → Voice (cadence.py). `send_mode` is WHERE your words go ("" = derive from
         // the legacy `mode`); `narration_volume` is THE quantity dial (0..3); -1 = unset = the
         // legacy mode + knobs decide, no budget. `narration_register` is tone (0 casual, 1 neutral, 2 formal);
         // neutral = the persona's own voice, an identity transform. See volume.py, register.py.
+        // RETIRED 2026-10-14 (modes): `send_mode` and `narration_volume` are read by
+        // nothing; `narration_register` is live. Kept so old configs stay valid.
         m.insert("send_mode".into(), json!(""));
         m.insert("narration_volume".into(), json!(-1));
         m.insert("narration_register".into(), json!(1));
@@ -141,6 +165,7 @@ pub fn defaults() -> &'static Map<String, Value> {
         // tool call or reply), Heard voices ONE canned "still looking at this" line so
         // the away-from-keyboard listener knows it is still working. Companion only
         // (copilot/focus never fire it). Off disables it. (owner, 2026-09-15)
+        // RETIRED 2026-10-14 (modes): both keys are read by nothing.
         m.insert("companion_thinking_nudge".into(), json!(true));
         m.insert("companion_thinking_nudge_seconds".into(), json!(30));
         // The harness path: an optional LLM narrator (persona + agent state +
@@ -176,6 +201,8 @@ pub fn defaults() -> &'static Map<String, Value> {
         //                      "confirm" first).
         // A pending question/permission is answered the same way in every
         // mode (voice_answer runs before the loop).
+        // RETIRED 2026-10-14 (modes): read by nothing; Heard has one behaviour,
+        // the copilot one. Kept so old configs stay valid.
         m.insert("mode".into(), json!("copilot"));
         // Narration SKILL — the drop-in voice/constraint the server engine applies to
         // every turn (built-in: default | adhd | verbose | karpathy, or the basename of
@@ -186,6 +213,8 @@ pub fn defaults() -> &'static Map<String, Value> {
         // turns are voiced (finals + needs-you); the play-by-play tool/progress chatter is
         // dropped entirely (no floor, no LLM, no cost). On = full play-by-play. Independent
         // of listening mode; read fresh per event.
+        // RETIRED 2026-10-14 (modes): read by nothing; routine tool/progress
+        // narration is always off. Kept so old configs stay valid.
         m.insert("narrate_routine".into(), json!(false));
         // Think/speak streams — how the harness brain works by default. The
         // harness emits a two-stream output: a private `think` field (its

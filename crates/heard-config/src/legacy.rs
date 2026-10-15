@@ -16,10 +16,10 @@
 //! Not ported here, and named so nobody assumes they were:
 //!
 //! * `cadence.send_mode` / `cadence.volume_stop` / `cadence.preset`
-//!   (`engine/heard/cadence.py`) derive the new `send_mode` + `narration_volume`
-//!   dials from the legacy `mode` + `verbosity` + `narrate_routine` when the
-//!   new keys were never set. They reach into `heard/volume.py`, which is
-//!   narration, not config — they belong to `heard-narrate`.
+//!   (`engine/heard/cadence.py`) derived the `send_mode` + `narration_volume`
+//!   dials from the legacy `mode` + `verbosity` + `narrate_routine`. All of
+//!   those keys were retired with the modes (2026-10-14, see
+//!   [`crate::RETIRED_KEYS`]); nothing derives them any more.
 //! * feature-local key fallbacks and `settings_modules.py`'s retained
 //!   `frosty` id are feature-local compatibility, not config-file
 //!   compatibility.
@@ -54,6 +54,9 @@ pub fn normalize_verbosity(name: Option<&str>) -> String {
 /// An unknown or missing `mode` must never upgrade itself into a mode that
 /// changes where speech goes, so anything unrecognised reads as `copilot`.
 /// `custom` is the one non-preset value that is preserved.
+///
+/// `mode` is retired (2026-10-14) and nothing in the core reads it; this
+/// reader stays for a migration that wants to know what an old config chose.
 pub fn legacy_mode(cfg: &Map<String, Value>) -> String {
     let m = cfg
         .get("mode")

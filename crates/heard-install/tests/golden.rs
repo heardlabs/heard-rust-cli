@@ -445,12 +445,11 @@ fn a_path_with_spaces_is_quoted_and_still_recognised() {
 fn command_files_round_trip() {
     let h = Home::new("cmds");
     let r = install(&h.root, Target::ClaudeCode, &h.opts()).unwrap();
-    assert_eq!(r.commands_written.len(), 7);
+    assert_eq!(r.commands_written.len(), 6);
     let names: Vec<String> = COMMAND_FILES.iter().map(|c| c.file_name()).collect();
     assert_eq!(
         names,
         [
-            "heard-mode.md",
             "heard-voice.md",
             "heard-persona.md",
             "heard-speed.md",
@@ -459,17 +458,17 @@ fn command_files_round_trip() {
             "heard-status.md"
         ]
     );
-    let mode = h.read(&h.root.join(".claude/commands/heard-mode.md"));
+    let voice = h.read(&h.root.join(".claude/commands/heard-voice.md"));
     assert_eq!(
-        mode,
+        voice,
         "---\n\
-         description: Set Heard's narration mode (copilot, companion or focus)\n\
-         argument-hint: \"[copilot|companion|focus]\"\n\
+         description: Set Heard's voice\n\
+         argument-hint: \"[voice name]\"\n\
          allowed-tools: Bash(heard:*)\n\
          ---\n\
          <!-- heard-cli:managed: written by `heard install claude-code`, removed by `heard uninstall claude-code` -->\n\
          \n\
-         Run exactly one Bash command and nothing else: `heard mode --porcelain`, followed by each word of the arguments below wrapped in single quotes (write a single quote inside a word as '\\''). With no arguments, run `heard mode --porcelain` alone. Never run the arguments themselves. Then reply with only the one line it printed.\n\
+         Run exactly one Bash command and nothing else: `heard voice --porcelain`, followed by each word of the arguments below wrapped in single quotes (write a single quote inside a word as '\\''). With no arguments, run `heard voice --porcelain` alone. Never run the arguments themselves. Then reply with only the one line it printed.\n\
          \n\
          Arguments: $ARGUMENTS\n"
     );
@@ -496,12 +495,12 @@ fn command_files_round_trip() {
     h2.put(".claude/commands/heard-pause.md", "my own pause\n");
     h2.put(".claude/commands/deploy.md", "deploy\n");
     let r = install(&h2.root, Target::ClaudeCode, &h2.opts()).unwrap();
-    assert_eq!(r.commands_written.len(), 6);
+    assert_eq!(r.commands_written.len(), 5);
     assert!(r.warnings.iter().any(|w| w.contains("heard-pause.md")));
     let st = status(&h2.root, Target::ClaudeCode, Some(&h2.bin));
     assert!(!st.command_files_ok);
     let rm = uninstall(&h2.root, Target::ClaudeCode).unwrap();
-    assert_eq!(rm.commands_removed.len(), 6);
+    assert_eq!(rm.commands_removed.len(), 5);
     assert_eq!(
         h2.listing(".claude/commands"),
         ["deploy.md", "heard-pause.md"]
@@ -516,14 +515,46 @@ fn command_files_round_trip() {
 fn a_stale_command_file_of_ours_is_rewritten() {
     let h = Home::new("cmds-stale");
     h.put(
-        ".claude/commands/heard-mode.md",
+        ".claude/commands/heard-voice.md",
         &format!("old body\n{COMMAND_MARKER} -->\n"),
     );
     let r = install(&h.root, Target::ClaudeCode, &h.opts()).unwrap();
-    assert_eq!(r.commands_written.len(), 7);
+    assert_eq!(r.commands_written.len(), 6);
     assert!(h
-        .read(&h.root.join(".claude/commands/heard-mode.md"))
-        .contains("`heard mode --porcelain`"));
+        .read(&h.root.join(".claude/commands/heard-voice.md"))
+        .contains("`heard voice --porcelain`"));
+}
+
+#[test]
+fn the_retired_mode_command_file_is_removed_if_ours() {
+    // Modes retired 2026-10-14: an earlier install's `heard-mode.md` goes on
+    // reinstall (and on uninstall); a user's own file of that name stays.
+    let h = Home::new("cmds-retired");
+    h.put(
+        ".claude/commands/heard-mode.md",
+        &format!("old body\n{COMMAND_MARKER} -->\n"),
+    );
+    install(&h.root, Target::ClaudeCode, &h.opts()).unwrap();
+    assert!(!h.root.join(".claude/commands/heard-mode.md").exists());
+
+    let h2 = Home::new("cmds-retired-uninstall");
+    install(&h2.root, Target::ClaudeCode, &h2.opts()).unwrap();
+    h2.put(
+        ".claude/commands/heard-mode.md",
+        &format!("old body\n{COMMAND_MARKER} -->\n"),
+    );
+    let rm = uninstall(&h2.root, Target::ClaudeCode).unwrap();
+    assert_eq!(rm.commands_removed.len(), 7);
+    assert!(!h2.root.join(".claude/commands/heard-mode.md").exists());
+
+    let h3 = Home::new("cmds-retired-foreign");
+    h3.put(".claude/commands/heard-mode.md", "my own mode\n");
+    install(&h3.root, Target::ClaudeCode, &h3.opts()).unwrap();
+    uninstall(&h3.root, Target::ClaudeCode).unwrap();
+    assert_eq!(
+        h3.read(&h3.root.join(".claude/commands/heard-mode.md")),
+        "my own mode\n"
+    );
 }
 
 // ---------------------------------------------------------------------------

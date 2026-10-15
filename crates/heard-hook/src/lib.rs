@@ -200,9 +200,9 @@ pub const INTERCEPT_TIMEOUT: Duration = Duration::from_secs(2);
 
 /// The verbs the intercept answers. Anything else (`/heard-foo`, the user's
 /// own command that happens to share the prefix) goes to the model as usual.
+/// `mode` is not one since modes were retired (2026-10-14).
 pub const INTERCEPT_VERBS: &[&str] = &[
-    "mode", "voice", "persona", "speed", "alerts", "pause", "resume", "mute", "unmute", "status",
-    "say",
+    "voice", "persona", "speed", "alerts", "pause", "resume", "mute", "unmute", "status", "say",
 ];
 
 /// Run the hook with this process's argv, stdin and environment. Always
@@ -395,7 +395,8 @@ fn contains(hay: &[u8], needle: &[u8]) -> bool {
     hay.windows(needle.len()).any(|w| w == needle)
 }
 
-/// `/heard-mode focus` or `@heard mode focus` → `("mode", ["focus"])`.
+/// `/heard-voice bm_george` or `@heard voice bm_george` →
+/// `("voice", ["bm_george"])`.
 pub fn parse_prompt(prompt: &str) -> Option<(String, Vec<String>)> {
     let t = prompt.trim();
     let rest = if let Some(r) = t.strip_prefix("/heard-") {
@@ -558,8 +559,8 @@ mod tests {
     fn prompts_that_are_heard_commands() {
         let p = |s: &str| parse_prompt(s).map(|(v, a)| (v, a.join(" ")));
         assert_eq!(
-            p("/heard-mode focus"),
-            Some(("mode".into(), "focus".into()))
+            p("/heard-voice bm_george"),
+            Some(("voice".into(), "bm_george".into()))
         );
         assert_eq!(p("  /heard-pause \n"), Some(("pause".into(), "".into())));
         assert_eq!(p("@heard speed 1.2"), Some(("speed".into(), "1.2".into())));
@@ -572,13 +573,14 @@ mod tests {
             Some(("say".into(), "hello there".into()))
         );
         for no in [
-            "please /heard-mode focus",
+            "please /heard-voice bm_george",
+            "/heard-mode focus",
             "/heard-",
             "/heard-unknown x",
-            "@heardmode focus",
+            "@heardvoice bm_george",
             "@heard",
             "/heardmode",
-            "/mode focus",
+            "/voice bm_george",
             "",
         ] {
             assert_eq!(parse_prompt(no), None, "{no:?}");

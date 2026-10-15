@@ -4,12 +4,12 @@
 //! # What counts as needs-you
 //!
 //! Derived from what the core daemon actually emits (heard-narrate's
-//! templates, `policy::is_critical_template_event` and the Focus alert):
+//! templates and `policy::is_critical_template_event`):
 //!
 //! | spoken line | [`NeedsYou`] |
 //! |---|---|
 //! | tag `tool_post_needs_you` (a tool result that says it is blocked on you: approval, sign-in, a permission) | `Permission` |
-//! | tag `tool_question` (AskUserQuestion), or a Focus alert (`via = focus_alert`), whose text asks for permission (`allow`, `approve`, `approval`, `access`, `permission`) | `Permission` |
+//! | tag `tool_question` (AskUserQuestion) whose text asks for permission (`allow`, `approve`, `approval`, `access`, `permission`) | `Permission` |
 //! | the same without a permission word | `Question` |
 //! | a tag containing `failure` or `failed` (`tool_post_failure`, `tool_post_command_failed`) | `Failure` |
 //! | kind `final` whose text ends the turn on a decision question for you (`policy::focus_prompt_text` non-empty: "Should I…?", "Want me to…?"; routine sign-offs like "Anything else?" do not count) | `Waiting` |
@@ -106,7 +106,7 @@ pub fn classify(line: &SpokenLine<'_>) -> Option<NeedsYou> {
     if tag.contains("failure") || tag.contains("failed") {
         return Some(NeedsYou::Failure);
     }
-    if tag == "tool_question" || line.via == "focus_alert" {
+    if tag == "tool_question" {
         let low = line.text.to_lowercase();
         return Some(if PERMISSION_WORDS.iter().any(|w| low.contains(w)) {
             NeedsYou::Permission
@@ -703,15 +703,6 @@ mod tests {
                 "May I have access to the repo?"
             ),
             Some(NeedsYou::Permission)
-        );
-        assert_eq!(
-            c(
-                "final",
-                "final_short",
-                "focus_alert",
-                "Sir, I need your call: ship it?"
-            ),
-            Some(NeedsYou::Question)
         );
         assert_eq!(
             c(

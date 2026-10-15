@@ -1,4 +1,4 @@
-//! `heard setup`: model → voice (+ preview) → mode → hooks.
+//! `heard setup`: model → voice (+ preview) → hooks.
 //! Without a terminal it prints the equivalent commands instead of prompting.
 
 use crate::commands::{daemon, install};
@@ -35,7 +35,6 @@ pub fn plan_text(ctx: &Ctx) -> String {
         s.push_str("  heard models download        # the Kokoro voice, about 354 MB\n");
     }
     s.push_str("  heard voice bm_george        # or `heard voice --list`\n");
-    s.push_str("  heard mode copilot           # or companion, focus\n");
     let agents = detected_agents();
     if agents.is_empty() {
         s.push_str("  heard install all            # after installing claude or codex\n");
@@ -61,11 +60,11 @@ pub fn run(ctx: &Ctx) -> CliResult<()> {
     println!("{}", ui::bold("Heard setup"));
     println!(
         "{}\n",
-        ui::dim("Four steps: voice model, voice, mode, agent hooks. Esc skips a step.")
+        ui::dim("Three steps: voice model, voice, agent hooks. Esc skips a step.")
     );
 
     // 1. Model.
-    println!("{} Voice model", ui::cyan("1/4"));
+    println!("{} Voice model", ui::cyan("1/3"));
     let src = models::Source::from_env()?;
     if models::installed(&ctx.paths.models_dir, &src.files) {
         println!(
@@ -80,7 +79,7 @@ pub fn run(ctx: &Ctx) -> CliResult<()> {
     }
 
     // 2. Voice.
-    println!("\n{} Voice", ui::cyan("2/4"));
+    println!("\n{} Voice", ui::cyan("2/3"));
     let cfg = ctx.load()?;
     if let Some(v) = pick::voice(&settings::effective_voice(&ctx.paths, &cfg))? {
         println!("    {}", settings::set_voice(ctx, &v)?);
@@ -95,14 +94,8 @@ pub fn run(ctx: &Ctx) -> CliResult<()> {
         }
     }
 
-    // 3. Mode.
-    println!("\n{} Mode", ui::cyan("3/4"));
-    if let Some(m) = pick::mode(&settings::current_mode(&cfg))? {
-        println!("    {}", settings::set_mode(ctx, m)?);
-    }
-
-    // 4. Hooks.
-    println!("\n{} Agent hooks", ui::cyan("4/4"));
+    // 3. Hooks.
+    println!("\n{} Agent hooks", ui::cyan("3/3"));
     let agents = detected_agents();
     if agents.is_empty() {
         println!("    no `claude` or `codex` on PATH — run `heard install` after installing one");

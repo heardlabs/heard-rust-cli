@@ -179,7 +179,7 @@ pub enum Hold {
 /// coexists with what is queued, carries no history meta, and does not end
 /// the turn's silence. See [`crate::Daemon::tick`].
 pub const VIA_FILLER: &str = "filler";
-/// A timer-driven notice (the Focus hung-tool line): coexists, no history
+/// A timer-driven notice (the resume catch-up): coexists, no history
 /// meta.
 pub const VIA_NOTICE: &str = "notice";
 

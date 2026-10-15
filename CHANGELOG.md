@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.2.6 — 2026-10-15
+
+- **Modes retired.** Heard has one behaviour: what the old defaults did
+  (Co-pilot, `narration_volume` unset, `narrate_routine` off, `verbosity`
+  normal). Questions, approvals, failures and turn results are spoken; tool
+  progress (`routine_narration_off`) and the agent's prose between tools
+  (`copilot_prose_off`) are not. A default config narrates exactly as before;
+  a config that still sets a mode now gets the one behaviour.
+- **heard-config:** `mode`, `send_mode`, `narration_volume`,
+  `narrate_routine`, `verbosity`, `narrate_routine_before_focus`,
+  `companion_thinking_nudge` and `companion_thinking_nudge_seconds` stay in
+  the defaults with their old values, so existing config files stay valid,
+  but nothing reads them. New `RETIRED_KEYS` lists them.
+- **heard-daemon:** the policy no longer reads any of them. Gone:
+  `policy::{volume_stop, volume_stop_of, narration_mode, legacy_mode,
+  stop_for_legacy, budget_wpm, Budget, NEEDS_ME, LOW, NORMAL, HIGH,
+  focus_prompt_speech, is_focus_attention_event, crc32}`,
+  `PolicyOutcome::{SpeakFocusAlert, Digest}`, the `mode`, `narrate_routine`,
+  `focus_*`, `verbosity_*` and `budget_exhausted` fields of `Features` /
+  `Thunks`, `FeatureState::persona_name`, `DaemonBuilder::picker`, and
+  Focus's hung-tool line and Companion's fillers (`filler::{HUNG_TOOL_S,
+  PROMPT_FILLER_LINES, THINKING_NUDGE_LINES, should_prompt_filler,
+  should_thinking_nudge, thinking_nudge_after_s, pick_varied,
+  hung_tool_line}`). `is_focus_template_event` is private. Rules removed
+  from `RULES`: `volume_budget`, `focus_attention_drop`, `focus_alert`,
+  `focus_no_prompt`, `focus_fastpath_drop`, `copilot_tool_tier_suppressed`,
+  `fastpath_verbosity_drop`, `fastpath_verbosity_digest`; the floor's
+  `focus_harness_punt` drop is gone. Every other rule name is unchanged.
+- **heard-narrate:** the solo verbosity gates always use the normal profile
+  (`swarm_verbosity` is unchanged).
+- **heard-cli:** `heard mode`, `/mode`, the setup step and the status `mode`
+  field are gone; `heard config set` refuses the retired keys.
+  `/heard-mode` is no longer intercepted, and install / uninstall remove the
+  `heard-mode.md` command file an earlier install wrote.
+
 ## 0.2.4 — 2026-10-02
 
 - **heard-daemon: a Claude Code Stop speaks the message it carries.** Claude

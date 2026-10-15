@@ -39,12 +39,12 @@ Run `./install.sh --help` for options.
 Type `heard` to open the console. Type `/` to see the commands.
 
 ```
- heard · co-pilot · jarvis (bm_george) · 1.0× · alerts: both
+ heard · jarvis (bm_george) · 1.0× · alerts: both
  ─────────────────────────────────────────────────────────
  14:02:11  claude-code  Tests pass. Pushing the branch.
  14:02:40  codex        Needs approval to run rm -rf build.
  ─────────────────────────────────────────────────────────
- > /mode focus
+ > /voice af_heart
 ```
 
 Any text you type without a `/` is spoken aloud.
@@ -52,7 +52,6 @@ Any text you type without a `/` is spoken aloud.
 Every console command is also a regular command you can script:
 
 ```sh
-heard mode focus          # co-pilot · companion · focus
 heard voice               # arrow-key picker; --preview to hear one
 heard persona friday      # jarvis · aria · friday · atlas, or your own .md
 heard speed 1.2
@@ -63,13 +62,12 @@ heard status
 heard doctor              # finds problems and tells you the fix
 ```
 
-### Modes
+### What you hear
 
-| Mode | What you hear |
-|---|---|
-| **Co-pilot** (default) | Short updates while you're at the screen. Decisions and results get more detail. |
-| **Companion** | Fuller briefings for when you're away from the screen, driving or cooking. |
-| **Focus** | Only what needs you: approvals, blockers, failures and questions. |
+Heard speaks what needs you and what finished: questions, approvals,
+failures and each turn's result. It does not read out every tool call or
+the agent's thinking in between. (Earlier releases had Co-pilot,
+Companion and Focus modes; since 0.2.6 there is just this one.)
 
 ### From inside Claude Code
 
@@ -77,13 +75,12 @@ After `heard install claude-code`, you can change Heard without leaving your
 session:
 
 ```
-/heard-mode focus
 /heard-voice af_heart
 /heard-pause
 ```
 
 These commands are handled by Heard's own hook, so they don't reach the
-model. Claude Code's `! heard mode focus` also works.
+model. Claude Code's `! heard voice af_heart` also works.
 
 ## Uninstall
 

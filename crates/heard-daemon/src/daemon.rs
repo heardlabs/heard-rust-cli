@@ -36,7 +36,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
 use heard_config::{Config, Paths};
-use heard_narrate::verbosity::{self, Cfg};
 use heard_state::clock::{Clock, SystemClock};
 use heard_state::multi_agent::{MultiAgentRouter, ProjectSummarizer};
 use heard_state::{AgentEvent, AgentStateRegistry, SessionStore, SpokenStore};
@@ -47,18 +46,13 @@ use crate::capture::{Capture, NoCapture};
 use crate::dedup::Dedup;
 use crate::events::{EventBus, EventLine};
 use crate::extension::{Extension, SpokenLine};
-use crate::filler::{self, FillerPolicy};
 use crate::floor;
 use crate::policy::{self, EventView, FeatureState, Features, PolicyOutcome, Thunks};
 use crate::shape;
-use crate::speech::{Hold, NullSpeech, Speech, Utterance, VIA_FILLER, VIA_NOTICE};
+use crate::speech::{Hold, NullSpeech, Speech, Utterance, VIA_NOTICE};
 
-/// `(_hung_track, _hung_alerted)`: session → (armed at, tool label), and the
-/// sessions already nudged.
-type HungWatch = (HashMap<String, (f64, String)>, HashSet<String>);
-
-/// The persona fields routing reads: `persona.name` (the Focus alert seed)
-/// and `persona.address` (the floor's form of address, "Sir").
+/// The persona fields routing reads: `persona.name` and `persona.address`
+/// (the floor's form of address, "Sir").
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct PersonaInfo {
     /// `persona.name`.
@@ -156,7 +150,9 @@ impl NarrationEvent {
 pub enum Outcome {
     /// Nothing was said, for this reason (the Python's `_log` reason string).
     Dropped(&'static str),
-    /// Accumulated into the router's project digest.
+    /// Accumulated into the router's project digest. Not produced by
+    /// [`Daemon::handle_event`] since modes were retired (2026-10-14): the
+    /// burst digest only ever caught tool events, which no longer speak.
     Digested,
     /// Handed to the [`Speech`] sink, via this lane.
     Spoke(&'static str),
@@ -195,16 +191,8 @@ pub struct Daemon {
     extensions: Vec<Arc<dyn Extension>>,
     /// Live `subscribe` clients: every [`Daemon::emit_event`] goes to each.
     events: EventBus,
-    /// The monotonic clock the timers read (hung tool, nudges, resume).
+    /// The monotonic clock the timers read (the resume panel's timeout).
     clock: Arc<dyn Clock>,
-    /// Index picker for the canned filler lines (`random.choice`).
-    picker: Mutex<Box<dyn FnMut(usize) -> usize + Send>>,
-    /// `_hung_track` / `_hung_alerted` — Focus mode's hung-tool watch.
-    hung: Mutex<HungWatch>,
-    /// `_turn_open` / `_turn_nudged` — the companion "still thinking" nudge.
-    turns: Mutex<(HashMap<String, f64>, HashSet<String>)>,
-    /// `_fillers` — the one dead-air budget, and the two `_last_*` caches.
-    fillers: Mutex<(FillerPolicy, Option<usize>, Option<usize>)>,
     /// `_awaiting_resume_intent` + its safety timer's deadline (monotonic).
     awaiting_resume: Mutex<Option<f64>>,
     /// Every extension's [`Extension::verbatim_kinds`], lowercased.
@@ -222,14 +210,12 @@ pub struct Daemon {
     /// `_recent_edit_paths` — the last few edited files narrated on the fast
     /// path; a repeat edit routes to the brain instead.
     recent_edit_paths: Mutex<VecDeque<String>>,
-    /// `_volume_budget` — routine words spoken in the last minute.
-    volume_budget: Mutex<policy::Budget>,
     /// `_prompt_watch_announced` — session → when the voice prompt-watcher
     /// announced its spooled question. Nothing in the Rust daemon announces
     /// one yet, so this only ever holds what [`Daemon::note_prompt_announced`]
     /// records.
     prompt_watch_announced: Mutex<HashMap<String, std::time::Instant>>,
-    /// `persona.load`, for the floor's address and the Focus alert seed.
+    /// `persona.load`, for the floor's address.
     pub personas: Arc<dyn PersonaSource>,
     /// Whether `stop` also ends the accept loop (see [`Daemon::stop`]).
     stop_shuts_down: bool,
@@ -272,7 +258,6 @@ pub struct DaemonBuilder {
     personas: Arc<dyn PersonaSource>,
     events: EventBus,
     clock: Option<Arc<dyn Clock>>,
-    picker: Option<Box<dyn FnMut(usize) -> usize + Send>>,
     history_policy: Option<heard_state::HistoryPolicySource>,
 }
 
@@ -294,7 +279,6 @@ impl DaemonBuilder {
             personas: Arc::new(BundledPersonas),
             events: EventBus::new(),
             clock: None,
-            picker: None,
             history_policy: None,
         }
     }
@@ -319,13 +303,6 @@ impl DaemonBuilder {
     /// The monotonic clock for the daemon's timers (default: the system's).
     pub fn clock(mut self, clock: Arc<dyn Clock>) -> Self {
         self.clock = Some(clock);
-        self
-    }
-
-    /// The index picker for the canned filler lines: `pick(n)` → `0..n`
-    /// (default: a time-seeded xorshift). Tests script it.
-    pub fn picker(mut self, pick: impl FnMut(usize) -> usize + Send + 'static) -> Self {
-        self.picker = Some(Box::new(pick));
         self
     }
 
@@ -454,10 +431,6 @@ impl DaemonBuilder {
             extensions: self.extensions,
             events: self.events,
             clock: self.clock.unwrap_or_else(|| Arc::new(SystemClock::new())),
-            picker: Mutex::new(self.picker.unwrap_or_else(|| Box::new(xorshift_picker()))),
-            hung: Mutex::new((HashMap::new(), HashSet::new())),
-            turns: Mutex::new((HashMap::new(), HashSet::new())),
-            fillers: Mutex::new((FillerPolicy::default(), None, None)),
             awaiting_resume: Mutex::new(None),
             verbatim_kinds,
             backend_name: self.backend_name,
@@ -468,7 +441,6 @@ impl DaemonBuilder {
             last_prompt: Mutex::new(HashMap::new()),
             skills_announced: Mutex::new(HashSet::new()),
             recent_edit_paths: Mutex::new(VecDeque::new()),
-            volume_budget: Mutex::new(policy::Budget::default()),
             prompt_watch_announced: Mutex::new(HashMap::new()),
             personas: self.personas,
             stopping: Arc::new(AtomicBool::new(false)),
@@ -771,13 +743,14 @@ impl Daemon {
     /// 6. `needs_you` record / clear;
     /// 7. the policy table; `speakup_off` returns before the session is
     ///    touched, every other outcome touches it and notes the router;
-    /// 8. drop / retire the prompt / digest / Focus alert / template / model.
-    ///    The model lane is the [`Brain`]; its punt takes the [`floor`], with
-    ///    the persona's form of address.
+    /// 8. drop / retire the prompt / template / model. The model lane is the
+    ///    [`Brain`]; its punt takes the [`floor`], with the persona's form of
+    ///    address.
     ///
-    /// Not ported (no Rust owner yet): the Focus hung-tool timer, the
-    /// companion "still thinking" nudge and submit filler, the brain lane's
-    /// anti-repeat / per-project cooldown for intermediates.
+    /// One behaviour since modes were retired (2026-10-14): no Focus alert
+    /// or hung-tool line, no Companion filler or "still thinking" nudge.
+    /// Not ported (no Rust owner yet): the brain lane's anti-repeat /
+    /// per-project cooldown for intermediates.
     pub fn handle_event(&self, event: &NarrationEvent) -> Outcome {
         // D0.1d: the raw agent-event stream, UNCONDITIONALLY, before any
         // drop/dedup/pause gate — the ledger is ground truth for what the
@@ -826,27 +799,6 @@ impl Daemon {
         if self.cfg_bool("paused", false) {
             crate::dlog!("event_drop", kind = kind, tag = tag, reason = "paused");
             return Outcome::Dropped("paused");
-        }
-
-        // Focus-mode hung-tool watch (`HUNG_TOOL_S`): a `tool_pre` arms the
-        // timer; ANY later event from the session means it is progressing.
-        // Tracked in every mode (cheap), only VOICED in focus (see
-        // [`Daemon::tick`]); before the narration gates so a focus-dropped
-        // `tool_pre` is still watched.
-        {
-            let mut hung = self.hung.lock().unwrap_or_else(|e| e.into_inner());
-            if kind == "tool_pre" {
-                let label = if neutral.is_empty() {
-                    "a tool"
-                } else {
-                    neutral
-                };
-                hung.0
-                    .insert(session_id.to_owned(), (self.now(), label.trim().to_owned()));
-            } else {
-                hung.0.remove(session_id);
-                hung.1.remove(session_id);
-            }
         }
 
         // Layer 2 — always-on, deterministic, never an LLM. Before every
@@ -914,10 +866,7 @@ impl Daemon {
         }
 
         // ---- the narration policy (heard.narration_policy) ------------------
-        let cfg = Cfg(&cfg_value);
         let persona = self.persona_for(cfg_map);
-        let mode = policy::narration_mode(cfg_map);
-        let focus_mode = mode == "focus";
         let abs_path = event
             .ctx
             .get("abs_path")
@@ -937,8 +886,6 @@ impl Daemon {
                 _ => String::new(),
             },
         );
-        let narrate_routine = policy::cfg_truthy(cfg_map, "narrate_routine", false);
-        let critical = policy::is_critical_template_event(&view);
         let recent_edits: Vec<String> = self
             .recent_edit_paths
             .lock()
@@ -956,7 +903,6 @@ impl Daemon {
             &view,
             cfg_map,
             FeatureState {
-                persona_name: &persona.name,
                 first_skill,
                 multi_agent_active: self.router.list_active().len() > 1,
                 recent_edit_paths: &recent_edits,
@@ -964,24 +910,8 @@ impl Daemon {
             },
             Thunks {
                 prompt_watch_owns: Box::new(|| self.prompt_watch_owns(cfg_map, session_id)),
-                verbosity_pre: Box::new(|| {
-                    let density = self.sessions.tool_density(session_id) as i64;
-                    self.sessions.record_tool_event(session_id);
-                    verbosity::classify_pre(&cfg, tag, density)
-                }),
-                verbosity_post: Box::new(|| verbosity::classify_post(&cfg, tag)),
-                verbosity_prose: Box::new(|| verbosity::classify_prose(&cfg)),
                 duplicate_tool_line: Box::new(|| {
                     self.dedup.is_duplicate_tool_line(session_id, neutral)
-                }),
-                budget_exhausted: Box::new(|| {
-                    let limit = policy::budget_wpm(
-                        cfg_map.get("narration_volume").unwrap_or(&Value::from(-1)),
-                    );
-                    self.volume_budget
-                        .lock()
-                        .unwrap_or_else(|e| e.into_inner())
-                        .exhausted(limit, std::time::Instant::now())
                 }),
             },
         );
@@ -1022,18 +952,6 @@ impl Daemon {
                         .lock()
                         .unwrap_or_else(|e| e.into_inner())
                         .insert(session_id.to_owned());
-                    // Arm the companion "still thinking" nudge for this turn,
-                    // and open a fresh (single) filler budget.
-                    {
-                        let mut turns = self.turns.lock().unwrap_or_else(|e| e.into_inner());
-                        turns.0.insert(session_id.to_owned(), self.now());
-                        turns.1.remove(session_id);
-                    }
-                    self.fillers
-                        .lock()
-                        .unwrap_or_else(|e| e.into_inner())
-                        .0
-                        .open_turn(session_id);
                     if !neutral.is_empty() {
                         self.last_prompt
                             .lock()
@@ -1042,56 +960,11 @@ impl Daemon {
                         self.note_user_engaged();
                     }
                 }
-                // The instant canned filler ("On it."): companion only, and
-                // only into real silence (the shared dead-air budget).
-                if !session_id.is_empty() && filler::should_prompt_filler(cfg_map) {
-                    let (ok, why) = self
-                        .fillers
-                        .lock()
-                        .unwrap_or_else(|e| e.into_inner())
-                        .0
-                        .allow(session_id, self.now());
-                    if ok {
-                        let line = self.pick_filler(false);
-                        self.say_filler(line, session_id);
-                    } else {
-                        crate::dlog!(
-                            "filler_suppressed",
-                            session = session_id,
-                            reason = why,
-                            at = "prompt_submit"
-                        );
-                    }
-                }
                 crate::dlog!("event_drop", kind = kind, reason = "prompt_intent_retired");
                 return Outcome::Dropped("prompt_intent_retired");
             }
-            PolicyOutcome::Digest => {
-                self.router.add_to_digest(
-                    session_id,
-                    kind,
-                    tag,
-                    neutral,
-                    Some(Value::Object(event.ctx.clone())),
-                );
-                crate::dlog!(
-                    "event_deferred",
-                    kind = kind,
-                    tag = tag,
-                    reason = decision.rule
-                );
-                return Outcome::Digested;
-            }
-            PolicyOutcome::SpeakFocusAlert => {
-                let alert = policy::focus_prompt_speech(&view, &persona.name);
-                return self.emit(event, &alert, &project(), "focus_alert");
-            }
             PolicyOutcome::SpeakTemplate => {
-                let spoken = if focus_mode && policy::is_focus_template_event(&view) {
-                    policy::focus_prompt_speech(&view, &persona.name)
-                } else {
-                    neutral.to_owned()
-                };
+                let spoken = neutral.to_owned();
                 if decision.rule == "first_skill_use_speaks" {
                     self.skills_announced
                         .lock()
@@ -1158,23 +1031,13 @@ impl Daemon {
                         );
                     }
                     if decision.speak {
-                        let text = if focus_mode {
-                            let lead = floor::final_lead(&decision.text, 140);
-                            if lead.is_empty() {
-                                decision.text.clone()
-                            } else {
-                                lead
-                            }
-                        } else {
-                            decision.text.clone()
-                        };
-                        return self.emit(event, &text, &project, "brain");
+                        return self.emit(event, &decision.text, &project, "brain");
                     }
                     // Legacy brains do not own human attention, so preserve
                     // the original final/opener floor. A bounded attention
                     // brain can explicitly make deliberate silence final.
                     let authoritative_silence = self.brain.silence_is_authoritative(&request);
-                    if kind == "final" && !focus_mode && !authoritative_silence {
+                    if kind == "final" && !authoritative_silence {
                         crate::dlog!(
                             "harness_skip_override",
                             kind = kind,
@@ -1186,7 +1049,7 @@ impl Daemon {
                             return self.emit(event, &text, &project, "floor");
                         }
                     }
-                    if is_opener && !focus_mode && !authoritative_silence {
+                    if is_opener && !authoritative_silence {
                         let lead = floor::final_lead(neutral, 160);
                         if !lead.is_empty() {
                             crate::dlog!(
@@ -1219,31 +1082,6 @@ impl Daemon {
         }
 
         // ---- the no-LLM floor -------------------------------------------------
-        if focus_mode {
-            crate::dlog!(
-                "event_drop",
-                kind = kind,
-                tag = tag,
-                reason = "focus_harness_punt"
-            );
-            return Outcome::Dropped("focus_harness_punt");
-        }
-        // Co-pilot suppresses the low-signal tool tier here too: with 2+
-        // agents a tool event skips the fast path and lands here, and the
-        // floor would otherwise read its raw template.
-        if mode == "copilot"
-            && !narrate_routine
-            && (kind == "tool_pre" || kind == "tool_post")
-            && !critical
-        {
-            crate::dlog!(
-                "event_drop",
-                kind = kind,
-                tag = tag,
-                reason = "copilot_tool_tier_suppressed"
-            );
-            return Outcome::Dropped("copilot_tool_tier_suppressed");
-        }
         let text = floor::floor_text(kind, neutral, &persona.address, &project);
         if text.is_empty() {
             crate::dlog!("event_drop", kind = kind, tag = tag, reason = "floor_drop");
@@ -1397,7 +1235,7 @@ impl Daemon {
 
     /// `_start_speech`'s shaping, ONCE, for every spoken line, in the
     /// Python's order: register (tone) → the style's length cap (template
-    /// lines only) → the routine-word budget note → the first-run hold →
+    /// lines only) → the first-run hold →
     /// `_sanitize_spoken` (never read a file path verbatim). `None` when the
     /// first-run hold swallows the line.
     fn shape_for_speech(&self, text: &str, kind: &str, tag: &str, via: &str) -> Option<String> {
@@ -1424,12 +1262,6 @@ impl Daemon {
         );
         if via == "fastpath" {
             text = shape::style_line(&text, cfg.get("narration_skill"), tag);
-        }
-        if matches!(kind, "tool_pre" | "tool_post" | "intermediate") {
-            self.volume_budget
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .note(text.split_whitespace().count(), std::time::Instant::now());
         }
         if !first_run_ok && policy::first_run_held(cfg) {
             crate::dlog!("speech_skipped", reason = "first_run_hold");
@@ -1566,23 +1398,6 @@ impl Daemon {
     }
 
     fn hand_to_speech_with(&self, line: &SpokenLine<'_>, opts: Option<crate::speech::LineOptions>) {
-        // `_enqueue_speech`'s bookkeeping, for a line that will reach the
-        // queue now (not one the sink holds for replay, not a speaker-off
-        // line): it spends the dead-air budget, and a REAL line ends the
-        // turn's silence (disarms the "still thinking" nudge).
-        let is_filler = line.via == VIA_FILLER;
-        if !self.speech.is_holding() && !self.cfg_bool("audio_off", false) {
-            self.fillers
-                .lock()
-                .unwrap_or_else(|e| e.into_inner())
-                .0
-                .note_line(line.session_id, self.now(), is_filler);
-            if !line.session_id.is_empty() && !is_filler {
-                let mut turns = self.turns.lock().unwrap_or_else(|e| e.into_inner());
-                turns.0.remove(line.session_id);
-                turns.1.remove(line.session_id);
-            }
-        }
         match opts {
             Some(o) => self.speech.speak_with(line, o),
             None => self.speech.speak(line),
@@ -1786,25 +1601,6 @@ impl<'a> Line<'a> {
     }
 }
 
-/// A time-seeded xorshift for `random.choice` over the filler pools.
-fn xorshift_picker() -> impl FnMut(usize) -> usize + Send {
-    let mut state = std::time::SystemTime::now()
-        .duration_since(std::time::UNIX_EPOCH)
-        .map(|d| d.as_nanos() as u64)
-        .unwrap_or(0x9E37_79B9_7F4A_7C15)
-        | 1;
-    move |n: usize| {
-        state ^= state << 13;
-        state ^= state >> 7;
-        state ^= state << 17;
-        if n == 0 {
-            0
-        } else {
-            (state % n as u64) as usize
-        }
-    }
-}
-
 impl Daemon {
     /// The daemon's monotonic clock.
     pub fn now(&self) -> f64 {
@@ -1844,17 +1640,12 @@ impl Daemon {
 
     /// `cmd == "first_run_hold"`'s effects once its generation checked out:
     /// stop current output, discard the held backlog and the digest, forget
-    /// the hung-tool watch and the resume panel. Nothing suppressed during
+    /// the resume panel. Nothing suppressed during
     /// setup is replayed after Finish.
     pub fn first_run_reset(&self) {
         self.speech.cancel();
         self.speech.discard_held();
         let _ = self.router.collect_project_flushes(false, None);
-        {
-            let mut hung = self.hung.lock().unwrap_or_else(|e| e.into_inner());
-            hung.0.clear();
-            hung.1.clear();
-        }
         self.clear_awaiting_resume();
     }
 
@@ -2023,13 +1814,8 @@ impl Daemon {
     /// The Python's one-second `_tick`, in its order:
     ///
     /// 1. first-run hold: collect (and discard) the digest, nothing else;
-    /// 2. Focus mode's hung-tool line — once per hang, after
-    ///    [`filler::HUNG_TOOL_S`] with no follow-up event;
-    /// 3. companion's "still thinking" nudge — once per turn, after
-    ///    `companion_thinking_nudge_seconds` with nothing spoken, under the
-    ///    shared dead-air budget;
-    /// 4. the resume panel's safety timeout ("fresh");
-    /// 5. the project-digest drain ([`Daemon::drain_project_digests`]),
+    /// 2. the resume panel's safety timeout ("fresh");
+    /// 3. the project-digest drain ([`Daemon::drain_project_digests`]),
     ///    skipped entirely while muted or waiting on the resume panel (the
     ///    buffer is what the panel offers), collected silently when
     ///    `multi_agent_digest_enabled` is off.
@@ -2043,83 +1829,7 @@ impl Daemon {
             let _ = self.router.collect_project_flushes(false, None);
             return 0;
         }
-        let quiet =
-            policy::cfg_truthy(cfg, "muted", false) || policy::cfg_truthy(cfg, "paused", false);
         let now = self.now();
-
-        if policy::narration_mode(cfg) == "focus" && !quiet {
-            let due: Vec<(String, String, f64)> = {
-                let mut hung = self.hung.lock().unwrap_or_else(|e| e.into_inner());
-                let (track, alerted) = &mut *hung;
-                let mut due = Vec::new();
-                for (sid, (started, label)) in track.iter() {
-                    if alerted.contains(sid) || now - started < filler::HUNG_TOOL_S {
-                        continue;
-                    }
-                    due.push((sid.clone(), label.clone(), now - started));
-                }
-                for (sid, _, _) in &due {
-                    alerted.insert(sid.clone());
-                }
-                due
-            };
-            for (sid, label, elapsed) in due {
-                let text = filler::hung_tool_line(&label);
-                crate::dlog!(
-                    "hung_tool_alert",
-                    session = sid.as_str(),
-                    label = label.trim_end_matches('.'),
-                    elapsed = elapsed.round() as i64
-                );
-                self.say_line(&Line {
-                    coexists: true,
-                    history: false,
-                    ..Line::new(&text, "", "", &sid, VIA_NOTICE)
-                });
-            }
-        }
-
-        if filler::should_thinking_nudge(cfg) {
-            let thr = filler::thinking_nudge_after_s(cfg);
-            let open: Vec<(String, f64)> = {
-                let turns = self.turns.lock().unwrap_or_else(|e| e.into_inner());
-                turns
-                    .0
-                    .iter()
-                    .filter(|(sid, opened)| !turns.1.contains(*sid) && now - **opened >= thr)
-                    .map(|(sid, opened)| (sid.clone(), *opened))
-                    .collect()
-            };
-            for (sid, opened) in open {
-                let (ok, why) = self
-                    .fillers
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner())
-                    .0
-                    .allow(&sid, now);
-                if !ok {
-                    crate::dlog!(
-                        "filler_suppressed",
-                        session = sid.as_str(),
-                        reason = why,
-                        at = "thinking_nudge"
-                    );
-                    continue;
-                }
-                self.turns
-                    .lock()
-                    .unwrap_or_else(|e| e.into_inner())
-                    .1
-                    .insert(sid.clone());
-                crate::dlog!(
-                    "companion_thinking_nudge",
-                    session = sid.as_str(),
-                    elapsed = (now - opened).round() as i64
-                );
-                let line = self.pick_filler(true);
-                self.say_filler(line, &sid);
-            }
-        }
 
         let timed_out = self
             .awaiting_resume
@@ -2138,25 +1848,6 @@ impl Daemon {
             return 0;
         }
         self.drain_project_digests(auto_voices)
-    }
-
-    fn pick_filler(&self, nudge: bool) -> &'static str {
-        let mut picker = self.picker.lock().unwrap_or_else(|e| e.into_inner());
-        let mut fillers = self.fillers.lock().unwrap_or_else(|e| e.into_inner());
-        let (pool, last) = if nudge {
-            (filler::THINKING_NUDGE_LINES, &mut fillers.2)
-        } else {
-            (filler::PROMPT_FILLER_LINES, &mut fillers.1)
-        };
-        filler::pick_varied(pool, last, &mut **picker)
-    }
-
-    fn say_filler(&self, text: &str, session_id: &str) {
-        self.say_line(&Line {
-            coexists: true,
-            history: false,
-            ..Line::new(text, "", "", session_id, VIA_FILLER)
-        });
     }
 
     /// Speak one line through the shaping, the first-run hold, the mute gate
@@ -2268,17 +1959,40 @@ mod tests {
     }
 
     #[test]
-    fn a_tool_event_takes_the_fast_path() {
-        let (daemon, sink) =
-            daemon_with("fastpath", "onboarded: true\nnarrate_routine: true\n", None);
+    fn a_needs_you_tool_event_takes_the_fast_path() {
+        let (daemon, sink) = daemon("fastpath");
         assert_eq!(
-            daemon.handle_event(&event("tool_pre", "tool_bash", "Running a shell command")),
+            daemon.handle_event(&event(
+                "tool_post",
+                "tool_post_needs_you",
+                "Install the browser extension"
+            )),
             Outcome::Spoke("fastpath")
         );
         let lines = lines(&sink);
         assert_eq!(lines.len(), 1);
         assert_eq!(lines[0]["via"], "fastpath");
-        assert_eq!(lines[0]["kind"], "tool_pre");
+        assert_eq!(lines[0]["kind"], "tool_post");
+    }
+
+    #[test]
+    fn retired_mode_knobs_do_not_bring_back_routine_narration() {
+        // Modes retired 2026-10-14: `narrate_routine: true` (and Companion)
+        // used to voice every tool and the prose between them.
+        let (daemon, sink) = daemon_with(
+            "retired-knobs",
+            "onboarded: true\nmode: companion\nnarration_volume: 3\nnarrate_routine: true\nverbosity: verbose\n",
+            None,
+        );
+        assert_eq!(
+            daemon.handle_event(&event("tool_pre", "tool_bash", "Running a shell command")),
+            Outcome::Dropped("routine_narration_off")
+        );
+        assert_eq!(
+            daemon.handle_event(&event("intermediate", "intermediate_short", "thinking")),
+            Outcome::Dropped("copilot_prose_off")
+        );
+        assert!(lines(&sink).is_empty());
     }
 
     #[test]
@@ -2344,22 +2058,6 @@ mod tests {
             lines(&sink)[0]["text"],
             "Wrote it in release-checklist, Sir."
         );
-    }
-
-    #[test]
-    fn a_punted_intermediate_is_dropped_by_the_floor() {
-        // Companion (routine on): prose reaches the model lane, and the
-        // floor has nothing for a punted intermediate.
-        let (daemon, sink) = daemon_with(
-            "floor-intermediate",
-            "onboarded: true\nnarrate_routine: true\n",
-            None,
-        );
-        assert_eq!(
-            daemon.handle_event(&event("intermediate", "intermediate_short", "thinking")),
-            Outcome::Dropped("floor_drop")
-        );
-        assert!(lines(&sink).is_empty());
     }
 
     #[test]
@@ -2484,33 +2182,6 @@ mod tests {
         assert_eq!(status.router_mode, "solo");
         assert_eq!(status.active_sessions.as_array().map(Vec::len), Some(1));
         assert!(!status.muted);
-    }
-
-    #[test]
-    fn a_digested_event_drains_as_one_project_line() {
-        let (daemon, sink) = daemon("digest");
-        // Quiet drops prose outright, so use the profile that DIGESTS tools.
-        std::fs::create_dir_all(&daemon.config.paths().config_dir).expect("config dir");
-        std::fs::write(
-            &daemon.config.paths().config_path,
-            "onboarded: true\nverbosity: brief\nnarrate_tools: true\nnarrate_routine: true\n",
-        )
-        .expect("config");
-        daemon.reload();
-
-        // `tool_edit` is low-signal, so `brief` routes it to the digest.
-        let mut event = event("tool_pre", "tool_edit", "Editing auth.py");
-        event
-            .ctx
-            .insert("abs_path".into(), Value::String("/tmp/proj/auth.py".into()));
-        assert_eq!(daemon.handle_event(&event), Outcome::Digested);
-        assert_eq!(daemon.router.pending_count(), 1);
-        assert!(lines(&sink).is_empty(), "a digest is not spoken on arrival");
-
-        // Backpressure has not fired and 2 s of idle have not passed, so a
-        // drain right now flushes nothing.
-        assert_eq!(daemon.drain_project_digests(false), 0);
-        assert_eq!(daemon.router.pending_count(), 1);
     }
 
     #[test]

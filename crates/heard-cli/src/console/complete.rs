@@ -3,7 +3,7 @@
 
 use reedline::{CompletionResult, Span, Suggestion};
 
-use crate::settings::{self, Alerts, Ctx, Mode};
+use crate::settings::{self, Alerts, Ctx};
 use crate::voices;
 
 /// One console command.
@@ -23,7 +23,6 @@ const fn c(name: &'static str, args: &'static str, about: &'static str) -> Cmd {
 
 /// Every console command, in menu order.
 pub const COMMANDS: &[Cmd] = &[
-    c("/mode", "[copilot|companion|focus]", "How much Heard says"),
     c(
         "/voice",
         "[name]",
@@ -52,7 +51,7 @@ pub const COMMANDS: &[Cmd] = &[
         "",
         "Check the install; prints a fix for each problem",
     ),
-    c("/setup", "", "Guided setup: model, voice, mode, hooks"),
+    c("/setup", "", "Guided setup: model, voice, hooks"),
     c(
         "/install",
         "[claude-code|codex|all]",
@@ -85,10 +84,6 @@ impl Completer {
 
     fn args_for(&self, cmd: &str) -> Vec<(String, String)> {
         match cmd {
-            "/mode" => Mode::ALL
-                .iter()
-                .map(|m| (m.key().to_string(), m.describe().to_string()))
-                .collect(),
             "/voice" => voices::picker_order()
                 .into_iter()
                 .map(|v| (v.to_string(), voices::label(v)))
@@ -223,9 +218,10 @@ mod tests {
     fn prefix_filters_and_args_complete() {
         let (_d, c) = ctx();
         let mut comp = Completer::new(c);
-        assert_eq!(values(comp.complete("/mo", 3)), vec!["/mode"]);
-        assert_eq!(values(comp.complete("/mode f", 7)), vec!["focus"]);
+        assert_eq!(values(comp.complete("/sp", 3)), vec!["/speed"]);
+        // Modes retired 2026-10-14: no `/mode`.
+        assert!(values(comp.complete("/mo", 3)).is_empty());
         assert!(values(comp.complete("/voice bm_", 10)).contains(&"bm_george".to_string()));
-        assert!(values(comp.complete("hello /mo", 9)).is_empty());
+        assert!(values(comp.complete("hello /sp", 9)).is_empty());
     }
 }

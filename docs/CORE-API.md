@@ -336,12 +336,12 @@ half-closes; the daemon keeps the connection and writes `{"ev": "hello", …}`
 then one `json.dumps`-spelled line per event, `ev` first, `ensure_ascii`.
 
 **Timers — `Daemon::tick(auto_voices)`** (call once a second instead of
-`drain_project_digests`): first-run discards the digest; Focus's hung-tool
-line (`filler::HUNG_TOOL_S`); companion's "still thinking" nudge and, on
-prompt submit, the "On it." filler, both under `filler::FillerPolicy`; the
-resume panel's 30 s timeout; the digest drain (skipped while muted or
-awaiting the resume answer). `DaemonBuilder::clock` / `picker` make them
-deterministic in tests.
+`drain_project_digests`): first-run discards the digest; the resume
+panel's 30 s timeout; the digest drain (skipped while muted or awaiting the
+resume answer). `DaemonBuilder::clock` makes them deterministic in tests.
+(Focus's hung-tool line and Companion's fillers went with the modes,
+retired in 0.2.6; `filler::FillerPolicy` remains for an edition's own
+fillers.)
 
 **Other core commands now real:** `feedback` (`history.append_feedback`
 against `Speech::last_utterance_id`), `resume_intent` (keyword classifier;

@@ -12,10 +12,11 @@
 //! appropriately — silent drop, accumulate-for-digest, or send through the
 //! queue.
 //!
-//! The actual decisions come from profiles ([`crate::profile`]). The config key
-//! `verbosity` names the profile; solo / focus events use it, and swarm
-//! non-focus events use `swarm_verbosity` (default "brief") — that selection is
-//! the router's job (`multi_agent.py`, a later stage), not this module's.
+//! The actual decisions come from profiles ([`crate::profile`]). Solo / focus
+//! events use the `normal` profile, always: the `verbosity` config key was
+//! retired with the modes (2026-10-14) and is no longer read. Swarm
+//! non-focus events use `swarm_verbosity` (default "brief") — that selection
+//! is the router's job (`multi_agent.py`), not this module's.
 
 use serde_json::Value;
 
@@ -92,13 +93,10 @@ impl Cfg<'_> {
         }
     }
 
-    fn verbosity(&self) -> Option<&str> {
-        self.0.get("verbosity").and_then(Value::as_str)
-    }
-
-    /// Resolve the active profile for the focus / solo event path.
+    /// The profile for the focus / solo event path: `normal`, whatever the
+    /// retired `verbosity` key says.
     fn profile(&self) -> Profile {
-        profile::load(self.verbosity())
+        profile::load(None)
     }
 }
 
@@ -114,8 +112,7 @@ fn py_truthy(value: &Value) -> bool {
     }
 }
 
-/// Active profile name (after legacy normalisation). Used by tests and the
-/// menu's checkmark logic.
+/// Active profile name: `normal` (the `verbosity` key is retired).
 pub fn level(cfg: &Cfg) -> String {
     cfg.profile().name
 }
@@ -210,19 +207,8 @@ mod tests {
 
     #[test]
     fn the_python_verbosity_tests_hold() {
-        // engine/tests/test_verbosity.py
-        let low = json!({"narrate_tools": true, "verbosity": "low"});
-        assert_eq!(
-            classify_pre(&cfg(&low), "tool_bash_test", 0),
-            Decision::Speak
-        );
-        assert_eq!(classify_pre(&cfg(&low), "tool_edit", 0), Decision::Drop);
-        assert_eq!(
-            classify_pre(&cfg(&low), "tool_question", 0),
-            Decision::Speak
-        );
-
-        let normal = json!({"narrate_tools": true, "verbosity": "normal"});
+        // engine/tests/test_verbosity.py, at the normal profile.
+        let normal = json!({"narrate_tools": true});
         assert_eq!(
             classify_pre(&cfg(&normal), "tool_bash_generic", 3),
             Decision::Speak
@@ -238,51 +224,74 @@ mod tests {
         for tag in ["tool_edit", "tool_write", "tool_glob", "tool_grep"] {
             assert_eq!(classify_pre(&cfg(&normal), tag, 0), Decision::Drop, "{tag}");
         }
+        assert_eq!(
+            classify_pre(&cfg(&normal), "tool_question", 0),
+            Decision::Speak
+        );
 
-        let verbose = json!({"narrate_tools": true, "verbosity": "verbose"});
+        // The other profiles still exist for the swarm router.
+        let quiet = profile::load(Some("low"));
+        assert_eq!(
+            classify_pre_with_profile(&quiet, "tool_bash_test", 0),
+            Decision::Speak
+        );
+        assert_eq!(
+            classify_pre_with_profile(&quiet, "tool_edit", 0),
+            Decision::Drop
+        );
+        let verbose = profile::load(Some("verbose"));
         for tag in ["tool_edit", "tool_write", "tool_glob", "tool_grep"] {
             assert_eq!(
-                classify_pre(&cfg(&verbose), tag, 0),
+                classify_pre_with_profile(&verbose, tag, 0),
                 Decision::Speak,
                 "{tag}"
             );
         }
-
-        let brief = json!({"narrate_tools": true, "verbosity": "brief"});
-        assert_eq!(classify_pre(&cfg(&brief), "tool_edit", 0), Decision::Digest);
+        let brief = profile::load(Some("brief"));
         assert_eq!(
-            classify_pre(&cfg(&brief), "tool_bash_test", 0),
-            Decision::Speak
+            classify_pre_with_profile(&brief, "tool_edit", 0),
+            Decision::Digest
         );
 
         // Failures and needs-you pierce everything, including the master mute.
-        let muted = json!({"narrate_tools": false, "verbosity": "high"});
+        let muted = json!({"narrate_tools": false});
         assert_eq!(
             classify_pre(&cfg(&muted), "tool_bash_test", 0),
             Decision::Drop
         );
-        assert_eq!(
-            classify_post(&cfg(&muted), "tool_post_failure"),
-            Decision::Speak
-        );
-        assert_eq!(
-            classify_post(&cfg(&muted), "tool_post_command_failed"),
-            Decision::Speak
-        );
-        assert_eq!(
-            classify_post(&cfg(&muted), "tool_post_needs_you"),
-            Decision::Speak
-        );
+        for tag in [
+            "tool_post_failure",
+            "tool_post_command_failed",
+            "tool_post_needs_you",
+        ] {
+            assert_eq!(classify_post(&cfg(&muted), tag), Decision::Speak, "{tag}");
+        }
 
         let empty = json!({});
         assert_eq!(
             classify_post(&cfg(&empty), "tool_post_success"),
             Decision::Drop
         );
-        assert_eq!(
-            classify_prose(&cfg(&json!({"verbosity": "quiet"}))),
-            Decision::Drop
-        );
-        assert_eq!(level(&cfg(&json!({"verbosity": "bogus"}))), "normal");
+        assert_eq!(classify_prose(&cfg(&empty)), Decision::Speak);
+    }
+
+    #[test]
+    fn the_retired_verbosity_key_is_ignored() {
+        // Modes retired 2026-10-14: every `verbosity` value reads as normal.
+        for v in ["quiet", "brief", "verbose", "low", "high", "bogus"] {
+            let c = json!({"narrate_tools": true, "verbosity": v});
+            assert_eq!(level(&cfg(&c)), "normal", "{v}");
+            assert_eq!(classify_prose(&cfg(&c)), Decision::Speak, "{v}");
+            assert_eq!(
+                classify_pre(&cfg(&c), "tool_edit", 0),
+                Decision::Drop,
+                "{v}"
+            );
+            assert_eq!(
+                classify_pre(&cfg(&c), "tool_bash_generic", 0),
+                Decision::Speak,
+                "{v}"
+            );
+        }
     }
 }

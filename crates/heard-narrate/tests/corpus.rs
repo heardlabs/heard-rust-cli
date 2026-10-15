@@ -39,7 +39,11 @@ fn corpus(module: &str) -> Vec<Value> {
 }
 
 fn check(module: &str, run: impl Fn(&Value) -> Value) {
-    let cases = corpus(module);
+    check_where(module, |_| true, run);
+}
+
+fn check_where(module: &str, keep: impl Fn(&Value) -> bool, run: impl Fn(&Value) -> Value) {
+    let cases: Vec<Value> = corpus(module).into_iter().filter(|c| keep(c)).collect();
     assert!(
         cases.len() >= 50,
         "{module}: a corpus this small proves nothing"
@@ -118,9 +122,23 @@ fn templates_match_python() {
     });
 }
 
+/// Modes retired 2026-10-14: the `verbosity` key is no longer read (always the
+/// normal profile), so only the cases recorded with a config that already
+/// resolved to `normal` are replayed.
+fn verbosity_is_normal(case: &Value) -> bool {
+    match case["input"]["cfg"].get("verbosity") {
+        None | Some(Value::Null) => true,
+        Some(Value::String(v)) => {
+            let v = v.trim().to_lowercase();
+            v.is_empty() || v == "normal"
+        }
+        Some(_) => true,
+    }
+}
+
 #[test]
 fn verbosity_matches_python() {
-    check("verbosity", |input| {
+    check_where("verbosity", verbosity_is_normal, |input| {
         let cfg = verbosity::Cfg(&input["cfg"]);
         let f = input["fn"].as_str().expect("case names a function");
         let out = match f {

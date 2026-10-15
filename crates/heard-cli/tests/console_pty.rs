@@ -1,4 +1,4 @@
-//! Pty smoke test of the console: `/mode focus` changes config, and a line
+//! Pty smoke test of the console: `/speed 1.2` changes config, and a line
 //! appended to history.jsonl is printed above the prompt by the live feed.
 //!
 //! The terminal emulator is played by the test: crossterm asks for the cursor
@@ -54,7 +54,7 @@ fn settle(p: &mut PtySession, ms: u64) {
 }
 
 #[test]
-fn console_mode_command_and_live_feed() {
+fn console_setting_command_and_live_feed() {
     let env = Env::new();
     let bin = assert_cmd::cargo::cargo_bin!("heard");
     let mut cmd = Command::new("/bin/sh");
@@ -74,11 +74,12 @@ fn console_mode_command_and_live_feed() {
     // Header, then the prompt.
     let head = expect(&mut p, "type / for commands");
     assert!(head.contains("heard"), "{head:?}");
-    assert!(head.contains("co-pilot"), "{head:?}");
+    assert!(head.contains("jarvis"), "{head:?}");
+    assert!(!head.contains("co-pilot"), "modes are retired: {head:?}");
     expect(&mut p, "> ");
     settle(&mut p, 300);
 
-    p.send("/mode focus").unwrap();
+    p.send("/speed 1.2").unwrap();
     p.flush().unwrap();
     settle(&mut p, 300);
     // Close any completion menu, then submit.
@@ -87,17 +88,16 @@ fn console_mode_command_and_live_feed() {
     settle(&mut p, 100);
     p.send("\r").unwrap();
     p.flush().unwrap();
-    expect(&mut p, "mode: focus");
+    expect(&mut p, "speed: 1.2");
 
     let t0 = Instant::now();
-    while !env.config_yaml().contains("mode: focus") {
+    while !env.config_yaml().contains("speed: 1.2") {
         assert!(
             t0.elapsed() < Duration::from_secs(5),
             "config never changed"
         );
         std::thread::sleep(Duration::from_millis(50));
     }
-    assert!(env.config_yaml().contains("narration_volume: 0"));
 
     // The live feed: append a spoken line; it appears while the prompt waits.
     settle(&mut p, 300);

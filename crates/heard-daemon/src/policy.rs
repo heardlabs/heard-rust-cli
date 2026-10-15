@@ -4,30 +4,37 @@
 //! The table is evaluated top to bottom; the first rule whose predicate holds
 //! decides. Every must-speak rule sits above every may-drop rule, so a new
 //! gate cannot be added "before" a must-speak rule by accident: the list is
-//! the order. [`decide`] is pure over a [`Features`] value. Five features have
-//! side effects when computed (the prompt-watch poll, the tool-density record,
-//! the duplicate-line register, the verbosity profile reads, the budget) and
-//! are THUNKS, called only when their rule is reached — exactly when the
-//! Python computes them.
+//! the order. [`decide`] is pure over a [`Features`] value. Two features have
+//! side effects when computed (the prompt-watch poll, the duplicate-line
+//! register) and are THUNKS, called only when their rule is reached — exactly
+//! when the Python computes them.
+//!
+//! Modes retired 2026-10-14: Heard has ONE behaviour, what the old defaults
+//! produced (mode copilot, `narration_volume` unset, `narrate_routine` off,
+//! `verbosity` normal). Questions, approvals, failures and turn results speak;
+//! tool-by-tool progress (`routine_narration_off`) and the agent's prose
+//! between tools (`copilot_prose_off`; the name is kept because logs and
+//! downstream tests match it) never do. Nothing here reads `mode`,
+//! `send_mode`, `narration_volume`, `narrate_routine` or `verbosity` any more.
+//! The routine words-per-minute budget is gone with them: an unset
+//! `narration_volume` meant no budget, and it only ever gated tool and prose
+//! events, which are dropped anyway.
 //!
 //! The feature sources are ported next to the table, each named after the
 //! Python it came from:
 //!
 //! | here | Python |
 //! |---|---|
-//! | [`narration_mode`], [`volume_stop`] | `cadence.narration_mode` / `volume_stop` |
-//! | [`budget_wpm`], [`Budget`] | `volume.budget_wpm` / `volume.Budget` |
 //! | [`first_run_held`] | `first_run.state(cfg).held` |
 //! | [`speakup_allows`] | `Daemon._speakup_allows` |
-//! | [`is_critical_template_event`], [`is_focus_template_event`], [`is_focus_attention_event`], [`focus_prompt_text`], [`focus_prompt_speech`], [`should_use_fast_path`] | `harness.*` |
+//! | [`is_critical_template_event`], [`focus_prompt_text`], [`should_use_fast_path`] | `harness.*` |
 //!
 //! The golden corpus (`fixtures/daemon/narration_policy.json`, made by the
 //! fixture generator (not included) from the Python reference implementation) replays
-//! (event × config × state) cases through these and [`decide`].
+//! (event × config × state) cases through these and [`decide`]; the cases
+//! recorded under a non-default mode setting are skipped (modes retired
+//! 2026-10-14).
 
-use std::time::Instant;
-
-use heard_narrate::verbosity::Decision as Verbosity;
 use serde_json::{Map, Value};
 
 // ---------------------------------------------------------------------------
@@ -121,130 +128,6 @@ fn py_eq_one(v: &Value) -> bool {
         Value::Bool(b) => *b,
         Value::Number(n) => n.as_f64() == Some(1.0),
         _ => false,
-    }
-}
-
-// ---------------------------------------------------------------------------
-// volume.py / cadence.py
-
-/// `volume.NEEDS_ME`.
-pub const NEEDS_ME: i64 = 0;
-/// `volume.LOW`.
-pub const LOW: i64 = 1;
-/// `volume.NORMAL`.
-pub const NORMAL: i64 = 2;
-/// `volume.HIGH`.
-pub const HIGH: i64 = 3;
-
-/// `volume.stop(value)` → the stop index, `None` when unset / out of range.
-pub fn volume_stop_of(value: &Value) -> Option<i64> {
-    py_int(value).filter(|i| (0..4).contains(i))
-}
-
-/// `volume.budget_wpm(value)` — routine words per minute at this stop;
-/// `None` = unlimited (or unset).
-pub fn budget_wpm(value: &Value) -> Option<usize> {
-    match volume_stop_of(value)? {
-        0 | 1 => Some(100),
-        2 => Some(200),
-        _ => None,
-    }
-}
-
-/// `volume.Budget` — a rolling one-minute count of routine words spoken.
-#[derive(Debug, Default)]
-pub struct Budget {
-    events: Vec<(Instant, usize)>,
-}
-
-impl Budget {
-    /// `Budget.WINDOW_S`.
-    pub const WINDOW_S: f64 = 60.0;
-
-    /// `note(words, now)`.
-    pub fn note(&mut self, words: usize, now: Instant) {
-        self.events.push((now, words));
-        self.trim(now);
-    }
-
-    /// `spent(now)`.
-    pub fn spent(&mut self, now: Instant) -> usize {
-        self.trim(now);
-        self.events.iter().map(|(_, n)| n).sum()
-    }
-
-    /// `exhausted(limit, now)`.
-    pub fn exhausted(&mut self, limit: Option<usize>, now: Instant) -> bool {
-        match limit {
-            Some(l) => self.spent(now) >= l,
-            None => false,
-        }
-    }
-
-    fn trim(&mut self, now: Instant) {
-        self.events
-            .retain(|(t, _)| now.saturating_duration_since(*t).as_secs_f64() <= Self::WINDOW_S);
-    }
-}
-
-/// `str(cfg.get(key) or "").strip().lower()`.
-fn norm(cfg: &Map<String, Value>, key: &str) -> String {
-    match cfg.get(key) {
-        Some(v) if py_truthy(v) => py_str(v).trim().to_lowercase(),
-        _ => String::new(),
-    }
-}
-
-/// `cadence.legacy_mode` — the stored `mode`, fail-closed to copilot.
-pub fn legacy_mode(cfg: &Map<String, Value>) -> String {
-    let m = norm(cfg, "mode");
-    match m.as_str() {
-        "copilot" | "companion" | "focus" => m,
-        "custom" => m,
-        _ => "copilot".into(),
-    }
-}
-
-/// `volume.stop_for_legacy`.
-pub fn stop_for_legacy(narrate_routine: bool, verbosity: &str) -> i64 {
-    let v = if verbosity.is_empty() {
-        "normal".to_string()
-    } else {
-        verbosity.to_lowercase()
-    };
-    if narrate_routine {
-        return HIGH;
-    }
-    if v == "quiet" || v == "brief" {
-        LOW
-    } else {
-        NORMAL
-    }
-}
-
-/// `cadence.volume_stop`.
-pub fn volume_stop(cfg: &Map<String, Value>) -> i64 {
-    if let Some(s) = cfg.get("narration_volume").and_then(volume_stop_of) {
-        return s;
-    }
-    match legacy_mode(cfg).as_str() {
-        "focus" => return NEEDS_ME,
-        "companion" => return HIGH,
-        _ => {}
-    }
-    let verbosity = match cfg.get("verbosity") {
-        Some(v) if py_truthy(v) => py_str(v),
-        _ => "normal".into(),
-    };
-    stop_for_legacy(cfg_truthy(cfg, "narrate_routine", false), &verbosity)
-}
-
-/// `cadence.narration_mode` — WHAT is said follows the volume dial.
-pub fn narration_mode(cfg: &Map<String, Value>) -> &'static str {
-    match volume_stop(cfg) {
-        NEEDS_ME => "focus",
-        HIGH => "companion",
-        _ => "copilot",
     }
 }
 
@@ -382,8 +265,8 @@ pub fn is_critical_template_event(ev: &EventView) -> bool {
         || tag.contains("failed")
 }
 
-/// `harness.is_focus_template_event`.
-pub fn is_focus_template_event(ev: &EventView) -> bool {
+/// `harness.is_focus_template_event`: a question / needs-you tag.
+fn is_focus_template_event(ev: &EventView) -> bool {
     matches!(
         ev.tag.to_lowercase().as_str(),
         "tool_question" | "tool_post_needs_you"
@@ -455,22 +338,6 @@ const ROUTINE_PHRASES: &[&str] = &[
     "what's next",
 ];
 
-const PERMISSION_PREFIXES: &[&str] = &[
-    "Sir, need your attention.",
-    "Sir, I need permission:",
-    "Sir, permission needed:",
-    "Sir, when you have a second,",
-    "Sir, I need your approval:",
-];
-
-const DECISION_PREFIXES: &[&str] = &[
-    "Sir, need your attention.",
-    "Sir, I need your call:",
-    "Sir, when you have a second,",
-    "Sir, this is waiting on you:",
-    "Sir, I need you to decide:",
-];
-
 /// Python's `str.isspace` for one character (close enough: Unicode White_Space
 /// plus the ASCII separators `split()` treats as whitespace).
 fn is_py_space(c: char) -> bool {
@@ -526,8 +393,10 @@ fn after_last_sentence_break(q: &str) -> &str {
     &q[last_end..]
 }
 
-/// `harness.focus_prompt_text` — the exact user-action prompt Focus speaks,
-/// `""` when the event is not something the user must answer now.
+/// `harness.focus_prompt_text` — the user-action prompt an event ends on (a
+/// question / needs-you line, or a decision question such as "Should I…?"),
+/// `""` when the event is not something the user must answer now. No longer
+/// spoken by the daemon (Focus is retired); the CLI's notifier reads it.
 pub fn focus_prompt_text(ev: &EventView) -> String {
     let text = collapse_ws(ev.neutral);
     if text.is_empty() {
@@ -557,58 +426,14 @@ pub fn focus_prompt_text(ev: &EventView) -> String {
     String::new()
 }
 
-/// `harness.focus_prompt_speech`.
-pub fn focus_prompt_speech(ev: &EventView, persona_name: &str) -> String {
-    let prompt = focus_prompt_text(ev);
-    if prompt.is_empty() {
-        return String::new();
-    }
-    let lower = prompt.to_lowercase();
-    let permission = ["allow", "approve", "approval", "access", "permission"]
-        .iter()
-        .any(|p| lower.contains(p));
-    let prefixes = if permission {
-        PERMISSION_PREFIXES
-    } else {
-        DECISION_PREFIXES
-    };
-    let seed = format!("{prompt}|{}|{persona_name}", ev.session_id);
-    let idx = crc32(seed.as_bytes()) as usize % prefixes.len();
-    format!("{} {prompt}", prefixes[idx]).trim().to_string()
-}
-
-/// `harness.is_focus_attention_event`.
-pub fn is_focus_attention_event(ev: &EventView) -> bool {
-    if is_focus_template_event(ev) {
-        return true;
-    }
-    let kind = ev.kind.to_lowercase();
-    if kind != "final" && kind != "intermediate" {
-        return false;
-    }
-    !focus_prompt_text(ev).is_empty()
-}
-
-/// `zlib.crc32` (IEEE, reflected).
-pub fn crc32(bytes: &[u8]) -> u32 {
-    let mut crc = 0xFFFF_FFFFu32;
-    for &b in bytes {
-        crc ^= u32::from(b);
-        for _ in 0..8 {
-            let mask = (crc & 1).wrapping_neg();
-            crc = (crc >> 1) ^ (0xEDB8_8320 & mask);
-        }
-    }
-    !crc
-}
-
 // ---------------------------------------------------------------------------
 // narration_policy.py — the table.
 
 /// A lazily-computed, possibly side-effecting feature.
 pub type Thunk<'a, T> = Box<dyn Fn() -> T + 'a>;
 
-/// `narration_policy.Features`.
+/// `narration_policy.Features`, at the one behaviour (modes retired
+/// 2026-10-14).
 pub struct Features<'a> {
     /// `kind`.
     pub kind: &'a str,
@@ -616,40 +441,22 @@ pub struct Features<'a> {
     pub tag: &'a str,
     /// `neutral` is non-empty.
     pub has_text: bool,
-    /// `copilot` | `companion` | `focus`.
-    pub mode: &'a str,
     /// Settings → "Speak up on" toggles.
     pub speakup_allowed: bool,
     /// `cfg["onboarded"]`.
     pub onboarded: bool,
-    /// `cfg["narrate_routine"]`.
-    pub narrate_routine: bool,
     /// Failure / question / needs-you.
     pub critical: bool,
     /// A session's FIRST use of a skill.
     pub first_skill: bool,
-    /// `harness.is_focus_attention_event`.
-    pub focus_attention: bool,
-    /// `harness.is_focus_template_event`.
-    pub focus_template: bool,
-    /// A Focus alert line exists for it.
-    pub focus_alert_text: bool,
     /// `harness.is_enabled` (always true in Python).
     pub harness_enabled: bool,
     /// `harness.should_use_fast_path`.
     pub fast_path: bool,
     /// The voice prompt-watcher already owns this question.
     pub prompt_watch_owns: Thunk<'a, bool>,
-    /// `verbosity.classify_pre` (records tool density).
-    pub verbosity_pre: Thunk<'a, Verbosity>,
-    /// `verbosity.classify_post`.
-    pub verbosity_post: Thunk<'a, Verbosity>,
-    /// `verbosity.classify_prose`.
-    pub verbosity_prose: Thunk<'a, Verbosity>,
     /// `_is_duplicate_tool_line` (records the line).
     pub duplicate_tool_line: Thunk<'a, bool>,
-    /// The routine words-per-minute budget is spent.
-    pub budget_exhausted: Thunk<'a, bool>,
 }
 
 /// `Decision.outcome`.
@@ -657,12 +464,8 @@ pub struct Features<'a> {
 pub enum PolicyOutcome {
     /// Say nothing.
     Drop,
-    /// Fold into the session's burst digest.
-    Digest,
     /// A `prompt_intent`: arm the turn opener, record the "you" turn.
     RetirePrompt,
-    /// Focus: the prompt-shaped alert line.
-    SpeakFocusAlert,
     /// The deterministic template line (fast path).
     SpeakTemplate,
     /// Hand to the narration brain.
@@ -674,36 +477,24 @@ impl PolicyOutcome {
     pub fn as_str(self) -> &'static str {
         match self {
             PolicyOutcome::Drop => "drop",
-            PolicyOutcome::Digest => "digest",
             PolicyOutcome::RetirePrompt => "retire_prompt",
-            PolicyOutcome::SpeakFocusAlert => "speak_focus_alert",
             PolicyOutcome::SpeakTemplate => "speak_template",
             PolicyOutcome::Model => "model",
         }
     }
 }
 
-/// The five side-effecting features, supplied by the caller.
+/// The side-effecting features, supplied by the caller.
 pub struct Thunks<'a> {
     /// See [`Features::prompt_watch_owns`].
     pub prompt_watch_owns: Thunk<'a, bool>,
-    /// See [`Features::verbosity_pre`].
-    pub verbosity_pre: Thunk<'a, Verbosity>,
-    /// See [`Features::verbosity_post`].
-    pub verbosity_post: Thunk<'a, Verbosity>,
-    /// See [`Features::verbosity_prose`].
-    pub verbosity_prose: Thunk<'a, Verbosity>,
     /// See [`Features::duplicate_tool_line`].
     pub duplicate_tool_line: Thunk<'a, bool>,
-    /// See [`Features::budget_exhausted`].
-    pub budget_exhausted: Thunk<'a, bool>,
 }
 
 /// The daemon-held state the pure features read.
 #[derive(Debug, Clone, Copy)]
 pub struct FeatureState<'a> {
-    /// `persona.name` (the Focus alert seed).
-    pub persona_name: &'a str,
     /// `tag == "tool_skill"` and this (session, skill) never spoke.
     pub first_skill: bool,
     /// `len(router.list_active()) > 1`.
@@ -723,21 +514,14 @@ impl<'a> Features<'a> {
         thunks: Thunks<'a>,
     ) -> Features<'a> {
         let neutral = view.neutral.trim();
-        let mode = narration_mode(cfg);
         Features {
             kind: view.kind,
             tag: view.tag,
             has_text: !neutral.is_empty(),
-            mode,
             speakup_allowed: speakup_allows(cfg, view.kind, view.tag, neutral),
             onboarded: cfg_truthy(cfg, "onboarded", false),
-            narrate_routine: cfg_truthy(cfg, "narrate_routine", false),
             critical: is_critical_template_event(view),
             first_skill: state.first_skill,
-            focus_attention: is_focus_attention_event(view),
-            focus_template: is_focus_template_event(view),
-            focus_alert_text: mode == "focus"
-                && !focus_prompt_speech(view, state.persona_name).is_empty(),
             harness_enabled: state.harness_enabled,
             fast_path: should_use_fast_path(
                 view,
@@ -745,11 +529,7 @@ impl<'a> Features<'a> {
                 state.recent_edit_paths,
             ),
             prompt_watch_owns: thunks.prompt_watch_owns,
-            verbosity_pre: thunks.verbosity_pre,
-            verbosity_post: thunks.verbosity_post,
-            verbosity_prose: thunks.verbosity_prose,
             duplicate_tool_line: thunks.duplicate_tool_line,
-            budget_exhausted: thunks.budget_exhausted,
         }
     }
 }
@@ -777,7 +557,6 @@ fn out(outcome: PolicyOutcome, rule: &'static str) -> PolicyDecision {
 /// `narration_policy.decide` — top to bottom; the first matching rule wins.
 pub fn decide(f: &Features) -> PolicyDecision {
     let tool = f.kind == "tool_pre" || f.kind == "tool_post";
-    let focus = f.mode == "focus";
 
     // ---- 1. The user's own choices, and installation state.
     if !f.speakup_allowed {
@@ -794,7 +573,7 @@ pub fn decide(f: &Features) -> PolicyDecision {
     }
 
     // ---- 2. MUST SPEAK.
-    if f.critical || (f.first_skill && !focus) {
+    if f.critical || f.first_skill {
         if !f.has_text {
             return drop_("fastpath_empty_neutral");
         }
@@ -811,57 +590,23 @@ pub fn decide(f: &Features) -> PolicyDecision {
         );
     }
 
-    // ---- 3. May drop.
-    if (tool || f.kind == "intermediate") && (f.budget_exhausted)() {
-        return drop_("volume_budget");
-    }
-    if tool && !f.narrate_routine {
+    // ---- 3. May drop: tool-by-tool progress and the prose between tools.
+    if tool {
         return drop_("routine_narration_off");
     }
-    if f.kind == "intermediate" && f.mode == "copilot" && !f.narrate_routine {
+    if f.kind == "intermediate" {
         return drop_("copilot_prose_off");
     }
-    if focus && !f.focus_attention {
-        return drop_("focus_attention_drop");
-    }
-    if focus && !f.focus_template {
-        return if f.focus_alert_text {
-            out(PolicyOutcome::SpeakFocusAlert, "focus_alert")
-        } else {
-            drop_("focus_no_prompt")
-        };
-    }
 
-    // ---- 4. Routing.
+    // ---- 4. Routing. Only non-tool, non-prose kinds get here, and
+    // `should_use_fast_path` holds for those only when they are critical
+    // (handled above), so in the daemon this is the brain; the fast-path tail
+    // is kept for a caller that hands in its own features.
     if !f.harness_enabled || !f.fast_path {
         return out(PolicyOutcome::Model, "harness");
     }
-    if focus && !f.focus_template {
-        return drop_("focus_fastpath_drop");
-    }
-    if f.mode == "copilot" && tool && !f.narrate_routine {
-        return drop_("copilot_tool_tier_suppressed");
-    }
-    match f.kind {
-        "tool_pre" => match (f.verbosity_pre)() {
-            Verbosity::Drop => return drop_("fastpath_verbosity_drop"),
-            Verbosity::Digest => return out(PolicyOutcome::Digest, "fastpath_verbosity_digest"),
-            Verbosity::Speak => {}
-        },
-        // Guards run only for their own kind: the thunks stay lazy.
-        "tool_post" if (f.verbosity_post)() != Verbosity::Speak => {
-            return drop_("fastpath_verbosity_drop")
-        }
-        "intermediate" if (f.verbosity_prose)() != Verbosity::Speak => {
-            return drop_("fastpath_verbosity_drop")
-        }
-        _ => {}
-    }
     if !f.has_text {
         return drop_("fastpath_empty_neutral");
-    }
-    if tool && (f.duplicate_tool_line)() {
-        return drop_("fastpath_dup_tool_line");
     }
     out(PolicyOutcome::SpeakTemplate, "fastpath")
 }
@@ -874,17 +619,9 @@ pub const RULES: &[&str] = &[
     "prompt_watch_owns_question",
     "critical_always_speaks",
     "first_skill_use_speaks",
-    "volume_budget",
     "routine_narration_off",
     "copilot_prose_off",
-    "focus_attention_drop",
-    "focus_alert",
-    "focus_no_prompt",
     "harness",
-    "focus_fastpath_drop",
-    "copilot_tool_tier_suppressed",
-    "fastpath_verbosity_drop",
-    "fastpath_verbosity_digest",
     "fastpath_empty_neutral",
     "fastpath_dup_tool_line",
     "fastpath",
@@ -907,12 +644,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn crc32_matches_zlib() {
-        assert_eq!(crc32(b""), 0);
-        assert_eq!(crc32(b"hello"), 0x3610_a686);
-    }
-
-    #[test]
     fn py_int_follows_python() {
         assert_eq!(py_int(&Value::from(" 2 ")), Some(2));
         assert_eq!(py_int(&Value::from("1_0")), Some(10));
@@ -922,8 +653,42 @@ mod tests {
         assert_eq!(py_int(&Value::Null), None);
     }
 
+    fn features<'a>(kind: &'a str, tag: &'a str) -> Features<'a> {
+        Features {
+            kind,
+            tag,
+            has_text: true,
+            speakup_allowed: true,
+            onboarded: true,
+            critical: false,
+            first_skill: false,
+            harness_enabled: true,
+            fast_path: kind == "tool_pre" || kind == "tool_post",
+            prompt_watch_owns: Box::new(|| false),
+            duplicate_tool_line: Box::new(|| false),
+        }
+    }
+
     #[test]
-    fn default_mode_is_copilot() {
-        assert_eq!(narration_mode(&Map::new()), "copilot");
+    fn the_one_behaviour() {
+        // Tool progress and prose never speak; finals go to the brain;
+        // questions and failures always speak.
+        let d = |f: Features| decide(&f).rule;
+        assert_eq!(
+            d(features("tool_pre", "tool_bash")),
+            "routine_narration_off"
+        );
+        assert_eq!(
+            d(features("tool_post", "tool_post_success")),
+            "routine_narration_off"
+        );
+        assert_eq!(d(features("intermediate", "")), "copilot_prose_off");
+        assert_eq!(d(features("final", "")), "harness");
+        let mut q = features("tool_pre", "tool_question");
+        q.critical = true;
+        assert_eq!(d(q), "critical_always_speaks");
+        let mut s = features("tool_pre", "tool_skill");
+        s.first_skill = true;
+        assert_eq!(d(s), "first_skill_use_speaks");
     }
 }

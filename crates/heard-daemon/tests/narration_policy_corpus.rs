@@ -3,16 +3,19 @@
 //! the Python reference implementation) through the Rust port: the feature sources and
 //! `decide` exactly as `Daemon::route_event` builds them, the `_start_speech`
 //! shaping, and the floor with the persona's address.
+//!
+//! Modes retired 2026-10-14: the corpus was recorded with the old mode
+//! knobs, so cases recorded under a non-default mode setting are skipped
+//! ([`mode_retired`]); every default-config case must still match the
+//! recorded Python decision exactly.
 
 use std::cell::RefCell;
 use std::path::PathBuf;
-use std::time::Instant;
 
 use heard_daemon::floor;
 use heard_daemon::policy::{self, EventView, FeatureState, Features, Thunks};
 use heard_daemon::shape;
 use heard_daemon::{BundledPersonas, PersonaSource};
-use heard_narrate::verbosity::{self, Cfg, Decision as Verbosity};
 use serde_json::{Map, Value};
 
 fn fixture(name: &str) -> Value {
@@ -30,12 +33,46 @@ fn b(v: &Value, k: &str) -> bool {
     v.get(k).and_then(Value::as_bool).unwrap_or(false)
 }
 
-fn verb(v: &str) -> Verbosity {
-    match v {
-        "drop" => Verbosity::Drop,
-        "digest" => Verbosity::Digest,
-        _ => Verbosity::Speak,
-    }
+/// Modes retired 2026-10-14: a config that sets one of the retired knobs to
+/// anything but its default recorded behaviour Heard no longer has.
+fn mode_retired(cfg: &Map<String, Value>) -> bool {
+    let is = |k: &str, ok: &[Value]| cfg.get(k).is_some_and(|v| !ok.contains(v));
+    is("mode", &[Value::from("copilot")])
+        || is("narration_volume", &[Value::from(-1), Value::Null])
+        || is("narrate_routine", &[Value::Bool(false)])
+        || is("verbosity", &[Value::from("normal")])
+        || is("send_mode", &[Value::from(""), Value::from("prefill")])
+}
+
+/// Rules the Python table had that went with the modes (retired 2026-10-14).
+const RETIRED_RULES: &[&str] = &[
+    "volume_budget",
+    "focus_attention_drop",
+    "focus_alert",
+    "focus_no_prompt",
+    "focus_fastpath_drop",
+    "copilot_tool_tier_suppressed",
+    "fastpath_verbosity_drop",
+    "fastpath_verbosity_digest",
+];
+
+/// Feature thunks that went with the modes: the routine-word budget (an
+/// unset `narration_volume` never exhausts it) and the verbosity gates (only
+/// reached by tool and prose events, which no longer speak).
+const RETIRED_CALLS: &[&str] = &[
+    "budget_exhausted",
+    "verbosity_pre",
+    "verbosity_post",
+    "verbosity_prose",
+];
+
+fn calls_of(v: &Value) -> Vec<&str> {
+    v.as_array()
+        .unwrap()
+        .iter()
+        .filter_map(Value::as_str)
+        .filter(|c| !RETIRED_CALLS.contains(c))
+        .collect()
 }
 
 #[test]
@@ -44,21 +81,31 @@ fn every_policy_case_matches_the_python() {
     let events = data["events"].as_array().expect("events");
     let configs = data["configs"].as_array().expect("configs");
     let states = data["states"].as_array().expect("states");
-    let cases = data["cases"].as_array().expect("cases");
-    assert!(cases.len() >= 5000);
+    let cases: Vec<&Value> = data["cases"]
+        .as_array()
+        .expect("cases")
+        .iter()
+        .filter(|c| {
+            let cfg = &configs[c["c"].as_u64().unwrap() as usize]["cfg"];
+            !mode_retired(cfg.as_object().unwrap())
+        })
+        .collect();
+    assert!(cases.len() >= 3000, "{}", cases.len());
     let rules: Vec<&str> = data["rules"]
         .as_array()
         .unwrap()
         .iter()
         .filter_map(Value::as_str)
+        .filter(|r| !RETIRED_RULES.contains(r))
         .collect();
     assert_eq!(rules, policy::RULES);
 
     let mut bad = Vec::new();
-    for case in cases {
+    for case in cases.iter().copied() {
         let ev = &events[case["e"].as_u64().unwrap() as usize];
         let cfg_v = &configs[case["c"].as_u64().unwrap() as usize]["cfg"];
         let cfg: &Map<String, Value> = cfg_v.as_object().unwrap();
+        assert_eq!(case["mode"], "copilot");
         let st = &states[case["s"].as_u64().unwrap() as usize];
         let ctx = ev["ctx"].as_object().cloned().unwrap_or_default();
         let view = EventView {
@@ -84,18 +131,10 @@ fn every_policy_case_matches_the_python() {
             })
             .unwrap_or_default();
         let calls = RefCell::new(Vec::<&'static str>::new());
-        let vcfg = Cfg(cfg_v);
-        let density = st.get("density").and_then(Value::as_i64).unwrap_or(0);
-        let t0 = Instant::now();
-        let budget = RefCell::new(policy::Budget::default());
-        if let Some(n) = st.get("budget_spent").and_then(Value::as_u64) {
-            budget.borrow_mut().note(n as usize, t0);
-        }
         let feats = Features::build(
             &view,
             cfg,
             FeatureState {
-                persona_name: &persona.name,
                 first_skill: view.tag == "tool_skill" && !b(st, "skill_announced"),
                 multi_agent_active: b(st, "multi_agent_active"),
                 recent_edit_paths: &recent,
@@ -107,47 +146,20 @@ fn every_policy_case_matches_the_python() {
                     policy::cfg_truthy(cfg, "voice_prompt_announce", true)
                         && b(st, "question_spooled")
                 }),
-                verbosity_pre: Box::new(|| {
-                    calls.borrow_mut().push("verbosity_pre");
-                    verbosity::classify_pre(&vcfg, view.tag, density)
-                }),
-                verbosity_post: Box::new(|| {
-                    calls.borrow_mut().push("verbosity_post");
-                    verbosity::classify_post(&vcfg, view.tag)
-                }),
-                verbosity_prose: Box::new(|| {
-                    calls.borrow_mut().push("verbosity_prose");
-                    verbosity::classify_prose(&vcfg)
-                }),
                 duplicate_tool_line: Box::new(|| {
                     calls.borrow_mut().push("duplicate_tool_line");
                     b(st, "dup_tool_line")
                 }),
-                budget_exhausted: Box::new(|| {
-                    calls.borrow_mut().push("budget_exhausted");
-                    let limit =
-                        policy::budget_wpm(cfg.get("narration_volume").unwrap_or(&Value::from(-1)));
-                    budget.borrow_mut().exhausted(limit, t0)
-                }),
             },
         );
         let got = serde_json::json!({
-            "mode": feats.mode, "speakup": feats.speakup_allowed, "critical": feats.critical,
-            "fast_path": feats.fast_path, "focus_attention": feats.focus_attention,
-            "focus_template": feats.focus_template, "focus_alert_text": feats.focus_alert_text,
+            "speakup": feats.speakup_allowed, "critical": feats.critical,
+            "fast_path": feats.fast_path,
         });
         let d = policy::decide(&feats);
         drop(feats);
         let mut diffs = Vec::new();
-        for k in [
-            "mode",
-            "speakup",
-            "critical",
-            "fast_path",
-            "focus_attention",
-            "focus_template",
-            "focus_alert_text",
-        ] {
+        for k in ["speakup", "critical", "fast_path"] {
             if got[k] != case[k] {
                 diffs.push(format!("{k}: rs={} py={}", got[k], case[k]));
             }
@@ -161,24 +173,19 @@ fn every_policy_case_matches_the_python() {
                 case["rule"]
             ));
         }
-        let want_calls: Vec<&str> = case["calls"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter_map(Value::as_str)
-            .collect();
+        let want_calls = calls_of(&case["calls"]);
         if *calls.borrow() != want_calls {
             diffs.push(format!("calls rs={:?} py={want_calls:?}", calls.borrow()));
         }
         if policy::first_run_held(cfg) != b(case, "first_run_held") {
             diffs.push("first_run_held".into());
         }
-        let speech = policy::focus_prompt_speech(&view, &persona.name);
-        if speech != s(case, "focus_speech") {
-            diffs.push(format!(
-                "focus_speech rs={speech:?} py={:?}",
-                case["focus_speech"]
-            ));
+        // The recorded Focus alert is "<prefix> <prompt>": the prompt (what
+        // the CLI's notifier still reads) is its tail.
+        let prompt = policy::focus_prompt_text(&view);
+        let speech = s(case, "focus_speech");
+        if prompt.is_empty() != speech.is_empty() || !speech.ends_with(prompt.as_str()) {
+            diffs.push(format!("focus_prompt rs={prompt:?} py={speech:?}"));
         }
         if persona.name != s(case, "persona") || persona.address != s(case, "address") {
             diffs.push(format!("persona rs={persona:?}"));
@@ -207,63 +214,45 @@ fn every_policy_case_matches_the_python() {
 #[test]
 fn the_synthetic_table_matches_decide() {
     let data = fixture("narration_policy.json");
-    let table = data["table"].as_array().expect("table");
+    // Rows with a mode other than copilot, routine narration on, or an
+    // exhausted routine budget describe modes retired 2026-10-14.
+    let table: Vec<&Value> = data["table"]
+        .as_array()
+        .expect("table")
+        .iter()
+        .filter(|row| {
+            let f = &row["f"];
+            !matches!(s(f, "mode"), "focus" | "companion")
+                && !b(f, "narrate_routine")
+                && !b(f, "t_budget_exhausted")
+        })
+        .collect();
     let mut bad = Vec::new();
-    for row in table {
+    for row in table.iter().copied() {
         let f = &row["f"];
         let calls = RefCell::new(Vec::<&'static str>::new());
         let feats = Features {
             kind: s(f, "kind"),
             tag: s(f, "tag"),
             has_text: b(f, "has_text"),
-            mode: match s(f, "mode") {
-                "focus" => "focus",
-                "companion" => "companion",
-                _ => "copilot",
-            },
             speakup_allowed: b(f, "speakup_allowed"),
             onboarded: b(f, "onboarded"),
-            narrate_routine: b(f, "narrate_routine"),
             critical: b(f, "critical"),
             first_skill: b(f, "first_skill"),
-            focus_attention: b(f, "focus_attention"),
-            focus_template: b(f, "focus_template"),
-            focus_alert_text: b(f, "focus_alert_text"),
             harness_enabled: b(f, "harness_enabled"),
             fast_path: b(f, "fast_path"),
             prompt_watch_owns: Box::new(|| {
                 calls.borrow_mut().push("prompt_watch_owns");
                 b(f, "t_prompt_watch_owns")
             }),
-            verbosity_pre: Box::new(|| {
-                calls.borrow_mut().push("verbosity_pre");
-                verb(s(f, "t_verbosity_pre"))
-            }),
-            verbosity_post: Box::new(|| {
-                calls.borrow_mut().push("verbosity_post");
-                verb(s(f, "t_verbosity_post"))
-            }),
-            verbosity_prose: Box::new(|| {
-                calls.borrow_mut().push("verbosity_prose");
-                verb(s(f, "t_verbosity_prose"))
-            }),
             duplicate_tool_line: Box::new(|| {
                 calls.borrow_mut().push("duplicate_tool_line");
                 b(f, "t_duplicate_tool_line")
             }),
-            budget_exhausted: Box::new(|| {
-                calls.borrow_mut().push("budget_exhausted");
-                b(f, "t_budget_exhausted")
-            }),
         };
         let d = policy::decide(&feats);
         drop(feats);
-        let want_calls: Vec<&str> = row["calls"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .filter_map(Value::as_str)
-            .collect();
+        let want_calls = calls_of(&row["calls"]);
         if d.outcome.as_str() != s(row, "outcome")
             || d.rule != s(row, "rule")
             || *calls.borrow() != want_calls
@@ -278,7 +267,7 @@ fn the_synthetic_table_matches_decide() {
             ));
         }
     }
-    assert!(table.len() >= 1000);
+    assert!(table.len() >= 400, "{}", table.len());
     assert!(
         bad.is_empty(),
         "{} differ:\n{}",

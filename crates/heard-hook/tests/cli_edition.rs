@@ -403,15 +403,18 @@ fn run_with_listener(rig: &Rig, args: &[&str], stdin: &str) -> (Out, Vec<Vec<u8>
 #[test]
 fn a_heard_command_prompt_is_answered_with_a_block_and_not_forwarded() {
     for (prompt, want_args) in [
-        ("/heard-mode focus", "mode focus --porcelain"),
-        ("  @heard mode   focus\n", "mode focus --porcelain"),
+        ("/heard-voice bm_george", "voice bm_george --porcelain"),
+        (
+            "  @heard voice   bm_george\n",
+            "voice bm_george --porcelain",
+        ),
         ("/heard-pause", "pause --porcelain"),
     ] {
         let rig = Rig::new("icept");
-        rig.fake_heard("echo 'Focus mode'");
+        rig.fake_heard("echo 'voice: bm_george'");
         let (out, got) = run_with_listener(&rig, &["claude-code"], &prompt_payload(prompt));
         assert_eq!(out.code, Some(0));
-        assert_eq!(out.stdout, block("Heard: Focus mode"), "{prompt:?}");
+        assert_eq!(out.stdout, block("Heard: voice: bm_george"), "{prompt:?}");
         assert_eq!(out.stderr, "");
         let v: serde_json::Value = serde_json::from_str(&out.stdout).unwrap();
         assert_eq!(v["decision"], "block");
@@ -426,12 +429,15 @@ fn a_heard_command_prompt_is_answered_with_a_block_and_not_forwarded() {
 fn an_ordinary_prompt_is_forwarded_unchanged() {
     let rig = Rig::new("plain");
     rig.fake_heard("echo nope");
-    let payload = prompt_payload("please fix /heard-mode in the docs");
+    let payload = prompt_payload("please fix /heard-voice in the docs");
     let (out, got) = run_with_listener(&rig, &["claude-code"], &payload);
     assert_eq!((out.code, out.stdout.as_str()), (Some(0), ""));
     assert_eq!(got.len(), 1);
     let v: serde_json::Value = serde_json::from_slice(&got[0]).unwrap();
-    assert_eq!(v["payload"]["prompt"], "please fix /heard-mode in the docs");
+    assert_eq!(
+        v["payload"]["prompt"],
+        "please fix /heard-voice in the docs"
+    );
     assert!(rig.calls().is_empty(), "heard was not run");
 }
 
@@ -439,7 +445,9 @@ fn an_ordinary_prompt_is_forwarded_unchanged() {
 fn unknown_verbs_and_codex_prompts_are_forwarded() {
     for (agent, prompt) in [
         ("claude-code", "/heard-frobnicate now"),
-        ("codex", "/heard-mode focus"),
+        // Modes retired 2026-10-14: `mode` is no longer a verb.
+        ("claude-code", "/heard-mode focus"),
+        ("codex", "/heard-voice bm_george"),
     ] {
         let rig = Rig::new("fwd");
         rig.fake_heard("echo nope");
@@ -464,7 +472,7 @@ fn the_reply_comes_from_the_cli_whatever_it_does() {
             "Heard: daemon not running, run heard start",
         ),
         ("exit 0", "Heard: done"),
-        ("exit 3", "Heard: `heard mode` failed"),
+        ("exit 3", "Heard: `heard voice` failed"),
         // Quotes and unicode survive the JSON encoding.
         (
             "echo 'Persona \"Jarvis\" — ready'",
@@ -474,7 +482,7 @@ fn the_reply_comes_from_the_cli_whatever_it_does() {
         let rig = Rig::new("reply");
         rig.fake_heard(body);
         let (out, got) =
-            run_with_listener(&rig, &["claude-code"], &prompt_payload("/heard-mode x"));
+            run_with_listener(&rig, &["claude-code"], &prompt_payload("/heard-voice x"));
         assert_eq!(out.stdout, block(want), "{body}");
         assert!(got.is_empty());
     }
@@ -495,8 +503,7 @@ fn a_hung_cli_is_cut_off_at_two_seconds() {
 #[test]
 fn a_missing_cli_still_blocks_with_a_useful_reason() {
     let rig = Rig::new("icept-nocli");
-    let (out, got) =
-        run_with_listener(&rig, &["claude-code"], &prompt_payload("/heard-mode focus"));
+    let (out, got) = run_with_listener(&rig, &["claude-code"], &prompt_payload("/heard-pause"));
     assert_eq!(out.code, Some(0));
     let v: serde_json::Value = serde_json::from_str(&out.stdout).unwrap();
     assert_eq!(v["decision"], "block");

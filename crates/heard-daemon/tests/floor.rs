@@ -111,7 +111,6 @@ fn rig(label: &str, yaml: &str) -> Rig {
     let daemon = DaemonBuilder::new(paths)
         .speech(sink.clone())
         .clock(clock.clone())
-        .picker(|_n| 0)
         .extension(Arc::new(Hello))
         .build();
     let hooks = Arc::new(HookQueue::new(Arc::clone(&daemon)));
@@ -280,89 +279,34 @@ fn a_catch_up_answer_speaks_the_buffered_projects() {
     assert_eq!(r.daemon.router.pending_count(), 0);
 }
 
-const COMPANION: &str = "onboarded: true\nmode: companion\nnarration_volume: companion\n";
-
+/// Modes retired 2026-10-14: an old config that still says companion or focus
+/// gets the one behaviour. No "On it." on submit, no "still thinking"
+/// nudge, no hung-tool line, and tool progress stays silent.
 #[test]
-fn a_submitted_prompt_gets_one_filler_and_a_silent_turn_one_nudge() {
-    let r = rig("fillers", COMPANION);
-    r.daemon
-        .handle_event(&event("prompt_intent", "prompt", "fix the build", "s1"));
-    let lines = r.sink.lines.lock().unwrap().clone();
-    assert_eq!(lines.len(), 1, "{lines:?}");
-    assert_eq!(lines[0].0, "On it.");
-    assert_eq!(lines[0].2, "filler");
-    assert_eq!(
-        lines[0].3,
-        Some(LineOptions {
-            priority: false,
-            coexists: true,
-            history: false
-        })
-    );
-    // 30 s later the nudge is due, but this turn already had its filler.
-    r.clock.advance(31.0);
-    r.daemon.tick(false);
-    assert_eq!(r.sink.texts().len(), 1, "never two fillers in a row");
-    // A real line, then a new turn: no submit filler (not silent enough),
-    // and 30 s of silence later its one nudge.
-    r.daemon
-        .say("Working on it.", "intermediate", "x", "s2", "brain");
-    r.daemon
-        .handle_event(&event("prompt_intent", "prompt", "and the docs", "s2"));
-    r.clock.advance(31.0);
-    r.daemon.tick(false);
-    assert_eq!(r.sink.texts().last().unwrap(), "Still looking at this.");
-    r.clock.advance(60.0);
-    r.daemon.tick(false);
-    assert_eq!(
-        r.sink
-            .texts()
-            .iter()
-            .filter(|t| t.starts_with("Still"))
-            .count(),
-        1,
-        "at most one nudge per turn"
-    );
-}
-
-#[test]
-fn focus_speaks_once_for_a_hung_tool() {
-    let r = rig(
-        "hung",
-        "onboarded: true\nmode: focus\nnarration_volume: focus\n",
-    );
-    r.daemon
-        .handle_event(&event("tool_pre", "tool_bash", "Running the tests.", "s1"));
-    let before = r.sink.texts().len();
-    r.clock.advance(119.0);
-    r.daemon.tick(false);
-    assert_eq!(r.sink.texts().len(), before);
-    r.clock.advance(2.0);
-    r.daemon.tick(false);
-    r.daemon.tick(false);
-    let hung: Vec<String> = r
-        .sink
-        .texts()
-        .into_iter()
-        .filter(|t| t.starts_with("Still going"))
-        .collect();
-    assert_eq!(
-        hung,
-        vec!["Still going after two minutes \u{2014} Running the tests."]
-    );
-    // A later event disarms the watch.
-    r.daemon
-        .handle_event(&event("tool_post", "tool_bash", "", "s1"));
-    r.clock.advance(500.0);
-    r.daemon.tick(false);
-    assert_eq!(
-        r.sink
-            .texts()
-            .iter()
-            .filter(|t| t.starts_with("Still going"))
-            .count(),
-        1
-    );
+fn retired_mode_values_change_nothing() {
+    for yaml in [
+        "onboarded: true\nmode: companion\nnarration_volume: 3\nnarrate_routine: true\n",
+        "onboarded: true\nmode: focus\nnarration_volume: 0\nverbosity: verbose\n",
+    ] {
+        let r = rig("retired-modes", yaml);
+        r.daemon
+            .handle_event(&event("prompt_intent", "prompt", "fix the build", "s1"));
+        assert_eq!(
+            r.daemon
+                .handle_event(&event("tool_pre", "tool_bash", "Running the tests.", "s1")),
+            heard_daemon::Outcome::Dropped("routine_narration_off")
+        );
+        assert_eq!(
+            r.daemon
+                .handle_event(&event("intermediate", "", "Looking at the build.", "s1")),
+            heard_daemon::Outcome::Dropped("copilot_prose_off")
+        );
+        for _ in 0..3 {
+            r.clock.advance(200.0);
+            r.daemon.tick(false);
+        }
+        assert!(r.sink.texts().is_empty(), "{yaml}: {:?}", r.sink.texts());
+    }
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
@@ -449,7 +393,6 @@ fn classifier_rig(label: &str, answer: &'static str) -> (Rig, Arc<Classifier>) {
     let daemon = DaemonBuilder::new(paths)
         .speech(sink.clone())
         .clock(clock.clone())
-        .picker(|_n| 0)
         .extension(classifier.clone())
         .build();
     let hooks = Arc::new(HookQueue::new(Arc::clone(&daemon)));

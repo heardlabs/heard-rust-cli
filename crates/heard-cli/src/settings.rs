@@ -8,12 +8,10 @@
 //! (`engine/heard/cli.py::_validate`, `cadence.py`, `volume.py`,
 //! `engine_api.py`), not from memory:
 //!
-//! * `mode` — `copilot | companion | focus` (`cadence.PRESET_NAMES`), stored
-//!   lowercase. `custom` is read-only (the two primitives match no preset).
-//!   Picking a preset writes the preset AND both primitives it stands for
-//!   (`send_mode`, `narration_volume`) plus the two legacy knobs the volume
-//!   stop implies (`narrate_routine`, `verbosity`), exactly as
-//!   `engine_api.py` does, so a stale primitive can never override the pick.
+//! There is no mode setting: Heard's modes (and `send_mode`,
+//! `narration_volume`, `narrate_routine`, `verbosity`) were retired on
+//! 2026-10-14 ([`heard_config::RETIRED_KEYS`]).
+//!
 //! * `persona` — the four bundled personas, `raw`, or a user persona file in
 //!   `<config_dir>/personas/`.
 //! * `kokoro_voice` — one of the 54 ids in `voices-v1.0.bin`.
@@ -73,160 +71,6 @@ impl Ctx {
             "daemon not running; applies when it starts"
         }
     }
-}
-
-// ── mode ────────────────────────────────────────────────────────────────
-
-/// A listening-mode preset.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Mode {
-    /// At the screen: turn results, normal detail.
-    Copilot,
-    /// Away from it: everything, including the agent's prose.
-    Companion,
-    /// Heads-down: only failures, questions and approvals.
-    Focus,
-}
-
-impl Mode {
-    /// All presets, in picker order.
-    pub const ALL: [Mode; 3] = [Mode::Copilot, Mode::Companion, Mode::Focus];
-
-    /// The stored value.
-    pub fn key(self) -> &'static str {
-        match self {
-            Mode::Copilot => "copilot",
-            Mode::Companion => "companion",
-            Mode::Focus => "focus",
-        }
-    }
-
-    /// How it is shown.
-    pub fn display(self) -> &'static str {
-        match self {
-            Mode::Copilot => "co-pilot",
-            Mode::Companion => "companion",
-            Mode::Focus => "focus",
-        }
-    }
-
-    /// One line for pickers and help.
-    pub fn describe(self) -> &'static str {
-        match self {
-            Mode::Copilot => "at the screen: turn results and anything that needs you",
-            Mode::Companion => "away from it: the agent's prose and steps too",
-            Mode::Focus => "heads-down: only failures, questions and approvals",
-        }
-    }
-
-    /// Accepts the stored names plus the spellings people type.
-    pub fn parse(s: &str) -> Option<Mode> {
-        match s
-            .trim()
-            .to_ascii_lowercase()
-            .replace(['_', ' '], "-")
-            .as_str()
-        {
-            "copilot" | "co-pilot" | "pilot" => Some(Mode::Copilot),
-            "companion" => Some(Mode::Companion),
-            "focus" | "focused" => Some(Mode::Focus),
-            _ => None,
-        }
-    }
-
-    /// `(send_mode, narration_volume)` — `cadence.PRESETS`.
-    fn primitives(self) -> (&'static str, i64) {
-        match self {
-            Mode::Copilot => ("prefill", 2),
-            Mode::Companion => ("auto", 3),
-            Mode::Focus => ("prefill", 0),
-        }
-    }
-
-    /// The full preset map `engine_api.py` writes for a mode pick.
-    pub fn preset(self) -> Map<String, Value> {
-        let (send, stop) = self.primitives();
-        let (routine, verbosity) = volume_derived(stop);
-        let mut m = Map::new();
-        m.insert("send_mode".into(), json!(send));
-        m.insert("narration_volume".into(), json!(stop));
-        m.insert("narrate_routine".into(), json!(routine));
-        m.insert("verbosity".into(), json!(verbosity));
-        m.insert("mode".into(), json!(self.key()));
-        m
-    }
-}
-
-/// `volume.derived_settings(stop)` — `(narrate_routine, verbosity)`.
-fn volume_derived(stop: i64) -> (bool, &'static str) {
-    match stop {
-        0 | 1 => (false, "quiet"),
-        3 => (true, "verbose"),
-        _ => (false, "normal"),
-    }
-}
-
-/// `cadence.preset(cfg)`: which preset the primitives equal, or `custom`.
-/// Returned as the display name.
-pub fn current_mode(cfg: &Map<String, Value>) -> String {
-    let send = cfg
-        .get("send_mode")
-        .and_then(Value::as_str)
-        .map(|s| s.trim().to_ascii_lowercase())
-        .filter(|s| s == "auto" || s == "prefill")
-        .unwrap_or_else(|| {
-            if legacy::legacy_mode(cfg) == "companion" {
-                "auto".into()
-            } else {
-                "prefill".into()
-            }
-        });
-    let stop = cfg
-        .get("narration_volume")
-        .and_then(|v| v.as_i64().or_else(|| v.as_f64().map(|f| f as i64)))
-        .filter(|i| (0..=3).contains(i))
-        .unwrap_or_else(|| match legacy::legacy_mode(cfg).as_str() {
-            "focus" => 0,
-            "companion" => 3,
-            _ => {
-                let routine = matches!(cfg.get("narrate_routine"), Some(Value::Bool(true)));
-                let verb = cfg
-                    .get("verbosity")
-                    .and_then(Value::as_str)
-                    .unwrap_or("normal")
-                    .to_ascii_lowercase();
-                if routine {
-                    3
-                } else if verb == "quiet" || verb == "brief" {
-                    1
-                } else {
-                    2
-                }
-            }
-        });
-    for m in Mode::ALL {
-        let (s, v) = m.primitives();
-        if s == send && v == stop {
-            return m.display().to_string();
-        }
-    }
-    "custom".to_string()
-}
-
-/// Parse a mode argument or explain the choices.
-pub fn parse_mode(s: &str) -> CliResult<Mode> {
-    Mode::parse(s).ok_or_else(|| {
-        CliError::usage(
-            format!("unknown mode {s:?}"),
-            "use one of: copilot (co-pilot), companion, focus",
-        )
-    })
-}
-
-/// Write a mode.
-pub fn set_mode(ctx: &Ctx, m: Mode) -> CliResult<String> {
-    ctx.config.apply_preset(&m.preset())?;
-    Ok(format!("mode: {}  ({})", m.display(), ctx.reload_note()))
 }
 
 // ── voice ───────────────────────────────────────────────────────────────
@@ -691,8 +535,6 @@ fn resolve_session(ctx: &Ctx, arg: &str) -> String {
 /// What the header and `heard status` show.
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct Snapshot {
-    /// Display mode (`co-pilot`, `companion`, `focus`, `custom`).
-    pub mode: String,
     /// Persona name.
     pub persona: String,
     /// Kokoro voice id.
@@ -711,7 +553,6 @@ pub struct Snapshot {
 pub fn snapshot(ctx: &Ctx) -> CliResult<Snapshot> {
     let cfg = ctx.load()?;
     Ok(Snapshot {
-        mode: current_mode(&cfg),
         persona: current_persona(&cfg),
         voice: effective_voice(&ctx.paths, &cfg),
         speed: current_speed(&cfg),
@@ -732,30 +573,6 @@ pub fn io_fail(path: &Path, e: std::io::Error) -> CliError {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn mode_aliases() {
-        assert_eq!(Mode::parse("co-pilot"), Some(Mode::Copilot));
-        assert_eq!(Mode::parse("Co_Pilot"), Some(Mode::Copilot));
-        assert_eq!(Mode::parse("FOCUS"), Some(Mode::Focus));
-        assert_eq!(Mode::parse("custom"), None);
-    }
-
-    #[test]
-    fn presets_round_trip_through_current_mode() {
-        for m in Mode::ALL {
-            let mut cfg = heard_config::defaults().clone();
-            cfg.extend(m.preset());
-            assert_eq!(current_mode(&cfg), m.display());
-        }
-        // Defaults (send_mode "", narration_volume -1, mode copilot) → co-pilot.
-        assert_eq!(current_mode(heard_config::defaults()), "co-pilot");
-        // A stale primitive that matches no preset → custom.
-        let mut cfg = heard_config::defaults().clone();
-        cfg.insert("send_mode".into(), json!("auto"));
-        cfg.insert("narration_volume".into(), json!(0));
-        assert_eq!(current_mode(&cfg), "custom");
-    }
 
     #[test]
     fn speed_parsing() {

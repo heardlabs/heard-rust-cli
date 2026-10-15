@@ -3,7 +3,7 @@
 
 use inquire::{Confirm, InquireError, Select};
 
-use crate::settings::{self, Alerts, Ctx, Mode};
+use crate::settings::{self, Alerts, Ctx};
 use crate::ui::{CliError, CliResult};
 use crate::voices;
 
@@ -38,20 +38,6 @@ pub fn choose(
             .position(|x| *x == l)
             .map(|i| items[i].0.clone())
     }))
-}
-
-/// Pick a mode.
-pub fn mode(current: &str) -> CliResult<Option<Mode>> {
-    let items: Vec<(String, String)> = Mode::ALL
-        .iter()
-        .map(|m| {
-            (
-                m.display().to_string(),
-                format!("{:<10} {}", m.display(), m.describe()),
-            )
-        })
-        .collect();
-    Ok(choose("Mode", &items, current)?.and_then(|s| Mode::parse(&s)))
 }
 
 /// Pick a voice.

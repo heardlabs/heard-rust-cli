@@ -1,54 +1,18 @@
-//! Dead-air lines: the instant submit acknowledgement, the companion "still
-//! thinking" nudge, and the one budget they share ([`FillerPolicy`],
-//! `sequencer.FillerPolicy` in the Python).
+//! The dead-air budget ([`FillerPolicy`], `sequencer.FillerPolicy` in the
+//! Python): at most one canned filler line per agent turn, only into real
+//! silence.
 //!
-//! Both are fixed strings, spoken in the persona's voice but never restyled
-//! by a brain: they must land before the first token, filling silence the
-//! turn opener cannot (a long pure-thinking gap emits no intermediate).
+//! The daemon's own fillers (Companion's instant "On it." on submit and its
+//! "still thinking" nudge) and Focus's hung-tool line went with the modes
+//! (retired 2026-10-14); the budget stays for an edition that speaks fillers
+//! of its own.
 
 use std::collections::{HashMap, HashSet};
-
-use serde_json::{Map, Value};
-
-use crate::policy;
 
 /// `FILLER_MIN_SILENCE_S` — nothing at all spoken for this long.
 pub const FILLER_MIN_SILENCE_S: f64 = 20.0;
 /// `FILLER_MIN_SINCE_REAL_S` — and not this close behind a real line.
 pub const FILLER_MIN_SINCE_REAL_S: f64 = 10.0;
-/// `HUNG_TOOL_S` — a tool that started and produced no further event for
-/// this long is treated as hung (Focus mode's one "still running" line).
-pub const HUNG_TOOL_S: f64 = 120.0;
-
-/// `_PROMPT_FILLER_LINES`.
-pub const PROMPT_FILLER_LINES: &[&str] = &[
-    "On it.",
-    "On it now.",
-    "Right, on it.",
-    "Got it.",
-    "Got it \u{2014} looking now.",
-    "Okay, looking into that.",
-    "Let me take a look.",
-    "Let me dig in.",
-    "Let me get into it.",
-    "Sure, one moment.",
-    "Looking now.",
-    "Checking that now.",
-    "Alright, digging in.",
-    "Let me have a look at this.",
-    "On it \u{2014} give me a sec.",
-];
-
-/// `_THINKING_NUDGE_LINES`.
-pub const THINKING_NUDGE_LINES: &[&str] = &[
-    "Still looking at this.",
-    "Still on it.",
-    "Still working through this.",
-    "Still digging \u{2014} bear with me.",
-    "Give me another moment on this.",
-    "Still on it, almost there in thought.",
-];
-
 /// At most one filler per agent turn, only into real silence.
 ///
 /// * one filler per (session, turn);
@@ -141,81 +105,6 @@ impl FillerPolicy {
     }
 }
 
-/// `_should_prompt_filler(cfg)` — companion only, under the prompt-intent
-/// master switch, never while muted or paused.
-#[must_use]
-pub fn should_prompt_filler(cfg: &Map<String, Value>) -> bool {
-    policy::cfg_truthy(cfg, "narrate_prompt_intent", true)
-        && policy::narration_mode(cfg) == "companion"
-        && !policy::cfg_truthy(cfg, "muted", false)
-        && !policy::cfg_truthy(cfg, "paused", false)
-}
-
-/// `_should_thinking_nudge(cfg)`.
-#[must_use]
-pub fn should_thinking_nudge(cfg: &Map<String, Value>) -> bool {
-    policy::cfg_truthy(cfg, "companion_thinking_nudge", true)
-        && policy::narration_mode(cfg) == "companion"
-        && !policy::cfg_truthy(cfg, "muted", false)
-        && !policy::cfg_truthy(cfg, "paused", false)
-}
-
-/// `_thinking_nudge_after_s(cfg)` — `max(1, float(v or 30))`, 30 on a value
-/// that is not a number.
-#[must_use]
-pub fn thinking_nudge_after_s(cfg: &Map<String, Value>) -> f64 {
-    let v = cfg.get("companion_thinking_nudge_seconds");
-    let f = match v {
-        None | Some(Value::Null) => Some(30.0),
-        Some(v) if !policy::py_truthy(v) => Some(30.0),
-        Some(Value::Number(n)) => n.as_f64(),
-        Some(Value::Bool(true)) => Some(1.0),
-        Some(Value::String(s)) => s.trim().parse::<f64>().ok(),
-        Some(_) => None,
-    };
-    match f {
-        Some(f) if f.is_finite() => f.max(1.0),
-        Some(_) => 30.0,
-        None => 30.0,
-    }
-}
-
-/// `_pick_varied(pool, last)` — a line that is not the one just used.
-/// `pick(n)` returns an index in `0..n` (random in production, scripted in
-/// tests).
-pub fn pick_varied(
-    pool: &[&'static str],
-    last: &mut Option<usize>,
-    pick: &mut dyn FnMut(usize) -> usize,
-) -> &'static str {
-    let mut i = pick(pool.len()) % pool.len();
-    if pool.len() > 1 {
-        if let Some(prev) = *last {
-            let mut guard = 0;
-            while i == prev && guard < 64 {
-                i = pick(pool.len()) % pool.len();
-                guard += 1;
-            }
-            if i == prev {
-                i = (prev + 1) % pool.len();
-            }
-        }
-    }
-    *last = Some(i);
-    pool[i]
-}
-
-/// The hung-tool line: `f"Still going after two minutes — {clean}."`, with
-/// `clean = (label or "A tool").rstrip(".")`.
-#[must_use]
-pub fn hung_tool_line(label: &str) -> String {
-    let label = if label.is_empty() { "A tool" } else { label };
-    format!(
-        "Still going after two minutes \u{2014} {}.",
-        label.trim_end_matches('.')
-    )
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -237,42 +126,5 @@ mod tests {
         q.open_turn("t");
         q.note_line("t", 50.0, false);
         assert_eq!(q.allow("t", 55.0), (false, "filler_near_real_line"));
-    }
-
-    #[test]
-    fn nudge_threshold_reads_like_python() {
-        let cfg = |v: Value| {
-            let mut m = Map::new();
-            m.insert("companion_thinking_nudge_seconds".into(), v);
-            m
-        };
-        assert_eq!(thinking_nudge_after_s(&Map::new()), 30.0);
-        assert_eq!(thinking_nudge_after_s(&cfg(Value::from(0))), 30.0);
-        assert_eq!(thinking_nudge_after_s(&cfg(Value::from(0.2))), 1.0);
-        assert_eq!(thinking_nudge_after_s(&cfg(Value::from("7"))), 7.0);
-        assert_eq!(thinking_nudge_after_s(&cfg(Value::from("x"))), 30.0);
-    }
-
-    #[test]
-    fn varied_pick_never_repeats() {
-        let mut last = None;
-        let mut script = [0usize, 0, 0, 3].into_iter();
-        let mut pick = |_n: usize| script.next().unwrap_or(1);
-        assert_eq!(
-            pick_varied(PROMPT_FILLER_LINES, &mut last, &mut pick),
-            "On it."
-        );
-        assert_eq!(
-            pick_varied(PROMPT_FILLER_LINES, &mut last, &mut pick),
-            "Got it."
-        );
-        assert_eq!(
-            hung_tool_line("Running the tests."),
-            "Still going after two minutes \u{2014} Running the tests."
-        );
-        assert_eq!(
-            hung_tool_line(""),
-            "Still going after two minutes \u{2014} A tool."
-        );
     }
 }
